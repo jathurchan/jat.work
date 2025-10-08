@@ -1,0 +1,16 @@
+/node_modules
+
+/.next/
+/out/
+
+pnpm-lock.yaml
+
+.env*.local
+.env
+
+npm-debug.log*
+pnpm-debug.log*
+
+.vscode/
+
+.DS_Store
