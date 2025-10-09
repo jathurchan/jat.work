@@ -39,6 +39,34 @@ export default function Page() {
         </div>
       </div>
 
+      {/* Current Focus */}
+      <section className="space-y-3">
+        <h2 id="focusing" className="text-xl font-semibold tracking-tight">Current Focus</h2>
+        <article className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-8 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition">
+          <header className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+            <h3 className="font-semibold text-2xl">
+              Aegis – Policy-Aware RAG Chatbot
+            </h3>
+            <time className="text-xs text-zinc-500">In Progress</time>
+          </header>
+          <p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            Building a lightweight <strong>retrieval-augmented chatbot</strong> that
+            <strong> classifies</strong>, <strong>grounds</strong>, and <strong>flags</strong> policy-relevant content
+            with <strong>transparent, citation-based</strong> responses.
+          </p>
+          <div className="mt-4">
+            <a
+              href="https://github.com/jathurchan/aegis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              View on GitHub
+            </a>
+          </div>
+        </article>
+      </section>
+
       {/* Experience */}
       <section aria-labelledby="experience-heading" className="space-y-5">
         <h2 id="experience-heading" className="text-xl font-semibold tracking-tight">Selected Work</h2>
@@ -55,7 +83,7 @@ export default function Page() {
             </p>
           </article>
 
-          {/* Amazon SDE I */}
+          {/* Amazon */}
           <article className="h-full rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col min-h-[230px] md:min-h-[250px] hover:bg-zinc-50 dark:hover:bg-zinc-900 transition">
             <header className="flex items-baseline justify-between">
               <h3 className="font-semibold text-lg">Amazon</h3>
@@ -96,13 +124,13 @@ export default function Page() {
         <h2 className="text-xl font-semibold tracking-tight">Applied ML</h2>
         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
           I am deepening my specialization in <strong>applied ML</strong> and <strong>information retrieval</strong>.
-  I am certified in <em>Deep Learning</em> (2022), <em>Generative AI with LLMs</em> (2023), and <em>Retrieval-Augmented Generation (RAG)</em> (2025).
+          I am certified in <em>Deep Learning</em> (2022), <em>Generative AI with LLMs</em> (2023), and <em>Retrieval-Augmented Generation (RAG)</em> (2025).
         </p>
       </section>
 
       {/* Closing line */}
       <p className="text-zinc-800 dark:text-zinc-200 leading-relaxed">
-         I design, build, and maintain systems that are not only scalable but also resilient and performant. My goal is to create software that endures.
+        I design, build, and maintain systems that are not only scalable but also resilient and performant. My goal is to create software that endures.
       </p>
     </section>
   )
