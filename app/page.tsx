@@ -45,18 +45,16 @@ export default function Page() {
         <article className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-8 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition">
           <header className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
             <h3 className="font-semibold text-2xl">
-              Aegis – Policy-Aware RAG Chatbot
+              llm-mux – Framework for Cost-Efficient LLM Applications
             </h3>
             <time className="text-xs text-zinc-500">In Progress</time>
           </header>
           <p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            Building a lightweight <strong>retrieval-augmented chatbot</strong> that
-            <strong> classifies</strong>, <strong>grounds</strong>, and <strong>flags</strong> policy-relevant content
-            with <strong>transparent, citation-based</strong> responses.
+            A lightweight FastAPI framework to build LLM applications fast — with tiered model routing, cost optimization, and observability out of the box.
           </p>
           <div className="mt-4">
             <a
-              href="https://github.com/jathurchan/aegis"
+              href="https://github.com/jathurchan/llm-mux"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"
