@@ -1,0 +1,40 @@
+---
+import { skills } from '../lib/site';
+import { sectionIcons } from '../lib/icons';
+
+const pillarIcons: Record<string, string> = {
+  cloud:
+    '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.34 9.5 4 4 0 0 0 7 19h10.5Z"/>',
+  systems:
+    '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4 6.5 16M12 7.4 17.5 16M7 18h10"/>',
+  ai:
+    '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
+};
+---
+
+<section class="shell hero-inner" id="toolkit" aria-label="Toolkit">
+  <div class="hero-foot reveal reveal-delay-6" style="width: 100%;">
+    <div class="hero-skills-lead">
+      <span class="featured-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['toolkit'] ?? ''} />
+        {skills.eyebrow}
+      </span>
+      <p class="hero-skills-text">{skills.lead}</p>
+    </div>
+    <ul class="toolkit-grid" aria-label="Toolkit">
+      {skills.categories.map((cat) => (
+        <li class="toolkit-cat" style={`--c:${cat.color}`}>
+          <div class="toolkit-cat-head">
+            <span class="toolkit-cat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={pillarIcons[cat.key] ?? ''} />
+            </span>
+            <h3 class="toolkit-cat-name">{cat.name}</h3>
+          </div>
+          <div class="toolkit-chips">
+            {cat.items.map(item => <span class="toolkit-chip">{item}</span>)}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

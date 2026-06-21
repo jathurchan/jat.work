@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { topicColor, topicLabel, formatDate } from '../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+const { entry } = Astro.props;
+const { title, pubDate, blurb, tags } = entry.data;
+const topic = tags?.[0];
+---
+
+<Base title={`${title} — Jathurchan Selvakumar`} description={blurb}>
+  <div class="page" id="top">
+    <Header backButton />
+    <main class="shell" style="flex: 1 1 0%; padding-top: var(--space-lg); padding-bottom: var(--space-xl);">
+      <article class="post-article" style="max-width: 720px; margin: 0 auto;">
+
+
+        <div class="post-header rise">
+          <span class="post-date">{formatDate(pubDate)}</span>
+          {topic && (
+            <>
+              <span class="post-dot"></span>
+              <span style={`color: ${topicColor[topic]}; font-weight: 600;`}>{topicLabel[topic]}</span>
+            </>
+          )}
+        </div>
+
+        <h1 class="post-title rise">
+          {title}
+        </h1>
+
+        <p class="post-blurb rise">
+          {blurb}
+        </p>
+
+        <hr class="post-divider" />
+
+        <div class="prose rise" style="animation-delay: 0.08s;">
+          <slot />
+        </div>
+      </article>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<script>
+  import '../scripts/reading';
+</script>

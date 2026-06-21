@@ -1,0 +1,14 @@
+---
+// The jat·work brand mark: ink letters with a Google four-colour dot for the ".".
+interface Props {
+  href?: string;
+  class?: string;
+}
+const { href = '/', class: extraClass = '' } = Astro.props;
+---
+
+<a href={href} class:list={['wm', extraClass]} aria-label="jat.work — home">
+  <span class="wm-name" aria-hidden="true">jat</span
+  ><span class="wm-dot" aria-hidden="true"></span
+  ><span class="wm-name" aria-hidden="true">work</span>
+</a>

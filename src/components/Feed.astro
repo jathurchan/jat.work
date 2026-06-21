@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import { filters, lab, topicColor, topicLabel, formatDate } from '../lib/site';
+import { sectionIcons } from '../lib/icons';
+
+// The blog comes from src/content/blog/*.{md,mdx}, newest first.
+const entries = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// One small line-icon per topic, reusing the pillar glyphs from the hero so a
+// post reads in the same visual language as the rest of the site.
+const topicIcons: Record<string, string> = {
+  cloud:
+    '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.34 9.5 4 4 0 0 0 7 19h10.5Z"/>',
+  systems:
+    '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4 6.5 16M12 7.4 17.5 16M7 18h10"/>',
+  ai:
+    '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
+};
+
+// How many cards show before "Load more posts" reveals the next batch.
+const PAGE_SIZE = 6;
+---
+
+{/* ---------- Blog Section ---------- */}
+<section id="notes" class="lab-section">
+  <div class="section-lead">
+    <span class="featured-eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['notes'] ?? ''} />
+      {lab.eyebrow}
+    </span>
+    <h2 class="featured-lead-text">{lab.lead}</h2>
+  </div>
+
+  {/* Terminal-style filter rail with a live result count (mirrors the hero's
+      monospace, HUD-flavoured voice). */}
+  <div class="lab-toolbar">
+    <div class="ftabs" role="group" aria-label="Filter by topic">
+      <span class="ftabs-prompt" aria-hidden="true">~/</span>
+      {
+        filters.map((f) => (
+          <button class="ftab" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'} style={f.color ? `--accent: ${f.color}` : ''}>
+            {f.label}
+          </button>
+        ))
+      }
+    </div>
+    <div class="lab-toolbar-end">
+      <div class="lab-search">
+        <svg class="lab-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="search" id="jw-search" class="lab-search-input" placeholder="grep posts…" aria-label="Search posts by title, summary, or topic" autocomplete="off" spellcheck="false" />
+      </div>
+      <span class="lab-count" id="jw-labcount" aria-live="polite">{entries.length} posts</span>
+    </div>
+  </div>
+
+  <div class="lab-grid" id="jw-worklist" data-page-size={PAGE_SIZE}>
+    {entries.length === 0 ? (
+      <div class="lab-empty">
+        <svg class="lab-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20h4L19 9l-4-4L4 16v4Z"></path>
+          <path d="M14 6l4 4"></path>
+        </svg>
+        <h3 class="lab-empty-title">Building the archives</h3>
+        <p class="lab-empty-text">I'm currently writing up my notes on cloud computing, distributed systems, and AI. Check back soon.</p>
+      </div>
+    ) : (
+      entries.map((e, index) => {
+        const tags = e.data.tags?.length ? e.data.tags : ['all'];
+        const primaryTag = tags[0];
+        const cardColor = topicColor[primaryTag] || 'var(--ink)';
+        const isFeature = index === 0;
+
+        return (
+          <a
+            href={`/blog/${e.slug}`}
+            class={`lab-card${isFeature ? ' lab-card--feature' : ''}`}
+            data-tags={JSON.stringify(e.data.tags ?? [])}
+            style={`--card-color: ${cardColor};`}
+          >
+            <div class="lab-card-body">
+              <div class="lab-card-top">
+                <span class="lab-kinds">
+                  {tags.map((tag) => (
+                    <span class="lab-kind" style={topicColor[tag] ? `--chip-color: ${topicColor[tag]};` : ''}>
+                      {topicIcons[tag] && (
+                        <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[tag]} />
+                      )}
+                      {topicLabel[tag] ?? 'Article'}
+                    </span>
+                  ))}
+                </span>
+                {isFeature && <span class="lab-latest">Latest</span>}
+                <span class="lab-arrow" aria-hidden="true">→</span>
+              </div>
+
+              <h3 class="lab-card-title">{e.data.title}</h3>
+              <p class="lab-card-blurb">{e.data.blurb}</p>
+
+              <div class="lab-card-foot">
+                <span class="lab-date">{formatDate(e.data.pubDate)}</span>
+              </div>
+            </div>
+
+            {isFeature && primaryTag !== 'all' && (
+              <div class="lab-feature-aside" aria-hidden="true">
+                <svg class="lab-feature-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" set:html={topicIcons[primaryTag] ?? ''} />
+              </div>
+            )}
+          </a>
+        );
+      })
+    )}
+  </div>
+
+  <p class="lab-noresults" id="jw-noresults" role="status" hidden>
+    No posts match — try another topic or clear the search.
+  </p>
+
+  {entries.length > PAGE_SIZE && (
+    <div class="lab-more">
+      <button type="button" id="jw-loadmore" class="lab-more-btn">
+        <span class="lab-more-label">Load more posts</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+    </div>
+  )}
+</section>

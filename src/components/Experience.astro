@@ -1,0 +1,179 @@
+---
+import { career, careerHead, careerStart } from '../lib/site';
+import { sectionIcons } from '../lib/icons';
+
+// Chronological, start → now: scrolling DOWN walks the path forward in time.
+const path = career;
+
+// Bespoke glyph per experience — a small visual idea of the work itself,
+// drawn on a glassy, brand-tinted disc instead of a corporate logo.
+// 24×24, stroke-based to match the icon language used across the site.
+const symbols: Record<string, string> = {
+  // falling latency — a descending trend line into an arrowhead
+  latency:
+    '<path d="M3 6l6 6 3.5-3.5L21 15"/><path d="M21 10v5h-5"/>',
+  // the canary / guardrail — a shield catching drift before it pages anyone
+  canary:
+    '<path d="M12 3l7 3v5c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6l7-3Z"/><path d="M9 12l2 2 4-4"/>',
+  // health — a heart traced by an ECG pulse
+  pulse:
+    '<path d="M12 20S4 15 4 9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 8 2.5C20 12 16 16 12 20Z"/><path d="M5.5 12H9l1.4-3 2 5 1.3-2h4"/>',
+  // coordinating teams — three linked nodes
+  network:
+    '<circle cx="6" cy="6.5" r="2.2"/><circle cx="18" cy="6.5" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M8 7.4l3 8.7M16 7.4l-3 8.7M8.2 6.5h7.6"/>',
+  // RaftLock — a padlock
+  lock:
+    '<rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.4"/>',
+  // observability — a dashboard of live signals
+  observability:
+    '<rect x="3" y="4.5" width="18" height="13" rx="2.2"/><path d="M7 13.5l2.5-3 2.5 2L17 8"/><path d="M8.5 21h7M12 17.5V21"/>',
+  // cart — a shopping cart for the marketplace
+  cart:
+    '<rect x="6.5" y="7" width="11" height="8" rx="2"/><path d="M3 4h2l1.5 3"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>',
+  // proxy — routing requests through a middle layer / proxy server
+  proxy:
+    '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M2 12h6"/><path d="M5 9l3 3-3 3"/><path d="M16 12h6"/><path d="M19 9l3 3-3 3"/><path d="M10 8h4"/><path d="M10 16h4"/>',
+};
+---
+
+<section id="experience" class="route-section">
+  <div class="section-lead">
+    <span class="featured-eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['experience'] ?? ''} />
+      {careerHead.eyebrow}
+    </span>
+    <h2 class="featured-lead-text">{careerHead.lead}</h2>
+  </div>
+
+  <div class="route" aria-label="Career path, earliest to now">
+    <!-- the line that draws itself as you scroll -->
+    <div class="route-spine" aria-hidden="true">
+      <div class="route-spine-fill"></div>
+    </div>
+
+    <!-- start cap -->
+    <div class="route-origin">
+      <span class="route-origin-dot" aria-hidden="true"></span>
+      <div class="route-origin-text">
+        <span class="route-origin-kicker">{careerStart.kicker}</span>
+        <p class="route-origin-line">{careerStart.line}</p>
+      </div>
+    </div>
+
+    <ol class="route-list">
+      {
+        path.map((c) => {
+          const variant = c.variant ?? 'station';
+          return (
+            <li
+              class={`route-stop route-stop--${variant}${c.now ? ' is-now' : ''}`}
+              style={`--brand: ${c.brand || c.color};`}
+            >
+              {/* connector narration — the decision that led here */}
+              {c.transitionIn && (
+                <p class="route-transition">
+                  <span class="route-transition-mark" aria-hidden="true">↳</span>
+                  <span set:html={c.transitionIn} />
+                </p>
+              )}
+
+              {/* station marker on the spine */}
+              <span class="route-node" role="img" aria-label={c.org}>
+                {variant === 'branch' && <span class="route-fork" aria-hidden="true"></span>}
+                <span class="route-node-disc">
+                  <span class="route-node-sheen" aria-hidden="true"></span>
+                  <svg
+                    class="route-node-sym"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    set:html={symbols[c.symbol ?? ''] ?? ''}
+                  />
+                </span>
+                {c.now && <span class="route-node-ping" aria-hidden="true"></span>}
+              </span>
+
+              {/* the card */}
+              <article class="route-card">
+                <header class="route-card-head">
+                  <span class="route-chapter">
+                    {variant === 'branch' ? 'BRANCH' : `CH · ${c.chapter}`}
+                  </span>
+                  {c.tag && <span class="route-tag">{c.tag}</span>}
+                  <div class="route-period">
+                    {c.now && <span class="route-now">live</span>}
+                    <span>{c.period}</span>
+                  </div>
+                </header>
+
+                <div class="route-identity">
+                  <span class="route-org">{c.org}</span>
+                  <h3 class="route-role">{c.role}</h3>
+                  {c.place && <span class="route-place">{c.place}</span>}
+                </div>
+
+                {(c.story || c.heroMetric) && (
+                  <div class="route-body">
+                    {c.story && <p class="route-story">{c.story}</p>}
+                    {c.heroMetric && (
+                      <div class="route-metric">
+                        <span class="route-metric-val">{c.heroMetric.value}</span>
+                        <span class="route-metric-label">{c.heroMetric.label}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {(c.stack?.length || c.product) && (
+                  <footer class="route-card-foot">
+                    {c.stack && c.stack.length > 0 && (
+                      <ul class="route-stack" aria-label="Tech stack">
+                        {c.stack.map((t) => (
+                          <li class="route-tech">{t}</li>
+                        ))}
+                      </ul>
+                    )}
+                    {c.product && (
+                      c.demo ? (
+                        <button
+                          type="button"
+                          class="route-product"
+                          data-raft-act="open-fullscreen"
+                          data-raft-launch-mode="tour"
+                        >
+                          <span>{c.product.label}</span>
+                          <span aria-hidden="true" class="route-product-arrow">→</span>
+                        </button>
+                      ) : (
+                        <a
+                          href={c.product.href}
+                          target="_blank"
+                          rel="noopener"
+                          class="route-product"
+                        >
+                          <span>{c.product.label}</span>
+                          <span aria-hidden="true" class="route-product-arrow">↗</span>
+                        </a>
+                      )
+                    )}
+                  </footer>
+                )}
+
+                {c.terminus && (
+                  <div class="route-terminus" aria-hidden="true">
+                    <span class="route-terminus-cap"></span>
+                    <span class="route-terminus-text">{c.terminus}</span>
+                  </div>
+                )}
+              </article>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</section>

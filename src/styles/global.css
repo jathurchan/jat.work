@@ -1,0 +1,27 @@
+/* ---------------------------------------------------------------------------
+   Global stylesheet — split into ordered partials for maintainability.
+
+   The import order below mirrors the original single-file source order, so the
+   cascade is byte-for-byte identical. If you add a rule, put it in the partial
+   that owns that area; only reorder these imports if you intend to change the
+   cascade.
+
+     01-base          tokens, theme, resets, page shell, scrollbar
+     02-header        floating header pill + section-nav disclosure
+     03-hero          full-width hero, statement, achievement deck, animations
+     04-wordmark      wordmark + inline links / chips
+     05-post          article reading experience + long-form prose
+     06-featured-feed header nav, featured-project card, lab feed + grid
+     07-experience    career route ("The Trace") — line, stations, cards
+     08-footer        site footer + parallax
+     09-demo          RaftLock demo dialog, theme toggle, hero visuals
+   --------------------------------------------------------------------------- */
+@import './partials/01-base.css';
+@import './partials/02-header.css';
+@import './partials/03-hero.css';
+@import './partials/04-wordmark.css';
+@import './partials/05-post.css';
+@import './partials/06-featured-feed.css';
+@import './partials/07-experience.css';
+@import './partials/08-footer.css';
+@import './partials/09-demo.css';

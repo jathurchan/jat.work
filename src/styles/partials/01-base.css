@@ -1,0 +1,145 @@
+:root {
+  /* Systems Engineer Palette (Light Mode) */
+  --g-blue: #0284c7;   /* Deep Cerulean */
+  --g-red: #e11d48;    /* Crimson */
+  --g-yellow: #d97706; /* Amber */
+  --g-green: #059669;  /* Emerald */
+  --accent: var(--g-blue);
+  --accent-soft: #e0f2fe;
+  --pop: var(--g-red);
+  --ok: var(--g-green);
+  --on-accent: #ffffff;
+  --paper: #fcfcfc;
+  --frame: #f4f4f5;
+  --ink: #18181b;
+  --sub: #52525b;
+  --faint: #a1a1aa;
+  --faint-text: #71717a;
+  --line: #e4e4e7;
+  --dialog-shadow: rgba(24, 24, 27, 0.15) 0 30px 70px -20px;
+  --overlay-bg: color-mix(in srgb, #09090b 40%, transparent);
+  
+  
+  /* Static spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  
+  --space-sm: clamp(16px, 2vw, 24px);
+  --space-md: clamp(24px, 4vw, 48px);
+  --space-lg: clamp(48px, 8vw, 96px);
+  --space-xl: clamp(64px, 12vw, 160px);
+
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: 'Playfair Display', serif;
+  }
+
+:root[data-theme="dark"] {
+  /* Systems Engineer Palette (Dark Mode) */
+  --g-blue: #38bdf8;   /* Electric Azure */
+  --g-red: #fb7185;    /* Glowing Ruby */
+  --g-yellow: #fbbf24; /* Glowing Amber */
+  --g-green: #34d399;  /* Glowing Emerald */
+  --accent: var(--g-blue);
+  --accent-soft: #0c4a6e;
+  --pop: var(--g-red);
+  --ok: var(--g-green);
+  --paper: #09090b;
+  --frame: #18181b;
+  --ink: #fafafa;
+  --sub: #a1a1aa;
+  --faint: #52525b;
+  --faint-text: #71717a;
+  --line: #27272a;
+  --dialog-shadow: rgba(0, 0, 0, 0.8) 0 30px 70px -20px;
+  --overlay-bg: color-mix(in srgb, #000000 80%, transparent);
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+html,
+body {
+  margin: 0;
+}
+body {
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ---- root shell ---- */
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+.shell {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+}
+/* content below the hero — left edge aligns with the hero, readable column width */
+.content {
+  width: 100%;
+  margin: 0 auto;
+  flex: 1 1 0%;
+  /* No bottom padding: the footer owns the gap below the last section via its
+     own margin-top. Doubling them left a dead band after the blog feed. */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ---- custom scrollbar & selection ---- */
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: inherit;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sub);
+}
+
