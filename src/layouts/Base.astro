@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import { meta } from '../lib/site';
+import { ViewTransitions } from 'astro:transitions';
+import Analytics from '@vercel/analytics/astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = meta.title, description = meta.description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fcfcfc" />
+    <script is:inline>
+      (function() {
+        // Apply the saved/preferred theme before first paint. Crucially, re-apply
+        // it after every View Transitions swap: navigation replaces <html>, which
+        // drops the data-theme attribute. Without this, returning from a post page
+        // leaves data-theme unset, so theme-gated styles (e.g. the RaftLock card)
+        // fall back to their dark defaults and wash out grey on the light page.
+        function applyTheme() {
+          var storedTheme = typeof localStorage !== 'undefined' && localStorage.getItem('theme');
+          // Default to light — dark is an explicit user choice, not the OS default.
+          var theme = storedTheme || 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          // Safari only reliably re-reads theme-color when the meta node itself is
+          // replaced — updating content in-place is often ignored until reload.
+          var color = theme === 'dark' ? '#121214' : '#fcfcfc';
+          var existing = document.querySelector('meta[name="theme-color"]');
+          if (existing) existing.remove();
+          var tc = document.createElement('meta');
+          tc.name = 'theme-color';
+          tc.content = color;
+          document.head.prepend(tc);
+        }
+        applyTheme();
+        if (!window.__themeSwapBound) {
+          window.__themeSwapBound = true;
+          document.addEventListener('astro:after-swap', applyTheme);
+        }
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Jathurchan Selvakumar" />
+    <link rel="icon" href="/favicon.svg?v=1" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.site} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap"
+    />
+    <ViewTransitions />
+    {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
+        once deployed to Vercel with Web Analytics enabled in the dashboard;
+        runs in dev mode locally (logs, sends nothing). */}
+    <Analytics />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

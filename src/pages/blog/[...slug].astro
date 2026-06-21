@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Post from '../../layouts/Post.astro';
+
+// Every non-draft post gets a generated page at /blog/<slug>.
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Post entry={entry}>
+  <Content />
+</Post>

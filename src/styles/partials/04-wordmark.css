@@ -1,0 +1,63 @@
+/* ---- wordmark ---- */
+.wm {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.wm-name {
+  transition: letter-spacing 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* The "." is the brand mark: a small Google four-colour dot. */
+.wm-dot {
+  width: 6.5px;
+  height: 6.5px;
+  margin: 0 2.5px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: conic-gradient(
+    from 0deg,
+    var(--g-blue) 0 90deg,
+    var(--g-red) 90deg 180deg,
+    var(--g-yellow) 180deg 270deg,
+    var(--g-green) 270deg 360deg
+  );
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.4s ease;
+}
+.wm:hover .wm-dot,
+.wm:focus-visible .wm-dot {
+  transform: rotate(360deg) scale(1.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.wm:hover .wm-name:first-of-type,
+.wm:focus-visible .wm-name:first-of-type {
+  letter-spacing: 0.02em;
+}
+
+/* ---- links / chips ---- */
+.chip {
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.chip:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.lnk {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1.4px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.25s;
+  padding-bottom: 1px;
+}
+.lnk:hover {
+  background-size: 100% 1.4px;
+}
+

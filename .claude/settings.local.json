@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/jat/Downloads/**)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(kill 56887)",
+      "Bash(pkill -f \"http.server 8799\")",
+      "Bash(npm -v)",
+      "Bash(python3 -c ' *)",
+      "Bash(npm install *)",
+      "Bash(npx astro *)",
+      "Bash(npm run *)",
+      "Bash(python3 -)",
+      "Bash(node -e ' *)",
+      "Bash(grep -v \"^$\\\\|^>\")",
+      "Bash(lsof -ti:4321)",
+      "Bash(gh repo *)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:51865/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321/)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"exit:$?\")",
+      "Bash(awk 'NR>=395 && NR<=1075' src/scripts/app.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:65134/)",
+      "Bash(kill 95349 41449)",
+      "Bash(lsof -nP -iTCP:4321 -iTCP:4322 -sTCP:LISTEN)",
+      "Read(//private/tmp/**)",
+      "Bash(rm -f /tmp/gc_new.css)",
+      "Bash(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable src/scripts/*.ts)",
+      "Bash(cp /tmp/app.full.ts /tmp/app.full.check.ts)",
+      "Bash(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable /tmp/app.full.check.ts)",
+      "Bash(echo \"original errors: $\\(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable /tmp/app.full.check.ts 2>&1)",
+      "Bash(node -e \"console.log\\(require\\('astro/package.json'\\).version\\)\")"
+    ]
+  }
+}

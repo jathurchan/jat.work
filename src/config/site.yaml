@@ -1,0 +1,290 @@
+# ---------------------------------------------------------------------------
+# Site configuration. Edit this file to change everything on the page except
+# the blog/feed entries, which live as Markdown/MDX in src/content/blog/.
+# ---------------------------------------------------------------------------
+
+# Identity used in the footer, résumé button, and social links.
+profile:
+  fullName: Jathurchan Selvakumar
+  email: hello@jat.work
+  links:
+    github: https://github.com/jathurchan
+    linkedin: https://www.linkedin.com/in/jathurchan
+
+# SEO / social metadata
+meta:
+  title: Jathurchan Selvakumar — Software Engineer, SRE
+  description: >-
+    Jathurchan Selvakumar — Software Engineer & SRE at Google. I build systems
+    that survive failure: distributed systems, observability, and RaftLock, a
+    Raft-based distributed lock in Go.
+
+# The hero intro. The name animates from `name` down to `nameShort` on load
+# (trailing letters collapse into the period). `pillars` colour-code the three
+# focus areas in the statement and thread the same colours through `highlights`.
+intro:
+  greeting: Hi, I'm
+  name: Jathurchan
+  nameShort: Jat
+  company: Google
+  statementLead: Software Engineer & SRE at Google
+  # The three colour-coded focus areas. `color` is a CSS token; `key` ties each
+  # pillar to its matching highlight card below.
+  pillars:
+    - { key: cloud,   label: cloud computing,     color: var(--g-blue) }
+    - { key: systems, label: distributed systems, color: var(--g-green) }
+    - { key: ai,      label: AI,                  color: var(--g-red) }
+  bio: I build reliable infrastructure and enjoy solving hard scaling problems.
+  # One achievement I'm proud of per pillar (matched by `key`/`color`). Each card
+  # reads as: a `context` kicker (where/what), a scannable `bodyHtml` line whose
+  # headline metric is wrapped in <strong> (rendered in the pillar colour), and an
+  # optional `cta` that links the proof to the section where you can go deeper.
+  highlights:
+    - key: cloud
+      color: var(--g-blue)
+      context: Amazon DynamoDB · MemDS
+      bodyHtml: >-
+        Cut false alerts <strong>99%</strong> in the metadata layer keeping
+        DynamoDB healthy at <strong>½M+ req/s</strong>.
+      cta: { label: See my AWS experience, href: '#experience' }
+    - key: systems
+      color: var(--g-green)
+      context: RaftLock · open source
+      bodyHtml: >-
+        Kill <strong>2 of 5 nodes</strong> mid-request — the cluster elects a new
+        leader, replays its log, and your lock is still yours.
+      cta: { label: Try the live demo, href: '#featured' }
+    - key: ai
+      color: var(--g-red)
+      context: mistral-router · open source
+      bodyHtml: >-
+        Built a <strong>FastAPI LLM gateway</strong> that routes each request to the
+        cheapest capable model — complexity routing with automatic quality fallback.
+      cta: { label: View on GitHub, href: 'https://github.com/jathurchan/mistral-router' }
+
+# The toolkit that closes the hero. Grouped by the same three focus areas the
+# statement opens with — each category reuses a pillar's `key` and `color`, so
+# the tools land in the colour the eye already learned from the statement and
+# the achievement deck. Languages live in the domain they serve (Go → systems,
+# Python → AI) rather than a category of their own.
+skills:
+  eyebrow: Toolkit
+  lead: The languages, frameworks, and tools I build with day to day — grouped by the three areas I work in.
+  categories:
+    - key: cloud
+      name: Cloud & Infrastructure
+      color: var(--g-blue)
+      items: ["AWS / GCP", "Kubernetes", "Terraform", "Docker", "CI/CD"]
+    - key: systems
+      name: Distributed Systems
+      color: var(--g-green)
+      items: ["Go", "gRPC", "Protobuf", "Redis", "Kafka"]
+    - key: ai
+      name: AI & ML
+      color: var(--g-red)
+      items: ["Python", "LLMs", "RAG", "PyTorch", "Langfuse"]
+
+# Section lead-in for the blog. Posts live as Markdown/MDX in src/content/blog/.
+lab:
+  eyebrow: Blog
+  lead: Notes and deep dives from the systems I build, break, and operate.
+
+# Section lead-in for the Career view.
+careerHead:
+  eyebrow: Work Experience
+  lead: "Every move was deliberate. Follow the line — from a student research paper to safeguarding planet-scale systems at Google."
+
+# Featured project card + live demo
+featured:
+  title: RaftLock
+  meta: Go · gRPC · Protobuf · 82% coverage
+  source: https://github.com/jathurchan/raftlock
+  # Short lead-in shown above the interactive demo to frame it.
+  eyebrow: Featured Project
+  lead: >-
+    Where I go deepest on <span class="thread-systems">distributed systems</span>
+    — and the one thing here you can break yourself.
+  tagline: >-
+    Raft consensus from first principles — <strong>five clean layers</strong>,
+    custom storage engine, simulation-tested. Kill two nodes and watch the
+    cluster recover, live.
+  # demo chips
+  chips:
+    - Survives 2 of 5 crashes
+    - Raft from scratch
+    - 82% test coverage
+    - Simulation-tested
+
+# Feed filter tabs + topic taxonomy (single source of truth for the blog).
+# `label` is the lowercase terminal-style filter tab; `name` is the title-case
+# badge shown on cards and post headers; `color` ties cards, filters, and post
+# headers together. Add a topic here and it flows everywhere — no other edits.
+filters:
+  - { id: all, label: all, color: var(--ink) }
+  - { id: cloud, label: cloud computing, name: Cloud Computing, color: var(--g-blue) }
+  - { id: systems, label: distributed systems, name: Distributed Systems, color: var(--g-green) }
+  - { id: ai, label: AI, name: AI, color: var(--g-red) }
+
+# Single source of truth for the in-page section nav (header dropdown +
+# scroll-spy). `id` is the section element id; `label` MUST match that
+# section's eyebrow so the header and the section headings never drift apart.
+nav:
+  sections:
+    - { id: featured, label: Featured }
+    - { id: toolkit, label: Toolkit }
+    - { id: experience, label: Experience }
+    - { id: notes, label: Blog }
+
+# Career path (Career view). Rendered as a self-drawing route, start → now.
+# Order is chronological: the visitor scrolls DOWN to move FORWARD in time.
+# `variant` styles the node: station (default) · branch · project · destination.
+# `transitionIn` is the narrative beat printed on the connector ABOVE the node.
+careerStart:
+  kicker: Where it starts
+  # `line` is rendered as HTML (see Experience.astro) so it can carry an inline link.
+  line: >-
+    <p class="route-origin-prose">At 11, a stray "View Source" pulled me in — I
+    rebuilt Google Search in raw HTML and didn't stop. <a class="route-link"
+    href="https://louislegrand.fr/" target="_blank"
+    rel="noopener noreferrer">Lycée Louis-le-Grand</a> — France's most selective high school — then years of classes
+    préparatoires — pure mathematics, physics, and logic. The hardest years of my
+    life, and the most formative. I kept building through all of it.</p>
+    <div class="origin-project">
+    <span class="origin-project-eye">Research · 2018 — 19</span>
+    <a class="origin-project-name"
+    href="https://github.com/jathurchan/air-route-optimizer" target="_blank"
+    rel="noopener noreferrer">Air Route Optimizer ↗</a>
+    <p class="origin-project-desc">Multi-objective graph optimizer for air
+    traffic networks — co-authored with a classmate under <a
+    href="http://jerome.gaertner.free.fr" target="_blank"
+    rel="noopener noreferrer">Jérôme Gärtner</a>. The paper that opened the
+    door to AWS.</p>
+    <div class="origin-project-stats">
+    <span class="origin-project-stat">−83% network risk</span>
+    <span class="origin-project-stat">Graded A+</span>
+    </div></div>
+career:
+  - chapter: "01"
+    org: Amazon Web Services
+    period: "2022"
+    role: SDE Intern
+    place: Dublin
+    color: var(--g-yellow)
+    brand: var(--g-yellow)
+    symbol: proxy
+    variant: station
+    transitionIn: >-
+      I targeted AWS Dublin — prepped hard on <a
+      class="route-link" href="https://leetcode.com/" target="_blank"
+      rel="noopener noreferrer">LeetCode</a> and studied Amazon's <a
+      class="route-link"
+      href="https://www.amazon.jobs/content/en/our-workplace/leadership-principles"
+      target="_blank" rel="noopener noreferrer">Leadership Principles</a> — and
+      Dublin said yes.
+    story: >-
+      Built the JNI layer linking DynamoDB's new Rust client to its Java callers — closing the gap between two runtimes without serialization overhead.
+    heroMetric: { value: "−28%", label: "p99 latency" }
+    product:
+      label: Amazon DynamoDB
+      href: https://aws.amazon.com/dynamodb
+    stack: [Rust, Java, JNI, "Tail Latency", "Async I/O (Tokio)"]
+
+  - chapter: "02"
+    org: Amazon Web Services
+    period: "2023"
+    role: SDE Intern · Return
+    place: Dublin
+    color: var(--g-yellow)
+    brand: var(--g-yellow)
+    symbol: canary
+    variant: station
+    transitionIn: I deferred my full-time offer and came back for more — one more internship, deeper inside DynamoDB's internals.
+    story: >-
+      Rebuilt the monitoring system watching DynamoDB's metadata store — replacing fragile thresholds with automated canaries that could tell signal from noise.
+    heroMetric: { value: "−99%", label: "false alerts" }
+    product:
+      label: Amazon DynamoDB
+      href: https://aws.amazon.com/dynamodb
+    stack: [Java, "Distributed Systems", Observability, "Automated Canaries", "Anomaly Detection"]
+
+  - chapter: "—"
+    org: Withings
+    period: "2023 — 24"
+    role: iOS Engineer
+    place: Paris
+    color: var(--g-red)
+    brand: var(--g-red)
+    symbol: pulse
+    variant: branch
+    tag: Detour · iOS
+    terminus: Paused — for now
+    transitionIn: >-
+      Master's from <a class="route-link" href="https://www.ensea.fr/en/"
+      target="_blank" rel="noopener noreferrer">ENSEA</a>, two AWS internships
+      behind me, a full-time offer on the table — I chose to come home to Paris
+      instead. Three months of self-taught iOS later, I had the role.
+    story: >-
+      Shipped an end-to-end Swift pipeline for AI-driven insights — building health software for the people I love.
+    heroMetric: { value: "10M+", label: "users reached" }
+    product:
+      label: Withings HealthMate
+      href: https://www.withings.com/health-mate
+    stack: [Swift, "iOS Architecture", CoreML, "API Design", "UIKit / SwiftUI"]
+
+  - chapter: "03"
+    org: Amazon
+    period: "2024"
+    role: Software Dev Engineer
+    place: Luxembourg
+    color: var(--g-yellow)
+    brand: var(--g-yellow)
+    symbol: cart
+    variant: station
+    transitionIn: From iOS in Paris to backend in Luxembourg — I rejoined Amazon full-time and stepped into an entirely different domain.
+    story: >-
+      Enabled the Ireland expansion for Amazon's core third-party Pricing services — coordinating across seven teams to resolve blockers and ship the launch.
+    heroMetric: { value: "7+", label: "teams aligned" }
+    product:
+      label: Seller Central
+      href: https://sellercentral.amazon.com
+    stack: [Java, AWS, Microservices, "Systems Migration", "Cross-Team Collaboration"]
+
+  - chapter: "04"
+    org: RaftLock
+    period: "2025"
+    role: Open-Source Author & Maintainer
+    place: Self-directed
+    color: var(--g-green)
+    brand: var(--g-green)
+    symbol: lock
+    variant: project
+    demo: true
+    transitionIn: >-
+      I wanted to build what I love — so I read <a class="route-link"
+      href="https://www.google.com/search?q=Designing+Data-Intensive+Applications+book"
+      target="_blank" rel="noopener noreferrer">Designing Data-Intensive
+      Applications</a> cover to cover and turned theory into code.
+    story: >-
+      Built a crash-tolerant distributed lock on Raft consensus from first principles — turning an obsession into working evidence.
+    heroMetric: { value: "82%", label: "test coverage" }
+    product:
+      label: Open the live demo
+      href: "#raftlock"
+    stack: [Go, "Raft Consensus", "State Machine Replication", "Distributed Storage (WAL)", "Concurrency (CSP)"]
+
+  - chapter: "05"
+    org: Google
+    period: "2026"
+    role: Software Engineer · SRE
+    place: Dublin
+    color: var(--g-blue)
+    brand: var(--g-blue)
+    symbol: observability
+    variant: destination
+    now: true
+    transitionIn: "Google SRE — the people who keep the internet running. I joined to protect infrastructure at planetary scale."
+    # The destination card swaps a tech-chip list for a live "terminal" — an
+    # open-ended hook that the story is still being written (see Experience.astro).
+    terminal: true
+
+

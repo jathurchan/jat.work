@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import FeaturedTeaser from '../components/FeaturedTeaser.astro';
+import Toolkit from '../components/Toolkit.astro';
+import FeaturedProject from '../components/FeaturedProject.astro';
+import Experience from '../components/Experience.astro';
+import Feed from '../components/Feed.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base>
+  <div class="page" id="top">
+    <Header sections />
+    <main class="content" id="main" tabindex="-1">
+      <Hero />
+      <FeaturedTeaser />
+      <Toolkit />
+      <FeaturedProject />
+      <Experience />
+      <Feed />
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<script>
+  import '../scripts/app';
+</script>

@@ -1,0 +1,822 @@
+/* ---- experience timeline ---- */
+/* ============================================================
+   Work Experience — "The Trace"
+   A self-drawing route, read top → now. Scrolling down walks
+   the path forward in time. One branch (Withings) forks off as
+   a paused detour; the final node is a live "destination" card.
+   ============================================================ */
+.route-section {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+}
+
+.route {
+  --rail: 30px;          /* spine centre-x within a stop          */
+  --node: 56px;          /* station disc diameter                 */
+  --pad: 100px;          /* stop content indent (clears the node) */
+  position: relative;
+  margin-top: clamp(28px, 5vh, 56px);
+}
+
+/* ---- the line ------------------------------------------------ */
+.route-spine {
+  position: absolute;
+  left: calc(var(--rail) - 1px);
+  top: 6px;
+  bottom: 64px;
+  width: 2px;
+  background: color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius: 99px;
+  overflow: hidden;
+}
+/* The draw is driven from app.ts (initRouteProgress): the height grows with
+   scroll while the gradient is pinned to the spine's full height (--spine-h),
+   so the colours stay put as the line fills rather than sliding. */
+.route-spine-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--route-progress, 0px);
+  border-radius: 99px;
+  background: linear-gradient(
+    to bottom,
+    var(--g-yellow) 0%,
+    var(--g-green) 48%,
+    var(--g-blue) 100%
+  );
+  background-size: 100% var(--spine-h, 100%);
+  background-repeat: no-repeat;
+  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--g-green) 45%, transparent);
+}
+/* a bright drawing head at the leading tip (colour-neutral so it reads on any
+   part of the gradient) */
+.route-spine-fill::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  background: #fff;
+  box-shadow: 0 0 10px 2px color-mix(in srgb, #ffffff 70%, transparent),
+              0 0 16px 4px color-mix(in srgb, var(--g-green) 55%, transparent);
+  opacity: var(--route-tip, 0);
+}
+
+/* ---- start cap ---------------------------------------------- */
+.route-origin {
+  position: relative;
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  padding-left: 0;
+  margin-bottom: clamp(36px, 6vh, 64px);
+}
+.route-origin-dot {
+  position: relative;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-left: calc(var(--rail) - 7px);
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--g-yellow);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--g-yellow) 14%, transparent);
+}
+.route-origin-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 1px;
+  /* line up with the card column */
+  margin-left: calc(var(--pad) - var(--rail) - 36px);
+  max-width: 640px;
+}
+.route-origin-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--g-yellow);
+}
+.route-origin-line {
+  /* The origin shares the first chapter's yellow; expose it as --brand so an
+     inline .route-link here picks up the same colour as the kicker. */
+  --brand: var(--g-yellow);
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--sub);
+  text-wrap: pretty;
+}
+.route-origin-prose {
+  margin: 0;
+}
+.origin-project + .route-origin-prose {
+  margin-top: 14px;
+}
+.origin-project {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--g-red) 6%, transparent);
+  border-left: 2.5px solid var(--g-red);
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.origin-project-eye {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g-red);
+  opacity: 0.75;
+}
+.origin-project-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.origin-project-name:hover {
+  color: var(--g-red);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.origin-project-desc {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--sub);
+  line-height: 1.45;
+}
+.origin-project-desc a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.origin-project-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.origin-project-stat {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--g-red);
+  background: color-mix(in srgb, var(--g-red) 12%, transparent);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ---- stops -------------------------------------------------- */
+.route-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 7vh, 76px);
+}
+.route-stop {
+  position: relative;
+  padding-left: var(--pad);
+}
+
+/* connector narration (the move that led here) */
+@keyframes route-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.route-transition {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  margin: 0 0 16px;
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--faint-text);
+  text-wrap: pretty;
+  animation: route-rise linear both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 22%;
+}
+.route-transition-mark {
+  font-family: var(--font-mono);
+  color: var(--brand);
+  flex: 0 0 auto;
+}
+/* Inline link inside the connector narration — picks up the chapter's brand
+   colour with a subtle underline so it reads as a link without shouting. */
+.route-link {
+  color: var(--brand);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+.route-link:hover {
+  text-decoration-color: var(--brand);
+}
+
+/* ---- station marker ----------------------------------------- */
+.route-node {
+  position: absolute;
+  left: calc(var(--rail) - var(--node) / 2);
+  top: 38px;
+  width: var(--node);
+  height: var(--node);
+  z-index: 2;
+}
+@keyframes route-node-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.route-node-disc {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--frame) 40%, transparent);
+  box-shadow: 0 0 0 4px var(--paper),
+              inset 0 1px 2px color-mix(in srgb, #ffffff 50%, transparent),
+              0 0 24px -2px color-mix(in srgb, var(--brand) 60%, transparent);
+  transition: transform 0.6s var(--ease-spring), box-shadow 0.6s ease;
+  animation: route-node-in var(--ease-spring) both;
+  animation-timeline: view();
+  animation-range: entry 6% cover 28%;
+}
+
+/* A static brand-tinted ring. It only spins on hover — at rest it shouldn't
+   burn a perpetual animation on every node for no informational gain. */
+.route-node-disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--brand) 0%, transparent) 0%,
+    color-mix(in srgb, var(--brand) 100%, transparent) 25%,
+    color-mix(in srgb, var(--brand) 0%, transparent) 50%,
+    color-mix(in srgb, var(--brand) 100%, transparent) 75%,
+    color-mix(in srgb, var(--brand) 0%, transparent) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  transition: opacity 0.6s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes route-spin-glow {
+  to { transform: rotate(360deg); }
+}
+
+.route-stop:hover .route-node-disc,
+.route-stop.is-active .route-node-disc {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px var(--paper),
+              inset 0 1px 2px color-mix(in srgb, #ffffff 60%, transparent),
+              0 0 32px 4px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+.route-stop:hover .route-node-disc::after,
+.route-stop.is-active .route-node-disc::after {
+  opacity: 1;
+  animation: route-spin-glow 3s linear infinite;
+}
+
+/* glassy tinted fill behind the glyph */
+.route-node-disc {
+  background:
+    radial-gradient(120% 120% at 32% 22%,
+      color-mix(in srgb, var(--brand) 26%, var(--paper)) 0%,
+      color-mix(in srgb, var(--brand) 12%, var(--paper)) 52%,
+      color-mix(in srgb, var(--brand) 5%, var(--paper)) 100%);
+}
+/* diagonal glass sheen across the top-left */
+.route-node-sheen {
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #ffffff 55%, transparent) 0%,
+    transparent 42%);
+  opacity: 0.7;
+  z-index: 1;
+  pointer-events: none;
+}
+:root[data-theme="dark"] .route-node-sheen {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #ffffff 22%, transparent) 0%,
+    transparent 46%);
+}
+.route-node-sym {
+  position: relative;
+  z-index: 2;
+  width: 52%;
+  height: 52%;
+  color: var(--brand);
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--brand) 30%, transparent));
+  transition: transform 0.6s var(--ease-spring);
+}
+.route-stop:hover .route-node-sym,
+.route-stop.is-active .route-node-sym {
+  transform: scale(1.08);
+}
+
+/* ---- card --------------------------------------------------- */
+@keyframes route-card-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.route-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px 28px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--brand) 50%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--frame) 60%, transparent) 0%, color-mix(in srgb, var(--brand) 6%, var(--frame)) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 15%, transparent), 0 8px 24px -12px color-mix(in srgb, var(--ink) 12%, transparent);
+  transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+  animation: route-card-in linear both;
+  animation-timeline: view();
+  animation-range: entry 2% cover 26%;
+}
+.route-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
+  border-top-color: var(--brand);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--brand) 4%, var(--frame)) 0%, color-mix(in srgb, var(--brand) 12%, var(--frame)) 100%);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 25%, transparent), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+/* Scroll-driven active state: same brand lift as hover, minus the translate so
+   the card doesn't jump while the page is moving under it. */
+.route-stop.is-active .route-card {
+  border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
+  border-top-color: var(--brand);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--brand) 4%, var(--frame)) 0%, color-mix(in srgb, var(--brand) 12%, var(--frame)) 100%);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 25%, transparent), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+
+.route-card-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+.route-chapter {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--brand) 80%, var(--ink));
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--brand) 18%, transparent);
+  white-space: nowrap;
+}
+.route-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--faint) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, transparent);
+  white-space: nowrap;
+}
+.route-period {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+.route-now {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand);
+  border: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.route-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.route-org {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--brand);
+}
+.route-role {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.route-place {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  margin-top: 3px;
+}
+
+.route-body {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+.route-story {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.route-story strong {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--brand) 70%, var(--ink));
+}
+.route-metric {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  min-width: 96px;
+}
+.route-metric-val {
+  font-family: var(--font-mono);
+  font-size: clamp(32px, 3.8vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--brand);
+}
+.route-metric-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  margin-top: 10px;
+  max-width: 130px;
+}
+
+/* Footer mirrors the hero's highlight cards: the tech stack (quiet "what it was
+   built with") sits left, the product link (the action) hugs the right. */
+.route-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-top: 2px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 30%, transparent);
+}
+/* Tech stack chips — the curated toolset per role, scannable at a glance. */
+.route-stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.route-tech {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--faint) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  white-space: nowrap;
+  transition: color 0.35s ease, border-color 0.35s ease, background 0.35s ease;
+}
+.route-card:hover .route-tech,
+.route-stop.is-active .route-tech {
+  color: color-mix(in srgb, var(--brand) 75%, var(--ink));
+  border-color: color-mix(in srgb, var(--brand) 28%, transparent);
+  background: color-mix(in srgb, var(--brand) 7%, transparent);
+}
+/* ---- destination "what's next" terminal ----
+   Replaces the tech-chip stack on the current/now card. A small faux terminal
+   that types out an open-ended line — the story is still being written. */
+.route-terminal {
+  margin-top: 16px;
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, var(--line));
+  border-radius: 12px;
+  overflow: hidden;
+  /* A cool, brand-tinted "console screen" recessed into the card — picks up the
+     card's blue so it reads as part of the destination panel, not a grey island,
+     with a soft brand glow lighting it from the top corner. */
+  background:
+    radial-gradient(125% 140% at 100% 0%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 58%),
+    color-mix(in srgb, var(--brand) 8%, var(--frame));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 12%, transparent),
+    inset 0 0 26px -12px color-mix(in srgb, var(--brand) 55%, transparent),
+    0 10px 24px -18px color-mix(in srgb, var(--brand) 65%, transparent);
+}
+.route-terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 22%, var(--line));
+}
+.route-terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+.route-terminal-dot--r { background: var(--g-red); }
+.route-terminal-dot--y { background: var(--g-yellow); }
+/* The green light reads as the "online" LED — glows to echo the LIVE badge. */
+.route-terminal-dot--g {
+  background: var(--g-green);
+  opacity: 1;
+  box-shadow: 0 0 7px color-mix(in srgb, var(--g-green) 75%, transparent);
+}
+.route-terminal-title {
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 2.4vw, 10px);
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--brand) 50%, var(--faint-text));
+  white-space: nowrap;
+}
+.route-terminal-body {
+  padding: 11px clamp(9px, 3vw, 13px) 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono);
+  /* Scale down on narrow cards so the nowrap lines never clip. */
+  font-size: clamp(9px, 3vw, 11.5px);
+  line-height: 1.5;
+  color: var(--sub);
+}
+.route-terminal-line {
+  margin: 0;
+  white-space: nowrap;
+}
+.route-term-prompt {
+  color: var(--brand);
+  font-weight: 600;
+}
+.route-term-ok { color: var(--g-green); }
+/* Typewriter: reveal the line character-by-character via a max-width animation
+   (forgiving of exact length in a monospace font) with a blinking block caret.
+   The card re-enters the DOM on View Transitions swaps, so the animation
+   replays each time the section is shown. */
+.route-term-typed {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  border-right: 1.5px solid color-mix(in srgb, var(--brand) 85%, var(--ink));
+  animation:
+    route-term-type 2.2s steps(30) 0.6s both,
+    route-term-caret 1s step-end 0.6s infinite;
+}
+@keyframes route-term-type {
+  from { max-width: 0; }
+  to { max-width: 28ch; }
+}
+@keyframes route-term-caret {
+  50% { border-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-term-typed {
+    max-width: 28ch;
+    animation: none;
+    border-right-color: transparent;
+  }
+}
+
+.route-product {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--brand);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: gap 0.25s var(--ease-spring);
+}
+.route-product:hover { gap: 11px; }
+.route-product-arrow { transition: transform 0.25s var(--ease-spring); }
+.route-product:hover .route-product-arrow { transform: translateX(4px); }
+
+/* ---- branch (the detour) ------------------------------------ */
+.route-stop--branch {
+  padding-left: calc(var(--pad) + 52px);
+}
+.route-stop--branch .route-node {
+  transform: translateX(52px);
+}
+/* elbow tap-off from the main line to the branch node */
+.route-fork {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 52px;
+  height: 2px;
+  border-top: 2px dashed color-mix(in srgb, var(--brand) 60%, var(--line));
+  transform: translateY(-1px);
+}
+.route-stop--branch .route-node-disc {
+  border: 2px dashed color-mix(in srgb, var(--brand) 60%, var(--line));
+  background: color-mix(in srgb, var(--brand) 5%, var(--paper));
+  box-shadow: 0 0 0 4px var(--paper);
+}
+.route-stop--branch .route-node-sheen {
+  display: none;
+}
+.route-stop--branch .route-card {
+  border-style: dashed;
+  border-top-style: dashed;
+  border-color: color-mix(in srgb, var(--brand) 35%, var(--line));
+  background: color-mix(in srgb, var(--brand) 2.5%, var(--frame));
+}
+.route-terminus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+.route-terminus-cap {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--brand) 60%, var(--line));
+  position: relative;
+}
+.route-terminus-cap::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  bottom: 100%;
+  width: 2px;
+  height: 16px;
+  background: linear-gradient(to top, color-mix(in srgb, var(--brand) 55%, var(--line)), transparent);
+}
+.route-terminus-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint-text);
+}
+
+/* ---- destination (the live "now" node) ---------------------- */
+.route-node-ping {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--brand);
+  animation: route-ping 2.4s var(--ease-out) infinite;
+  pointer-events: none;
+}
+@keyframes route-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.65); opacity: 0; }
+}
+.route-stop--destination .route-node-disc {
+  background: color-mix(in srgb, var(--brand) 15%, var(--paper));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 0 4px var(--paper),
+              inset 0 1px 2px color-mix(in srgb, #ffffff 45%, transparent),
+              0 0 30px -2px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+.route-stop--destination .route-node-sheen { opacity: 0.5; }
+
+.route-stop--destination .route-card {
+  padding: 32px 30px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--brand) 5%, var(--paper)), color-mix(in srgb, var(--brand) 5%, var(--paper))) padding-box,
+    conic-gradient(from var(--aurora, 0deg), var(--g-blue), var(--g-green), var(--g-yellow), var(--g-red), var(--g-blue)) border-box;
+  animation: route-card-in linear both, route-aurora 10s linear infinite;
+  animation-timeline: view(), auto;
+  animation-range: entry 2% cover 26%, normal;
+}
+@property --aurora {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes route-aurora {
+  to { --aurora: 360deg; }
+}
+.route-stop--destination .route-card:hover {
+  box-shadow: 0 26px 60px -28px color-mix(in srgb, var(--brand) 70%, transparent);
+}
+
+/* ---- responsive --------------------------------------------- */
+@media (max-width: 720px) {
+  .route {
+    --rail: 22px;
+    --node: 44px;
+    --pad: 70px;
+  }
+  .route-node { top: 30px; }
+  .route-origin-text { margin-left: 0; }
+  .route-origin { gap: 16px; }
+  .route-body { flex-direction: column; gap: 20px; }
+  .route-metric { align-items: flex-start; text-align: left; }
+  .route-metric-label { max-width: none; }
+  .route-card { padding: 22px 20px; }
+  .route-stop--branch { padding-left: calc(var(--pad) + 34px); }
+  .route-stop--branch .route-node { transform: translateX(34px); }
+  .route-fork { width: 34px; }
+}
+
+/* ---- reduced motion ----------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .route-spine-fill,
+  .route-transition,
+  .route-node-disc,
+  .route-card,
+  .route-stop--destination .route-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .route-stop--destination .route-card {
+    border: 1px solid color-mix(in srgb, var(--brand) 45%, var(--line));
+    background: color-mix(in srgb, var(--brand) 5%, var(--paper));
+  }
+  .route-node-disc::after,
+  .route-node-ping { animation: none; }
+}
+

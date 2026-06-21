@@ -1,0 +1,78 @@
+---
+import { featured } from '../lib/site';
+import { sectionIcons } from '../lib/icons';
+---
+
+<section class="shell hero-inner" id="featured" aria-label="Featured project">
+  <div class="hero-cinematic-visuals reveal reveal-delay-5" style="width: 100%;">
+    <!-- lead-in that frames the interactive demo -->
+    <div class="hero-featured-lead">
+      <span class="featured-eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['featured'] ?? ''} />
+        {featured.eyebrow}
+      </span>
+      <p class="featured-lead-text" set:html={featured.lead}></p>
+    </div>
+
+    <!-- Glow background -->
+    <div class="hero-visuals-glow"></div>
+
+    <div class="cluster-glass-container hero-ambient-container" style="max-width: 1040px; margin: 0 auto; width: 100%;">
+      
+      <div class="hero-visuals-left-panel">
+        <div class="hw-badge-pill">
+          <span class="live-status-dot"></span>
+          <span class="hw-badge-text">Live demo</span>
+        </div>
+        <h3 class="hw-title gradient-text">RaftLock</h3>
+        <p class="hw-tagline" set:html={featured.tagline} />
+        <div class="hw-glass-chips">
+          {featured.chips.map((chip: string) => <span class="glass-chip">{chip}</span>)}
+        </div>
+        <a href={featured.source} target="_blank" rel="noopener" class="premium-glass-btn hero-github-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+          <span>View Source Code</span>
+        </a>
+      </div>
+
+      <div class="cluster-canvas-wrapper">
+        <div class="hud-grid"></div>
+        <div class="hud-scanline"></div>
+        <div class="hud-corner top-left">[SYS: ONLINE]</div>
+        <div class="hud-corner top-right">[NODES: 5]</div>
+        <div class="hud-corner bottom-right">[ALG: RAFT]</div>
+        <canvas id="jw-cluster" class="cluster-canvas"></canvas>
+      </div>
+      
+      <div class="hero-mode-cards">
+        <button type="button" class="mode-card mode-card--primary" data-raft-act="open-fullscreen" data-raft-launch-mode="tour" aria-label="Start guided tour">
+          <span class="mode-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </span>
+          <span class="mode-content">
+            <span class="mode-card-head">
+              <h4>Guided Tour</h4>
+              <span class="mode-badge">~2 min</span>
+            </span>
+            <p>See how the lock survives crashes — explained step by step.</p>
+          </span>
+          <span class="mode-arrow" aria-hidden="true">→</span>
+        </button>
+
+        <button type="button" class="mode-card" data-raft-act="open-fullscreen" data-raft-launch-mode="sandbox" aria-label="Enter chaos sandbox">
+          <span class="mode-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          </span>
+          <span class="mode-content">
+            <span class="mode-card-head">
+              <h4>Chaos Sandbox</h4>
+            </span>
+            <p>Crash servers yourself and watch the cluster recover.</p>
+          </span>
+          <span class="mode-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>

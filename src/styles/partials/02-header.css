@@ -1,0 +1,348 @@
+/* ---- header (floating pill) ---- */
+.site-header {
+  position: sticky;
+  top: 16px;
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--space-4);
+}
+.site-header.reveal-down:not(.fast) {
+  animation-delay: 2.2s; /* Stagger after home page name animation (Jathurchan -> jat) */
+}
+.site-header.reveal-down.fast {
+  animation-delay: 0.1s; /* Immediate load for post pages */
+}
+.site-header-inner {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  border-radius: 99px;
+  
+  /* Initial state: perfectly transparent at the top */
+  padding: 12px 24px;
+  background: transparent;
+  box-shadow: 0 4px 24px -4px transparent;
+  border: 1px solid transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  
+  /* Force hardware acceleration to prevent iOS Safari from shearing/tilting the backdrop-filter */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform, backdrop-filter;
+  
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-header.is-scrolled .site-header-inner {
+  padding: 6px 20px;
+  background: color-mix(in srgb, var(--frame) 75%, transparent);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 20%, transparent), 0 12px 32px -8px color-mix(in srgb, var(--ink) 15%, transparent);
+  border-color: color-mix(in srgb, var(--line) 80%, transparent);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.site-header-inner:hover {
+  border-color: color-mix(in srgb, var(--line) 50%, transparent);
+}
+
+.site-header.is-scrolled .site-header-inner:hover {
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 30%, transparent), 0 16px 40px -8px color-mix(in srgb, var(--ink) 20%, transparent);
+  border-color: color-mix(in srgb, var(--line) 100%, transparent);
+}
+
+
+
+/* ---- section navigation (disclosure menu + scroll-spy) ---- */
+.section-menu {
+  position: relative;
+  pointer-events: auto;
+}
+.section-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 7px 12px 7px 13px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  background: color-mix(in srgb, var(--faint) 14%, transparent);
+  white-space: nowrap;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.section-menu-btn:hover {
+  border-color: color-mix(in srgb, var(--line) 100%, transparent);
+  background: color-mix(in srgb, var(--faint) 22%, transparent);
+}
+.section-menu-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* The Wayfinder icon acts as a radar/compass to indicate "you are here". */
+.wayfinder-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  transition: color 0.3s ease;
+}
+.wayfinder-ring {
+  stroke-dasharray: 0;
+  transition: stroke-dasharray 0.4s var(--ease-spring), transform 0.4s var(--ease-spring);
+  transform-origin: center;
+}
+.wayfinder-dot {
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
+}
+
+.section-menu-label {
+  text-align: left;
+}
+
+/* At the hero (no section active) the Wayfinder is a dashed, idle radar. */
+.section-menu.is-default .wayfinder-icon {
+  color: color-mix(in srgb, var(--faint) 80%, transparent);
+}
+.section-menu.is-default .wayfinder-ring {
+  stroke-dasharray: 2 4;
+}
+.section-menu.is-default .section-menu-label {
+  color: var(--sub);
+}
+/* When inside a section, the Wayfinder snaps into a solid ring with an active dot. */
+.section-menu:not(.is-default) .wayfinder-icon {
+  color: var(--accent);
+}
+.section-menu:not(.is-default) .wayfinder-ring {
+  stroke-dasharray: 0;
+  transform: scale(0.9);
+}
+.section-menu:not(.is-default) .wayfinder-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+.section-menu-chevron {
+  width: 13px;
+  height: 13px;
+  color: var(--faint);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.section-menu-btn[aria-expanded='true'] .section-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.section-menu-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 60;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  min-width: 200px;
+  /* The closed menu stays in layout (display:block below, so its open/close
+     transition can run), so cap its width to the viewport — otherwise the
+     200px panel pokes past the right edge on very narrow phones and drags a
+     sideways scroll onto the page. */
+  max-width: calc(100vw - 24px);
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  background: color-mix(in srgb, var(--frame) 85%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 24px 64px -16px color-mix(in srgb, var(--ink) 25%, transparent), inset 0 0 0 1px color-mix(in srgb, #ffffff 10%, transparent);
+  
+  /* Dynamic Island style entrance */
+  opacity: 1;
+  visibility: visible;
+  transform-origin: top center;
+  transform: scale(1) translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+}
+.section-menu-list[hidden] {
+  display: block; /* Override default hidden so transitions work */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(-10px);
+  pointer-events: none;
+}
+.section-menu-list li {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+.section-menu-list[hidden] li {
+  transform: translateY(-8px);
+  opacity: 0;
+}
+.section-menu-list:not([hidden]) li:nth-child(1) { transition-delay: 0.05s; }
+.section-menu-list:not([hidden]) li:nth-child(2) { transition-delay: 0.08s; }
+.section-menu-list:not([hidden]) li:nth-child(3) { transition-delay: 0.11s; }
+.section-menu-list:not([hidden]) li:nth-child(4) { transition-delay: 0.14s; }
+.section-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--sub);
+  padding: 10px 14px;
+  border-radius: 12px;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+}
+/* leading marker */
+.section-menu-item svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--faint) 60%, transparent);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, filter 0.3s ease;
+}
+.section-menu-item:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+.section-menu-item:hover svg {
+  transform: scale(1.15) rotate(-4deg);
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+}
+.section-menu-item[aria-current='true'] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+  font-weight: 500;
+}
+.section-menu-item[aria-current='true'] svg {
+  color: var(--accent);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 40%, transparent));
+  transform: scale(1.15);
+}
+.section-menu-item[aria-current='true']:hover svg {
+  transform: scale(1.15) rotate(-4deg);
+}
+.section-menu-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* brand + section nav grouped on the left */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.4vw, 16px);
+}
+
+/* primary "let's talk" CTA — routes to the footer where socials + email live */
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: 999px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  transition: all 0.3s var(--ease-spring);
+}
+.header-cta svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+.header-cta:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 80%, transparent);
+  box-shadow: 0 0 16px -2px color-mix(in srgb, var(--accent) 40%, transparent);
+  transform: translateY(-1.5px);
+}
+
+/* On phones the floating pill is too narrow to hold the wordmark, a section
+   label (which grows to e.g. "Experience" via scroll-spy), and the action
+   icons on one line — the row was wrapping and the actions spilled out of the
+   pill. Collapse the section menu to just its wayfinder icon + chevron and
+   pin everything to a single row. The label stays in the a11y tree so the
+   disclosure button keeps its name. */
+@media (max-width: 480px) {
+  .site-header-inner {
+    flex-wrap: nowrap;
+  }
+  .section-menu-btn {
+    padding: 7px 10px;
+  }
+  .section-menu-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* Let the dropdown size to its content on narrow phones rather than holding a
+     fixed 200px, which (offset from the left of the pill) would overhang the
+     right edge and cause a sideways scroll. */
+  .section-menu-list {
+    min-width: 0;
+  }
+}
+
+/* land section anchors below the floating header */
+#featured,
+#toolkit,
+#notes,
+#experience {
+  scroll-margin-top: 96px;
+}
+#contact {
+  scroll-margin-top: 80px;
+}
+
+/* --- Modern Header "Flat at Top" Override ---
+   When the header is at the top of the page (not scrolled), we remove the backgrounds
+   and borders from all the inner buttons so the header sits perfectly flat and 
+   seamlessly against the hero background. When scrolled, the floating pill activates
+   and the buttons regain their structure. */
+.site-header:not(.is-scrolled) .section-menu-btn,
+.site-header:not(.is-scrolled) .header-cta,
+.site-header:not(.is-scrolled) .resume-btn,
+.site-header:not(.is-scrolled) .theme-btn,
+.site-header:not(.is-scrolled) .header-back-btn {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Allow subtle hover states even when at the top */
+.site-header:not(.is-scrolled) .section-menu-btn:hover,
+.site-header:not(.is-scrolled) .theme-btn:hover,
+.site-header:not(.is-scrolled) .resume-btn:hover,
+.site-header:not(.is-scrolled) .header-back-btn:hover {
+  background: color-mix(in srgb, var(--faint) 10%, transparent);
+}
+
+.site-header:not(.is-scrolled) .header-cta:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}

@@ -1,0 +1,48 @@
+---
+import { profile } from '../lib/site';
+import { socialLinks, socialIcons } from '../lib/social';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" id="contact">
+  <div class="footer-parallax">
+    <div class="shell footer-inner">
+      <div class="footer-content">
+        <h2 class="footer-cta-title">Let's build<br />something.</h2>
+        <div class="footer-contact">
+          <a class="footer-email-btn" href={`mailto:${profile.email}`}>
+            {profile.email} <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <div class="footer-socials">
+            {
+              socialLinks.map((s) => (
+                <a
+                  href={s.href}
+                  class="footer-icon"
+                  aria-label={s.label}
+                  {...(s.external ? { target: '_blank', rel: 'noopener' } : {})}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={socialIcons[s.icon]} />
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-base">
+        <span>© {year} {profile.fullName}</span>
+        <span class="footer-sep" aria-hidden="true"></span>
+        <span class="footer-colophon"
+          >Built with <a href="https://astro.build" target="_blank" rel="noopener" class="lnk">Astro</a></span
+        >
+        <a class="footer-top" href="#top">Back to top <span class="up" aria-hidden="true">↑</span></a>
+      </div>
+    </div>
+    
+    <div class="footer-massive-text" aria-hidden="true">
+      JATHURCHAN
+    </div>
+  </div>
+</footer>

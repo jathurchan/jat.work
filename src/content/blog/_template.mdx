@@ -1,0 +1,56 @@
+---
+# ===========================================================================
+# Blog post template. Copy this file, rename it to <your-slug>.mdx (or .md),
+# and fill it in. Files prefixed with "_" are ignored by the content
+# collection, so this template never appears in the feed or the build.
+#
+# Faster: `npm run new:post -- "My post title"` scaffolds a real entry from
+# this same shape, with the slug and date filled in for you.
+# ===========================================================================
+
+# ---- Required ----
+title: Your post title here
+pubDate: 2026-06-18          # YYYY-MM-DD. Orders the feed (newest first) and is shown on the card as e.g. "Jun 18, 2026".
+tags: ['cloud']             # Any of: cloud, systems, ai. Each renders as a coloured topic chip; the first also sets the card's spine colour.
+blurb: One sentence shown under the title on the feed card. Keep it under ~120 chars.
+
+# ---- Optional ----
+# draft: true               # If true, the entry is hidden from the feed and no page is generated.
+---
+
+{/* Everything below becomes the page at /blog/<slug>. Delete this comment and
+    write your post. The styles all come from the `.prose` rules in
+    src/styles/global.css. */}
+
+Open with a short paragraph that frames the problem — the reader decided to click
+based on the blurb, so pay it off in the first two sentences.
+
+## A section heading
+
+Use `##` for sections and `###` for sub-sections. Body text supports **bold**,
+*italics*, `inline code`, and [links](https://jat.work).
+
+- Bullet lists work
+- Keep items parallel
+- One idea each
+
+1. Numbered lists too
+2. Good for ordered steps
+
+> A blockquote, for an aside or a pulled-out quote.
+
+### Code blocks are syntax-highlighted
+
+```go
+func main() {
+    // fenced code blocks get Shiki highlighting automatically
+    lock := raftlock.New("deploy")
+    lock.Acquire(ctx)
+}
+```
+
+Because this is **MDX**, you can also import and use components if you ever need
+to — e.g. `import Foo from '../../components/Foo.astro'` at the top, then `<Foo />`
+in the body. Plain Markdown (`.md`) works too if you don't need that.
+
+Close with the takeaway — the one sentence you'd want the reader to remember.

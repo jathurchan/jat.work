@@ -1,0 +1,124 @@
+---
+import { featured } from '../lib/site';
+---
+
+<div id="raftlock-overlay" class="rl-overlay" role="dialog" aria-modal="true" aria-label="RaftLock interactive demo">
+  <div class="rl-modal">
+
+    <!-- ── top bar ─────────────────────────────────────────────── -->
+    <header class="rl-topbar reveal reveal-delay-1">
+      <div class="rl-brand">
+        <div class="hw-badge-pill" style="margin-bottom: 0;">
+          <span class="live-status-dot"></span>
+          <span class="hw-badge-text">Interactive Demo</span>
+        </div>
+        <h2 class="rl-title">{featured.title}</h2>
+      </div>
+      <p class="rl-lede" set:html={featured.tagline}></p>
+      <button type="button" class="rl-close" data-raft-act="close-fullscreen" aria-label="Close demo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </header>
+
+    <!-- ── stage: the live cluster ─────────────────────────────── -->
+    <div class="rl-stage reveal reveal-delay-2" id="jw-clusterbox">
+      <div class="rl-stage-grid" aria-hidden="true"></div>
+      <div class="rl-stage-glow" aria-hidden="true"></div>
+
+      <canvas id="jw-democanvas" class="cluster-canvas"></canvas>
+
+      {/* Keyboard-focusable hit-targets — positioned over each node by JS. */}
+      <div class="canvas-nodes-overlay" aria-label="Interactive cluster nodes. Press Enter or Space to crash or revive a server.">
+        <button type="button" class="accessible-node-btn" data-node-id="0" aria-label="Node 0 (Leader). Press to crash."></button>
+        <button type="button" class="accessible-node-btn" data-node-id="1" aria-label="Node 1 (Follower). Press to crash."></button>
+        <button type="button" class="accessible-node-btn" data-node-id="2" aria-label="Node 2 (Follower). Press to crash."></button>
+        <button type="button" class="accessible-node-btn" data-node-id="3" aria-label="Node 3 (Follower). Press to crash."></button>
+        <button type="button" class="accessible-node-btn" data-node-id="4" aria-label="Node 4 (Follower). Press to crash."></button>
+      </div>
+
+      <!-- live status read-out -->
+      <div class="rl-status" aria-label="Cluster status">
+        <div class="rl-stat">
+          <span class="rl-stat-key">TERM</span>
+          <span id="jw-term" class="rl-stat-val">1</span>
+        </div>
+        <div class="rl-stat">
+          <span class="rl-stat-key">SERVERS</span>
+          <span id="jw-health" class="rl-stat-val health-indicator">5 / 5 healthy</span>
+        </div>
+        <div class="rl-stat">
+          <span class="rl-stat-key">LOCK</span>
+          <span id="jw-locklabel" class="rl-stat-val lock-state-badge">FREE</span>
+        </div>
+      </div>
+
+      <!-- legend -->
+      <div class="rl-legend" aria-hidden="true">
+        <span class="rl-legend-item"><span class="rl-key rl-key-leader">L</span> Leader</span>
+        <span class="rl-legend-item"><span class="rl-key rl-key-follower"></span> Follower</span>
+        <span class="rl-legend-item"><span class="rl-key rl-key-down">✕</span> Crashed</span>
+        <span class="rl-legend-hint">Click a server to crash or revive it</span>
+      </div>
+
+      <div id="jw-toast" class="glass-toast" aria-live="polite"></div>
+    </div>
+
+    <!-- ── dock: mode switch + controls ────────────────────────── -->
+    <div class="rl-dock reveal reveal-delay-3">
+      <div class="rl-dock-top">
+        <div class="glass-tabs" role="tablist" aria-label="Simulation mode">
+          <button type="button" class="glass-tab active" data-demo-mode="tour" role="tab" aria-selected="true" aria-controls="jw-tourbar">
+            Guided Tour
+          </button>
+          <button type="button" class="glass-tab" data-demo-mode="sandbox" role="tab" aria-selected="false" aria-controls="jw-sandboxbar">
+            Chaos Sandbox
+          </button>
+        </div>
+        <div class="rl-kbd-hints" aria-hidden="true">
+          <kbd>Space</kbd><span>play / pause</span>
+          <kbd>←</kbd><kbd>→</kbd><span>steps</span>
+          <kbd>Esc</kbd><span>close</span>
+        </div>
+      </div>
+
+      <div id="jw-tourbar" class="glass-tour-content" style="display: none;">
+        <div class="tour-text-wrap">
+          <span class="tour-step-indicator" id="jw-tour-step-indicator">Tour · Step 1/7</span>
+          <p class="tour-instruction-text" id="jw-tour-text" aria-live="polite"></p>
+        </div>
+        <div class="tourbar-controls" aria-label="Tour controls">
+          <button data-raft-act="tour-prev" class="glass-icon-btn" id="jw-tour-prev" aria-label="Previous step">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button data-raft-act="tour-toggle" class="glass-icon-btn active" id="jw-tour-toggle" aria-label="Pause tour">
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            <svg class="icon-play" style="display: none;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </button>
+          <button data-raft-act="tour-next" class="glass-icon-btn" id="jw-tour-next" aria-label="Next step">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+        <div class="tour-progress-container">
+          <div id="tour-progress-bar" class="tour-progress-bar"></div>
+        </div>
+      </div>
+
+      <div id="jw-sandboxbar" class="glass-sandbox-content" style="display: none;">
+        <p class="rl-sandbox-hint">Break the cluster and watch it recover:</p>
+        <div class="rl-sandbox-actions">
+          <button id="jw-lockbtn" data-raft-act="lock" class="glass-btn primary">Acquire lock</button>
+          <button id="jw-crashbtn" data-raft-act="crash" class="glass-btn">Crash leader</button>
+          <button id="jw-revivebtn" data-raft-act="revive" class="glass-btn">Revive node</button>
+          <button data-raft-act="reset" class="glass-btn">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── footer ──────────────────────────────────────────────── -->
+    <footer class="rl-footer reveal reveal-delay-4">
+      <span class="rl-footer-meta">{featured.meta}</span>
+      <a href={featured.source} target="_blank" rel="noopener" class="rl-footer-src">View source on GitHub ↗</a>
+    </footer>
+
+  </div>
+</div>
