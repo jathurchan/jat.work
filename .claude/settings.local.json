@@ -29,7 +29,8 @@
       "Bash(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable src/scripts/*.ts)",
       "Bash(cp /tmp/app.full.ts /tmp/app.full.check.ts)",
       "Bash(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable /tmp/app.full.check.ts)",
-      "Bash(echo \"original errors: $\\(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable /tmp/app.full.check.ts 2>&1)"
+      "Bash(echo \"original errors: $\\(node_modules/.bin/tsc --noEmit --strict --skipLibCheck --module esnext --moduleResolution bundler --target es2020 --lib es2020,dom,dom.iterable /tmp/app.full.check.ts 2>&1)",
+      "Bash(node -e \"console.log\\(require\\('astro/package.json'\\).version\\)\")"
     ]
   }
 }
