@@ -105,6 +105,9 @@
   color: var(--g-yellow);
 }
 .route-origin-line {
+  /* The origin shares the first chapter's yellow; expose it as --brand so an
+     inline .route-link here picks up the same colour as the kicker. */
+  --brand: var(--g-yellow);
   margin: 0;
   font-size: 15px;
   line-height: 1.55;

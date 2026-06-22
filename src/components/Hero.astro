@@ -12,6 +12,33 @@ const pillarIcons: Record<string, string> = {
   ai:
     '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
 };
+
+// Pre-split the statement around the company name so it can be colour-highlighted.
+// We pull any punctuation that immediately follows the company (e.g. the comma in
+// "…at Google, obsessed with…") into the company node so the template can keep the
+// two glued together — otherwise the inline-block highlight lets the comma orphan
+// onto its own line on small screens (notably iOS Safari).
+const statementNodes: ({ type: 'text'; value: string } | { type: 'company'; glue: string })[] | null =
+  intro.company
+    ? (() => {
+        const parts = intro.statementLead.split(intro.company);
+        const nodes: ({ type: 'text'; value: string } | { type: 'company'; glue: string })[] = [];
+        parts.forEach((part, i) => {
+          let text = part;
+          if (i > 0) {
+            const prev = nodes[nodes.length - 1];
+            const prevGlue = prev && prev.type === 'company' ? prev.glue : '';
+            text = text.slice(prevGlue.length);
+          }
+          nodes.push({ type: 'text', value: text });
+          if (i < parts.length - 1) {
+            const glue = (parts[i + 1] ?? '').match(/^[.,;:!?…)]+/)?.[0] ?? '';
+            nodes.push({ type: 'company', glue });
+          }
+        });
+        return nodes;
+      })()
+    : null;
 ---
 
 <section class="hero" aria-label="Introduction">
@@ -24,11 +51,10 @@ const pillarIcons: Record<string, string> = {
       </h1>
 
       <h2 class="hero-statement reveal reveal-delay-2">
-        {intro.company ? intro.statementLead.split(intro.company).map((part, index, array) => (
-          <>
-            {part}
-            {index < array.length - 1 && <span class="company-highlight">{intro.company}</span>}
-          </>
+        {statementNodes ? statementNodes.map((n) => (
+          n.type === 'company'
+            ? <span class="company-wrap"><span class="company-highlight">{intro.company}</span>{n.glue}</span>
+            : n.value
         )) : intro.statementLead}{' '}
         {intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;

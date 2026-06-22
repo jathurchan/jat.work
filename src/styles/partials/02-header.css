@@ -267,6 +267,32 @@
   transform: translateY(-1.5px);
 }
 
+/* On phones the floating pill is too narrow to hold the wordmark, a section
+   label (which grows to e.g. "Experience" via scroll-spy), and the action
+   icons on one line — the row was wrapping and the actions spilled out of the
+   pill. Collapse the section menu to just its wayfinder icon + chevron and
+   pin everything to a single row. The label stays in the a11y tree so the
+   disclosure button keeps its name. */
+@media (max-width: 480px) {
+  .site-header-inner {
+    flex-wrap: nowrap;
+  }
+  .section-menu-btn {
+    padding: 7px 10px;
+  }
+  .section-menu-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
 /* land section anchors below the floating header */
 #featured,
 #toolkit,

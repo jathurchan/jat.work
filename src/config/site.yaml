@@ -129,7 +129,7 @@ filters:
 # section's eyebrow so the header and the section headings never drift apart.
 nav:
   sections:
-    - { id: featured, label: Featured Project }
+    - { id: featured, label: Featured }
     - { id: toolkit, label: Toolkit }
     - { id: experience, label: Experience }
     - { id: notes, label: Blog }
@@ -140,7 +140,14 @@ nav:
 # `transitionIn` is the narrative beat printed on the connector ABOVE the node.
 careerStart:
   kicker: Where it starts
-  line: Months of LeetCode, side projects, and Amazon's Leadership Principles — all to earn a single shot.
+  # `line` is rendered as HTML (see Experience.astro) so it can carry an inline link.
+  line: >-
+    It started by accident — at 11, a stray "View Source" pulled me in, and I came
+    out having rebuilt Google Search in raw HTML, CSS and query parameters. At 13, I
+    spent a few weeks inside <a class="route-link"
+    href="https://medium.com/@infinit/this-is-the-story-of-infinit-an-idea-a-research-project-a-startup-a-human-adventure-and-much-f4564bc30985"
+    target="_blank" rel="noopener noreferrer">Infinit</a>, a Paris deep-tech storage
+    startup later acquired by Docker.
 career:
   - chapter: "01"
     org: Amazon Web Services
@@ -151,7 +158,13 @@ career:
     brand: var(--g-yellow)
     symbol: proxy
     variant: station
-    transitionIn: My first yes from the industry.
+    transitionIn: >-
+      Years of side projects with fellow students, from <a class="route-link"
+      href="https://louislegrand.fr/" target="_blank" rel="noopener noreferrer">Lycée
+      Louis-le-Grand</a> to my master's at <a class="route-link"
+      href="https://www.ensea.fr/" target="_blank" rel="noopener noreferrer">ENSEA</a>
+      — then sharpened on LeetCode and Amazon's Leadership Principles. My first real
+      yes from the industry.
     story: >-
       Built a high-performance JNI bridge for DynamoDB's Rust client — driving down tail latency in high-stakes infrastructure.
     heroMetric: { value: "−28%", label: "p99 latency" }

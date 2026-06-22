@@ -56,6 +56,10 @@ export function initSectionNav() {
   );
 
   let currentId: string | null = null;
+  // Stays false through the initial compute() so a deep-link hash (e.g. someone
+  // opening /#experience) isn't stripped before the page has scrolled into it.
+  // Once true, the spy keeps the hash in step with the section in view.
+  let spyStarted = false;
   const iconEl = menu.querySelector<SVGElement>('.wayfinder-icon');
   const DEFAULT_ICON_HTML = '<circle cx="12" cy="12" r="8" class="wayfinder-ring"></circle><circle cx="12" cy="12" r="2.5" class="wayfinder-dot" fill="currentColor"></circle>';
 
@@ -78,6 +82,18 @@ export function initSectionNav() {
       items.forEach((it) => it.removeAttribute('aria-current'));
       if (labelEl) labelEl.textContent = DEFAULT_LABEL;
       if (iconEl) iconEl.innerHTML = DEFAULT_ICON_HTML;
+    }
+
+    // Keep the URL in step with the section you're actually viewing, so a reload
+    // returns you here instead of to the last section you clicked. replaceState
+    // doesn't add history entries or trigger a scroll/hashchange. We leave the
+    // hash alone while the RaftLock demo owns it (#raftlock), and skip the very
+    // first pass so a deep-link hash survives load (see spyStarted above).
+    if (spyStarted && location.hash !== '#raftlock') {
+      const target = id ? `#${id}` : '';
+      if (location.hash !== target) {
+        history.replaceState(null, '', id ? `#${id}` : location.pathname + location.search);
+      }
     }
   };
 
@@ -109,5 +125,6 @@ export function initSectionNav() {
   };
   bindGlobal(window, 'scroll', onScroll, { passive: true });
   bindGlobal(window, 'resize', onScroll);
-  compute(); // initial state
+  compute(); // initial state — runs with spyStarted false so it won't touch the URL
+  spyStarted = true;
 }

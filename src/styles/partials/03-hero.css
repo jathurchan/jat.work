@@ -128,6 +128,12 @@
   text-wrap: balance;
   max-width: 760px;
 }
+/* Keep the company name glued to any punctuation right after it (e.g. the comma
+   in "…at Google, obsessed with…"). The highlight below is inline-block, which
+   otherwise lets the comma wrap onto its own line on small screens. */
+.company-wrap {
+  white-space: nowrap;
+}
 .company-highlight {
   display: inline-block;
   background: linear-gradient(90deg, var(--g-blue) 0%, var(--g-red) 33%, var(--g-yellow) 66%, var(--g-green) 100%);
