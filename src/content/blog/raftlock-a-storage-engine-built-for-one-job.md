@@ -1,6 +1,6 @@
 ---
 title: 'Inside RaftLock: a storage engine built for one job'
-pubDate: 2026-06-20
+pubDate: 2026-06-18
 tags: ['systems']
 blurb: Why I wrote a custom append-only log instead of reaching for RocksDB — and how it survives a crash mid-write.
 ---

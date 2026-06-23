@@ -92,7 +92,7 @@ lab:
 # Section lead-in for the Career view.
 careerHead:
   eyebrow: Work Experience
-  lead: "Every role was a deliberate move. Follow the line — from a first shot at AWS to keeping Looker alive at Google."
+  lead: "Every role was a deliberate move. Follow the line — from a first shot at AWS to safeguarding planet-scale systems at Google."
 
 # Featured project card + live demo
 featured:
@@ -159,19 +159,24 @@ career:
     symbol: proxy
     variant: station
     transitionIn: >-
-      Years of side projects with fellow students, from <a class="route-link"
+      Years of side projects with classmates, from <a class="route-link"
       href="https://louislegrand.fr/" target="_blank" rel="noopener noreferrer">Lycée
       Louis-le-Grand</a> to my master's at <a class="route-link"
-      href="https://www.ensea.fr/" target="_blank" rel="noopener noreferrer">ENSEA</a>
-      — then sharpened on LeetCode and Amazon's Leadership Principles. My first real
-      yes from the industry.
+      href="https://www.ensea.fr/" target="_blank" rel="noopener noreferrer">ENSEA</a>.
+      Then came the real preparation — sharpening my problem-solving on <a
+      class="route-link" href="https://leetcode.com/" target="_blank"
+      rel="noopener noreferrer">LeetCode</a> and learning to think in Amazon's <a
+      class="route-link"
+      href="https://www.amazon.jobs/content/en/our-workplace/leadership-principles"
+      target="_blank" rel="noopener noreferrer">Leadership Principles</a> — and, with
+      it, my first real yes from the industry.
     story: >-
       Built a high-performance JNI bridge for DynamoDB's Rust client — driving down tail latency in high-stakes infrastructure.
     heroMetric: { value: "−28%", label: "p99 latency" }
     product:
       label: Amazon DynamoDB
       href: https://aws.amazon.com/dynamodb
-    stack: [Rust, Java, JNI, DynamoDB]
+    stack: [Rust, Java, JNI, "Tail Latency", "Async I/O (Tokio)"]
 
   - chapter: "02"
     org: Amazon Web Services
@@ -189,7 +194,7 @@ career:
     product:
       label: Amazon DynamoDB
       href: https://aws.amazon.com/dynamodb
-    stack: [Distributed Systems, Java, Observability, DynamoDB]
+    stack: [Java, "Distributed Systems", Observability, "Automated Canaries", "Anomaly Detection"]
 
   - chapter: "—"
     org: Withings
@@ -209,7 +214,7 @@ career:
     product:
       label: Withings HealthMate
       href: https://www.withings.com/health-mate
-    stack: [Swift, iOS, CoreML, API Design]
+    stack: [Swift, "iOS Architecture", CoreML, "API Design", "UIKit / SwiftUI"]
 
   - chapter: "03"
     org: Amazon
@@ -227,7 +232,7 @@ career:
     product:
       label: Seller Central
       href: https://sellercentral.amazon.com
-    stack: [Java, AWS, Distributed Systems]
+    stack: [Java, AWS, Microservices, "Systems Migration", "Cross-Team Collaboration"]
 
   - chapter: "04"
     org: RaftLock
@@ -246,18 +251,21 @@ career:
     product:
       label: Open the live demo
       href: "#raftlock"
-    stack: [Go, gRPC, Raft, Consensus]
+    stack: [Go, "Raft Consensus", "State Machine Replication", "Distributed Storage (WAL)", "Concurrency (CSP)"]
 
   - chapter: "05"
     org: Google
-    period: "2026 — now"
+    period: "2026"
     role: Software Engineer · SRE
     place: Dublin
     color: var(--g-blue)
     brand: var(--g-blue)
     symbol: observability
     variant: destination
+    now: true
     transitionIn: "Bringing my passion for distributed systems to a new scale. I joined Google SRE to help build and protect infrastructure at planetary scale."
-    stack: [Go, Kubernetes, GCP, Observability]
+    # The destination card swaps a tech-chip list for a live "terminal" — an
+    # open-ended hook that the story is still being written (see Experience.astro).
+    terminal: true
 
 

@@ -127,6 +127,43 @@
     font-size: 38px;
   }
 }
+
+/* --- Compact header actions on phones ---------------------------------------
+   The floating pill is too tight below 480px to hold text labels plus a
+   multi-item action row without wrapping — on post pages the wide "Back"
+   button was squeezing .nav-row until the theme toggle dropped to a second
+   line. Collapse every action (Back, "Let's talk", theme) to a consistent
+   34px round icon button and pin the row so it never wraps. Defined here
+   (after 05-post.css) so these win over the base .header-back-btn rules. */
+@media (max-width: 480px) {
+  .nav-row {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+  .header-cta,
+  .header-back-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+  /* Keep only the glyphs: the back arrow and the chat bubble. */
+  .header-back-btn .back-text,
+  .header-back-btn .read-ring {
+    display: none;
+  }
+  /* A dashed idle radar reads as a loading spinner once its label is hidden,
+     so on phones show a solid "you are here" target — a clean ring with a
+     faint centre dot — instead of the scanning dashes. */
+  .section-menu.is-default .wayfinder-ring {
+    stroke-dasharray: 0;
+  }
+  .section-menu.is-default .wayfinder-dot {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
 .prodlink:hover {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
 }

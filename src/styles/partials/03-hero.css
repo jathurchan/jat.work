@@ -20,9 +20,12 @@
   animation: slowPulseGlow 8s infinite alternate;
   pointer-events: none;
 }
+/* Breathe between 0.97 and 1.0 (never above 1) so the full-width glow can't
+   bleed sideways past the viewport — scaling >1 here was a source of stray
+   horizontal scroll on small screens. */
 @keyframes slowPulseGlow {
-  from { opacity: 0.6; transform: scale(1); }
-  to { opacity: 1; transform: scale(1.05); }
+  from { opacity: 0.6; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Micro-animations */
@@ -86,7 +89,7 @@
 .hero-fullname {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: clamp(56px, 9vw, 108px);
+  font-size: clamp(32px, 10vw, 108px);
   line-height: 0.95;
   letter-spacing: -0.04em;
   white-space: nowrap;

@@ -128,6 +128,25 @@ const symbols: Record<string, string> = {
                   </div>
                 )}
 
+                {c.terminal && (
+                  /* Destination "what's next" terminal — a live, open-ended hook
+                     in place of a finished tech-chip stack. Decorative, so it's
+                     hidden from assistive tech. */
+                  <div class="route-terminal" aria-hidden="true">
+                    <div class="route-terminal-bar">
+                      <span class="route-terminal-dot route-terminal-dot--r"></span>
+                      <span class="route-terminal-dot route-terminal-dot--y"></span>
+                      <span class="route-terminal-dot route-terminal-dot--g"></span>
+                      <span class="route-terminal-title">jat@google</span>
+                    </div>
+                    <div class="route-terminal-body">
+                      <p class="route-terminal-line"><span class="route-term-prompt">$</span> status</p>
+                      <p class="route-terminal-line"><span class="route-term-ok">▸</span> all systems go</p>
+                      <p class="route-terminal-line"><span class="route-term-prompt">$</span> <span class="route-term-typed">what's next…</span></p>
+                    </div>
+                  </div>
+                )}
+
                 {(c.stack?.length || c.product) && (
                   <footer class="route-card-foot">
                     {c.stack && c.stack.length > 0 && (

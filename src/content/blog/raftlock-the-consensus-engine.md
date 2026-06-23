@@ -1,6 +1,6 @@
 ---
 title: 'Inside RaftLock: the consensus engine'
-pubDate: 2026-06-18
+pubDate: 2026-06-20
 tags: ['systems']
 blurb: Leader election, log replication, a single-threaded core, and the simulation framework I used to trust it.
 ---

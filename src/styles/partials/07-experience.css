@@ -492,6 +492,106 @@
   border-color: color-mix(in srgb, var(--brand) 28%, transparent);
   background: color-mix(in srgb, var(--brand) 7%, transparent);
 }
+/* ---- destination "what's next" terminal ----
+   Replaces the tech-chip stack on the current/now card. A small faux terminal
+   that types out an open-ended line — the story is still being written. */
+.route-terminal {
+  margin-top: 16px;
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, var(--line));
+  border-radius: 12px;
+  overflow: hidden;
+  /* A cool, brand-tinted "console screen" recessed into the card — picks up the
+     card's blue so it reads as part of the destination panel, not a grey island,
+     with a soft brand glow lighting it from the top corner. */
+  background:
+    radial-gradient(125% 140% at 100% 0%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 58%),
+    color-mix(in srgb, var(--brand) 8%, var(--frame));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 12%, transparent),
+    inset 0 0 26px -12px color-mix(in srgb, var(--brand) 55%, transparent),
+    0 10px 24px -18px color-mix(in srgb, var(--brand) 65%, transparent);
+}
+.route-terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 22%, var(--line));
+}
+.route-terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+.route-terminal-dot--r { background: var(--g-red); }
+.route-terminal-dot--y { background: var(--g-yellow); }
+/* The green light reads as the "online" LED — glows to echo the LIVE badge. */
+.route-terminal-dot--g {
+  background: var(--g-green);
+  opacity: 1;
+  box-shadow: 0 0 7px color-mix(in srgb, var(--g-green) 75%, transparent);
+}
+.route-terminal-title {
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 2.4vw, 10px);
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--brand) 50%, var(--faint-text));
+  white-space: nowrap;
+}
+.route-terminal-body {
+  padding: 11px clamp(9px, 3vw, 13px) 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono);
+  /* Scale down on narrow cards so the nowrap lines never clip. */
+  font-size: clamp(9px, 3vw, 11.5px);
+  line-height: 1.5;
+  color: var(--sub);
+}
+.route-terminal-line {
+  margin: 0;
+  white-space: nowrap;
+}
+.route-term-prompt {
+  color: var(--brand);
+  font-weight: 600;
+}
+.route-term-ok { color: var(--g-green); }
+/* Typewriter: reveal the line character-by-character via a max-width animation
+   (forgiving of exact length in a monospace font) with a blinking block caret.
+   The card re-enters the DOM on View Transitions swaps, so the animation
+   replays each time the section is shown. */
+.route-term-typed {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  border-right: 1.5px solid color-mix(in srgb, var(--brand) 85%, var(--ink));
+  animation:
+    route-term-type 2.2s steps(30) 0.6s both,
+    route-term-caret 1s step-end 0.6s infinite;
+}
+@keyframes route-term-type {
+  from { max-width: 0; }
+  to { max-width: 28ch; }
+}
+@keyframes route-term-caret {
+  50% { border-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-term-typed {
+    max-width: 28ch;
+    animation: none;
+    border-right-color: transparent;
+  }
+}
+
 .route-product {
   display: inline-flex;
   align-items: center;

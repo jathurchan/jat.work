@@ -45,6 +45,9 @@ export interface CareerEntry {
   story?: string;
   heroMetric?: Metric;
   stack?: string[];
+  /** Destination card only: render the animated "what's next" terminal in
+   * place of a tech-chip stack. */
+  terminal?: boolean;
 }
 
 

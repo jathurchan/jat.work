@@ -149,6 +149,11 @@
   padding: 6px;
   list-style: none;
   min-width: 200px;
+  /* The closed menu stays in layout (display:block below, so its open/close
+     transition can run), so cap its width to the viewport — otherwise the
+     200px panel pokes past the right edge on very narrow phones and drags a
+     sideways scroll onto the page. */
+  max-width: calc(100vw - 24px);
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
   background: color-mix(in srgb, var(--frame) 85%, transparent);
@@ -290,6 +295,12 @@
     clip: rect(0 0 0 0);
     white-space: nowrap;
     border: 0;
+  }
+  /* Let the dropdown size to its content on narrow phones rather than holding a
+     fixed 200px, which (offset from the left of the pill) would overhang the
+     right edge and cause a sideways scroll. */
+  .section-menu-list {
+    min-width: 0;
   }
 }
 

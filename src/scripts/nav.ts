@@ -92,7 +92,15 @@ export function initSectionNav() {
     if (spyStarted && location.hash !== '#raftlock') {
       const target = id ? `#${id}` : '';
       if (location.hash !== target) {
-        history.replaceState(null, '', id ? `#${id}` : location.pathname + location.search);
+        // Crucially, carry the existing state through instead of passing null.
+        // Astro's View Transitions router stamps each entry with
+        // { index, scrollX, scrollY }; nulling it out strips the `index` the
+        // back button uses to tell "came from the site" apart from a deep link,
+        // and wipes the scroll position Astro restores when you navigate back.
+        // That's what broke "Back" from post pages once URL/section syncing
+        // landed — keep the state, only swap the hash.
+        const url = id ? `#${id}` : location.pathname + location.search;
+        history.replaceState(history.state, '', url);
       }
     }
   };

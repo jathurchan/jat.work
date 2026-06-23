@@ -76,6 +76,13 @@ html {
 html,
 body {
   margin: 0;
+  /* Belt-and-suspenders horizontal-overflow guard. The page shell clips its own
+     overflow (.page below), but decorative bleed (the hero glow) and absolutely
+     positioned popovers can still nudge the document wider on browsers that don't
+     honour `overflow: clip`. Clipping at the root keeps small screens from ever
+     showing a stray sideways scroll. `clip` (not `hidden`) so it never turns the
+     root into a scroll container, which would break the sticky header. */
+  overflow-x: clip;
 }
 body {
   min-height: 100svh;
@@ -103,12 +110,13 @@ button {
   display: flex;
   flex-direction: column;
   overflow-x: clip;
+  clip-path: inset(-100vh 0 -100vh 0);
 }
 .shell {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+  padding: 0 var(--space-inset, clamp(24px, 6vw, 80px));
 }
 /* content below the hero — left edge aligns with the hero, readable column width */
 .content {
