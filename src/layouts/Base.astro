@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { meta } from '../lib/site';
 import { ViewTransitions } from 'astro:transitions';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title?: string;
@@ -53,6 +54,10 @@ const { title = meta.title, description = meta.description } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap"
     />
     <ViewTransitions />
+    {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
+        once deployed to Vercel with Web Analytics enabled in the dashboard;
+        runs in dev mode locally (logs, sends nothing). */}
+    <Analytics />
   </head>
   <body>
     <slot />
