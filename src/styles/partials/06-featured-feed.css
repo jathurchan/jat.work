@@ -392,14 +392,8 @@
 /* ---- lab grid ---- */
 .lab-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
-}
-@media (min-width: 600px) {
-  .lab-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1000px) {
-  .lab-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @keyframes reveal-card {
@@ -634,7 +628,7 @@
   transform: scale(1.15) rotate(-6deg);
   filter: drop-shadow(0 0 24px color-mix(in srgb, var(--card-color, var(--accent)) 50%, transparent));
 }
-@media (max-width: 999px) {
+@media (max-width: 999.98px) {
   .lab-feature-aside { display: none; }
 }
 

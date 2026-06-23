@@ -13,7 +13,7 @@
 import { runTeardowns, bindGlobal } from './lifecycle';
 import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
-import { initSectionNav } from './nav';
+import { initSectionNav, initHeaderScroll } from './nav';
 import { initRouteProgress } from './route';
 import { initName, initToolkitPulse } from './hero';
 
@@ -23,6 +23,7 @@ if ('scrollRestoration' in history) {
 window.scrollTo(0, 0);
 
 function boot() {
+  initHeaderScroll();
   initName();
   initTeaser();
   initDemo();

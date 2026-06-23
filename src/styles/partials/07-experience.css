@@ -687,7 +687,7 @@
   100% { transform: scale(1.65); opacity: 0; }
 }
 .route-stop--destination .route-node-disc {
-  background: color-mix(in srgb, var(--brand) 15%, transparent);
+  background: color-mix(in srgb, var(--brand) 15%, var(--paper));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 0 0 4px var(--paper),

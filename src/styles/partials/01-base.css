@@ -110,7 +110,6 @@ button {
   display: flex;
   flex-direction: column;
   overflow-x: clip;
-  clip-path: inset(-100vh 0 -100vh 0);
 }
 .shell {
   max-width: 1200px;

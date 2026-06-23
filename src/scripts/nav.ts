@@ -2,6 +2,33 @@
 import { bindGlobal } from './lifecycle';
 
 /* ----------------------------------------------------------------------- *
+ * Header scroll state: toggles the glassmorphic background on scroll.
+ * ----------------------------------------------------------------------- */
+export function initHeaderScroll() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+
+  let ticking = false;
+  const update = () => {
+    if (window.scrollY > 20) {
+      header.classList.add('is-scrolled');
+    } else {
+      header.classList.remove('is-scrolled');
+    }
+    ticking = false;
+  };
+
+  update();
+
+  bindGlobal(window, 'scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* ----------------------------------------------------------------------- *
  * Section nav scroll-spy: marks the section crossing the viewport's middle
  * as aria-current so the header reflects where you are on the page.
  * ----------------------------------------------------------------------- */
