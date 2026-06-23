@@ -136,6 +136,12 @@ const { sections = false, backButton = false } = Astro.props;
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    
+    // Update Safari top bar dynamically
+    const meta = document.getElementById('theme-color-meta');
+    if (meta) {
+      meta.setAttribute('content', next === 'dark' ? '#09090b' : '#fcfcfc');
+    }
   });
 
   // Back button (post pages). Delegated on document so it survives View
