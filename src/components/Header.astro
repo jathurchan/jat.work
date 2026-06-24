@@ -136,6 +136,13 @@ const { sections = false, backButton = false } = Astro.props;
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    const color = next === 'dark' ? '#121214' : '#fcfcfc';
+    const existing = document.querySelector('meta[name="theme-color"]');
+    if (existing) existing.remove();
+    const tc = document.createElement('meta');
+    tc.name = 'theme-color';
+    tc.content = color;
+    document.head.prepend(tc);
   });
 
   // Back button (post pages). Delegated on document so it survives View
