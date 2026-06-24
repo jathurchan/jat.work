@@ -47,24 +47,24 @@
   }
 
 :root[data-theme="dark"] {
-  /* Systems Engineer Palette (Dark Mode) */
-  --g-blue: #38bdf8;   /* Electric Azure */
-  --g-red: #fb7185;    /* Glowing Ruby */
-  --g-yellow: #fbbf24; /* Glowing Amber */
-  --g-green: #34d399;  /* Glowing Emerald */
+  /* Systems Engineer Palette (Dark Mode - Refined) */
+  --g-blue: #60a5fa;   /* Soft Azure */
+  --g-red: #fb7185;    /* Pastel Ruby */
+  --g-yellow: #facc15; /* Soft Amber */
+  --g-green: #4ade80;  /* Pastel Emerald */
   --accent: var(--g-blue);
-  --accent-soft: #0c4a6e;
+  --accent-soft: rgba(96, 165, 250, 0.15);
   --pop: var(--g-red);
   --ok: var(--g-green);
-  --paper: #09090b;
-  --frame: #18181b;
-  --ink: #fafafa;
-  --sub: #a1a1aa;
+  --paper: #121214;    /* Charcoal instead of pitch black */
+  --frame: #1c1c1f;    /* Subtle elevation */
+  --ink: #e4e4e7;      /* Off-white to reduce halation */
+  --sub: #a1a1aa;      /* Mid-gray for secondary text */
   --faint: #52525b;
-  --faint-text: #71717a;
-  --line: #27272a;
-  --dialog-shadow: rgba(0, 0, 0, 0.8) 0 30px 70px -20px;
-  --overlay-bg: color-mix(in srgb, #000000 80%, transparent);
+  --faint-text: #84848f; /* Improved contrast over original */
+  --line: rgba(255, 255, 255, 0.08); /* Translucent borders for elegance */
+  --dialog-shadow: rgba(0, 0, 0, 0.4) 0 30px 70px -20px; /* Softer shadow */
+  --overlay-bg: color-mix(in srgb, #121214 80%, transparent);
 }
 
 * {

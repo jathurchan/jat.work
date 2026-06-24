@@ -125,11 +125,20 @@
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: clamp(20px, 2.6vw, 30px);
+  font-size: clamp(16px, 4.5vw, 30px);
   line-height: 1.45;
   color: var(--ink);
-  text-wrap: balance;
+  text-wrap: pretty;
   max-width: 760px;
+}
+.hero-stmt-secondary {
+  font-weight: 500;
+  color: var(--sub);
+}
+@media (max-width: 640px) {
+  .hero-statement {
+    line-height: 1.35;
+  }
 }
 /* Keep the company name glued to any punctuation right after it (e.g. the comma
    in "…at Google, obsessed with…"). The highlight below is inline-block, which
@@ -182,17 +191,6 @@
 .pillar:hover {
   opacity: 0.8;
 }
-.hero-bio {
-  margin: 0;
-  font-size: clamp(15px, 1.2vw, 17px);
-  line-height: 1.7;
-  color: var(--sub);
-  max-width: 580px;
-  text-wrap: pretty;
-}
-
-/* "A few things I'm proud of" — a personal caption frames the deck so it reads
-   clearly as my own wins rather than anonymous stats. */
 .hero-proof {
   width: 100%;
   max-width: 560px;
@@ -201,19 +199,6 @@
   flex-direction: column;
   align-items: center;
 }
-.ach-lead {
-  margin: 0 0 14px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--faint-text);
-  text-align: center;
-}
-.ach-lead-em {
-  color: var(--sub);
-  font-weight: 600;
-}
-
 /* Key achievements: stacked card deck, one per focus area. The active pillar
    (hovered or auto-cycled) brings its card to the front via --stack = 0. */
 .hero-achievements {
@@ -267,17 +252,6 @@
 /* Context "where" label — a quiet, muted eyebrow. The pillar colour rides on
    the small glyph (and the spine) only, so the metric below is the one thing
    that reads in colour. */
-/* Footer row: context (the quiet "where") on the left, CTA (the action) on the
-   right — the eye reads the source, then exits into the link. Wraps to two
-   lines on narrow cards so neither gets crushed. */
-.ach-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin-top: 2px;
-}
 .ach-context {
   display: inline-flex;
   align-items: center;
@@ -316,6 +290,7 @@
 }
 /* CTA links the proof to the section where you can go deeper (demo, blog, work). */
 .ach-cta {
+  margin-top: 4px;
   display: inline-flex;
   align-items: center;
   gap: 6px;

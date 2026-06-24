@@ -27,7 +27,7 @@ intro:
   name: Jathurchan
   nameShort: Jat
   company: Google
-  statementLead: Software Engineer & SRE at Google, obsessed with
+  statementLead: Software Engineer & SRE at Google
   # The three colour-coded focus areas. `color` is a CSS token; `key` ties each
   # pillar to its matching highlight card below.
   pillars:
@@ -51,16 +51,16 @@ intro:
       color: var(--g-green)
       context: RaftLock · open source
       bodyHtml: >-
-        Built <strong>Raft consensus</strong> from scratch — a crash-tolerant
-        lock in Go, <strong>82%</strong> tested.
+        Kill <strong>2 of 5 nodes</strong> mid-request — the cluster elects a new
+        leader, replays its log, and your lock is still yours.
       cta: { label: Try the live demo, href: '#featured' }
     - key: ai
       color: var(--g-red)
-      context: DeepLearning.AI · Coursera
+      context: mistral-router · open source
       bodyHtml: >-
-        Studied <strong>Deep Learning</strong>, <strong>GenAI with LLMs</strong>,
-        and <strong>RAG</strong> — understanding the models, not just the APIs.
-      cta: { label: Read my AI notes, href: '#notes' }
+        Built a <strong>FastAPI LLM gateway</strong> that routes each request to the
+        cheapest capable model — complexity routing with automatic quality fallback.
+      cta: { label: View on GitHub, href: 'https://github.com/jathurchan/mistral-router' }
 
 # The toolkit that closes the hero. Grouped by the same three focus areas the
 # statement opens with — each category reuses a pillar's `key` and `color`, so
@@ -78,7 +78,7 @@ skills:
     - key: systems
       name: Distributed Systems
       color: var(--g-green)
-      items: ["Go", "gRPC", "PostgreSQL", "Redis", "Kafka"]
+      items: ["Go", "gRPC", "Protobuf", "Redis", "Kafka"]
     - key: ai
       name: AI & ML
       color: var(--g-red)
@@ -92,12 +92,12 @@ lab:
 # Section lead-in for the Career view.
 careerHead:
   eyebrow: Work Experience
-  lead: "Every role was a deliberate move. Follow the line — from a first shot at AWS to safeguarding planet-scale systems at Google."
+  lead: "Every move was deliberate. Follow the line — from a student research paper to safeguarding planet-scale systems at Google."
 
 # Featured project card + live demo
 featured:
   title: RaftLock
-  meta: Go · gRPC · 82% coverage
+  meta: Go · gRPC · Protobuf · 82% coverage
   source: https://github.com/jathurchan/raftlock
   # Short lead-in shown above the interactive demo to frame it.
   eyebrow: Featured Project
@@ -105,14 +105,15 @@ featured:
     Where I go deepest on <span class="thread-systems">distributed systems</span>
     — and the one thing here you can break yourself.
   tagline: >-
-    A distributed lock that <strong>survives crashes</strong> — Raft consensus
-    built from scratch. Crash a server and watch the cluster recover, live.
+    Raft consensus from first principles — <strong>five clean layers</strong>,
+    custom storage engine, simulation-tested. Kill two nodes and watch the
+    cluster recover, live.
   # demo chips
   chips:
     - Survives 2 of 5 crashes
     - Raft from scratch
     - 82% test coverage
-    - Go · gRPC
+    - Simulation-tested
 
 # Feed filter tabs + topic taxonomy (single source of truth for the blog).
 # `label` is the lowercase terminal-style filter tab; `name` is the title-case
@@ -142,12 +143,26 @@ careerStart:
   kicker: Where it starts
   # `line` is rendered as HTML (see Experience.astro) so it can carry an inline link.
   line: >-
-    It started by accident — at 11, a stray "View Source" pulled me in, and I came
-    out having rebuilt Google Search in raw HTML, CSS and query parameters. At 13, I
-    spent a few weeks inside <a class="route-link"
-    href="https://medium.com/@infinit/this-is-the-story-of-infinit-an-idea-a-research-project-a-startup-a-human-adventure-and-much-f4564bc30985"
-    target="_blank" rel="noopener noreferrer">Infinit</a>, a Paris deep-tech storage
-    startup later acquired by Docker.
+    <p class="route-origin-prose">At 11, a stray "View Source" pulled me in — I
+    rebuilt Google Search in raw HTML and didn't stop. <a class="route-link"
+    href="https://louislegrand.fr/" target="_blank"
+    rel="noopener noreferrer">Lycée Louis-le-Grand</a> — France's most selective high school — then years of classes
+    préparatoires — pure mathematics, physics, and logic. The hardest years of my
+    life, and the most formative. I kept building through all of it.</p>
+    <div class="origin-project">
+    <span class="origin-project-eye">Research · 2018 — 19</span>
+    <a class="origin-project-name"
+    href="https://github.com/jathurchan/air-route-optimizer" target="_blank"
+    rel="noopener noreferrer">Air Route Optimizer ↗</a>
+    <p class="origin-project-desc">Multi-objective graph optimizer for air
+    traffic networks — co-authored with a classmate under <a
+    href="http://jerome.gaertner.free.fr" target="_blank"
+    rel="noopener noreferrer">Jérôme Gärtner</a>. The paper that opened the
+    door to AWS.</p>
+    <div class="origin-project-stats">
+    <span class="origin-project-stat">−83% network risk</span>
+    <span class="origin-project-stat">Graded A+</span>
+    </div></div>
 career:
   - chapter: "01"
     org: Amazon Web Services
@@ -159,19 +174,15 @@ career:
     symbol: proxy
     variant: station
     transitionIn: >-
-      Years of side projects with classmates, from <a class="route-link"
-      href="https://louislegrand.fr/" target="_blank" rel="noopener noreferrer">Lycée
-      Louis-le-Grand</a> to my master's at <a class="route-link"
-      href="https://www.ensea.fr/" target="_blank" rel="noopener noreferrer">ENSEA</a>.
-      Then came the real preparation — sharpening my problem-solving on <a
+      I targeted AWS Dublin — prepped hard on <a
       class="route-link" href="https://leetcode.com/" target="_blank"
-      rel="noopener noreferrer">LeetCode</a> and learning to think in Amazon's <a
+      rel="noopener noreferrer">LeetCode</a> and studied Amazon's <a
       class="route-link"
       href="https://www.amazon.jobs/content/en/our-workplace/leadership-principles"
-      target="_blank" rel="noopener noreferrer">Leadership Principles</a> — and, with
-      it, my first real yes from the industry.
+      target="_blank" rel="noopener noreferrer">Leadership Principles</a> — and
+      Dublin said yes.
     story: >-
-      Built a high-performance JNI bridge for DynamoDB's Rust client — driving down tail latency in high-stakes infrastructure.
+      Built the JNI layer linking DynamoDB's new Rust client to its Java callers — closing the gap between two runtimes without serialization overhead.
     heroMetric: { value: "−28%", label: "p99 latency" }
     product:
       label: Amazon DynamoDB
@@ -187,9 +198,9 @@ career:
     brand: var(--g-yellow)
     symbol: canary
     variant: station
-    transitionIn: I deferred my full-time offer to complete a second internship — wanting to dive even deeper into DynamoDB's internals.
+    transitionIn: I deferred my full-time offer and came back for more — one more internship, deeper inside DynamoDB's internals.
     story: >-
-      Modernized the continuous monitoring system for DynamoDB's metadata store.
+      Rebuilt the monitoring system watching DynamoDB's metadata store — replacing fragile thresholds with automated canaries that could tell signal from noise.
     heroMetric: { value: "−99%", label: "false alerts" }
     product:
       label: Amazon DynamoDB
@@ -207,7 +218,11 @@ career:
     variant: branch
     tag: Detour · iOS
     terminus: Paused — for now
-    transitionIn: Taking an opportunity to return home to Paris, I pivoted to mobile — spending three months teaching myself iOS to land the role.
+    transitionIn: >-
+      Master's from <a class="route-link" href="https://www.ensea.fr/en/"
+      target="_blank" rel="noopener noreferrer">ENSEA</a>, two AWS internships
+      behind me, a full-time offer on the table — I chose to come home to Paris
+      instead. Three months of self-taught iOS later, I had the role.
     story: >-
       Shipped an end-to-end Swift pipeline for AI-driven insights — building health software for the people I love.
     heroMetric: { value: "10M+", label: "users reached" }
@@ -225,9 +240,9 @@ career:
     brand: var(--g-yellow)
     symbol: cart
     variant: station
-    transitionIn: Swapping iOS in Paris for backend engineering in Luxembourg — I rejoined Amazon full-time to tackle completely new problems at a massive scale.
+    transitionIn: From iOS in Paris to backend in Luxembourg — I rejoined Amazon full-time and stepped into an entirely different domain.
     story: >-
-      Enabled the Ireland launch for core 3P Pricing services. Navigating deep ambiguity, I collaborated across distributed teams to drive consensus and unblock the release.
+      Enabled the Ireland expansion for Amazon's core third-party Pricing services — coordinating across seven teams to resolve blockers and ship the launch.
     heroMetric: { value: "7+", label: "teams aligned" }
     product:
       label: Seller Central
@@ -244,9 +259,13 @@ career:
     symbol: lock
     variant: project
     demo: true
-    transitionIn: 'Back to distributed systems. I wanted to build what I love — so I dove into <a class="route-link" href="https://www.google.com/search?q=Designing+Data-Intensive+Applications+book" target="_blank" rel="noopener noreferrer">Designing Data-Intensive Applications</a> and turned theory into working code.'
+    transitionIn: >-
+      I wanted to build what I love — so I read <a class="route-link"
+      href="https://www.google.com/search?q=Designing+Data-Intensive+Applications+book"
+      target="_blank" rel="noopener noreferrer">Designing Data-Intensive
+      Applications</a> cover to cover and turned theory into code.
     story: >-
-      Engineered a crash-tolerant distributed lock using Raft consensus from first principles — turning an ambition into evidence.
+      Built a crash-tolerant distributed lock on Raft consensus from first principles — turning an obsession into working evidence.
     heroMetric: { value: "82%", label: "test coverage" }
     product:
       label: Open the live demo
@@ -263,7 +282,7 @@ career:
     symbol: observability
     variant: destination
     now: true
-    transitionIn: "Bringing my passion for distributed systems to a new scale. I joined Google SRE to help build and protect infrastructure at planetary scale."
+    transitionIn: "Google SRE — the people who keep the internet running. I joined to protect infrastructure at planetary scale."
     # The destination card swaps a tech-chip list for a live "terminal" — an
     # open-ended hook that the story is still being written (see Experience.astro).
     terminal: true
