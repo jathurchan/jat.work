@@ -39,6 +39,11 @@
   --space-lg: clamp(48px, 8vw, 96px);
   --space-xl: clamp(64px, 12vw, 160px);
 
+  /* Shared page side-gutter. One token drives every full-width container
+     (.shell, .route-section, .lab-section) so each section's content edge
+     lines up vertically with every other at every viewport width. */
+  --space-inset: clamp(24px, 6vw, 80px);
+
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 
@@ -117,7 +122,7 @@ button {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(24px, 6vw, 80px));
+  padding: 0 var(--space-inset);
 }
 /* content below the hero — left edge aligns with the hero, readable column width */
 .content {

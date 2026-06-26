@@ -248,14 +248,3 @@
   padding: 0 2px;
 }
 
-.navlink {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--sub);
-  transition: color 0.2s;
-  white-space: nowrap;
-}
-.navlink:hover {
-  color: var(--accent);
-}
-

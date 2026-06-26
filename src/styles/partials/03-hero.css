@@ -248,6 +248,16 @@
   border-left-color: var(--c);
   background: color-mix(in srgb, var(--c) 8%, var(--frame));
   box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--c) 55%, transparent);
+  /* As a card rises to the front, snap it to full opacity fast so its opaque
+     fill occludes the deck behind it. Without this, the slow opacity fade let
+     the buried cards' text bleed through mid-transition — most visible on
+     phones, where the taller cards overlap almost entirely. The card sliding
+     to the back keeps the graceful 0.5s fade from the base .ach rule. */
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.18s ease,
+              border-color 0.35s ease,
+              background 0.35s ease,
+              box-shadow 0.35s ease;
 }
 /* Context "where" label — a quiet, muted eyebrow. The pillar colour rides on
    the small glyph (and the spine) only, so the metric below is the one thing
@@ -1248,78 +1258,7 @@ body.raftlock-open {
     display: none;
   }
 }
-.hero-portrait {
-  position: relative;
-  width: 100%;
-  align-self: end;
-}
-.hero-portrait-glow {
-  position: absolute;
-  left: 50%;
-  top: -2%;
-  transform: translateX(-50%);
-  width: 116%;
-  height: 90%;
-  background: radial-gradient(
-    ellipse 50% 52% at 50% 40%,
-    color-mix(in srgb, var(--accent-soft) 80%, transparent),
-    transparent 72%
-  );
-  z-index: 0;
-  pointer-events: none;
-}
-.hero-portrait .portrait {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: saturate(0.96) contrast(1.02)
-    drop-shadow(0 10px 16px color-mix(in srgb, var(--ink) 16%, transparent));
-}
-
-/* signature: faint divider with a slow signal sweep */
-.hero-pulse {
-  position: relative;
-  height: 1px;
-  margin: 0 clamp(32px, 6vw, 80px);
-  background: var(--line);
-  overflow: hidden;
-}
-.hero-pulse::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -16%;
-  height: 100%;
-  width: 16%;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  animation: pulse-sweep 5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-@keyframes pulse-sweep {
-  0% {
-    left: -16%;
-  }
-  60%,
-  100% {
-    left: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-  .hero-visuals {
-    order: -1;
-  }
-  .cluster-glass-container {
-    height: 300px;
-  }
-}
-
-/* ---- intro animations ---- */
+/* ---- intro animation (post header + prose reveal) ---- */
 @keyframes risein {
   0% {
     opacity: 0;
@@ -1330,20 +1269,7 @@ body.raftlock-open {
     transform: translateY(0) scale(1);
   }
 }
-@keyframes portin {
-  0% {
-    opacity: 0;
-    transform: translateY(24px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 .rise {
   animation: risein 0.8s var(--ease-spring) both;
-}
-.portrait {
-  animation: portin 0.9s var(--ease-spring) 0.1s both;
 }
 

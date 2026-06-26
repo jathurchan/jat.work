@@ -186,8 +186,7 @@
 }
 
 a:focus-visible,
-button:focus-visible,
-.feat-vis:focus-visible {
+button:focus-visible {
   outline: 2.5px solid var(--accent);
   outline-offset: 3px;
   border-radius: 6px;

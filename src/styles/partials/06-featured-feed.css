@@ -6,31 +6,6 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-.nav-social {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--sub);
-  padding: 7px 10px;
-  border-radius: 9px;
-  white-space: nowrap;
-  transition: color 0.18s, background 0.18s;
-}
-.nav-social svg {
-  width: 15px;
-  height: 15px;
-  flex: 0 0 auto;
-  transition: transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-.nav-social:hover {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 9%, transparent);
-}
-.nav-social:hover svg {
-  transform: translateY(-1px);
-}
 .nav-divider {
   width: 1px;
   height: 18px;
@@ -72,9 +47,6 @@
   transform: translateY(2px);
 }
 @media (max-width: 768px) {
-  .header-actions {
-    display: none;
-  }
   .cluster-glass-container {
     grid-template-columns: 1fr;
     grid-template-rows: auto 300px auto;
@@ -110,10 +82,10 @@
   .hw-title {
     font-size: 28px;
   }
-  .nav-label, .resume-btn span, .header-cta span {
+  .resume-btn span, .header-cta span {
     display: none;
   }
-  .nav-social, .resume-btn, .header-cta {
+  .resume-btn, .header-cta {
     padding: 10px;
     justify-content: center;
   }
@@ -164,116 +136,6 @@
     transform: scale(1);
   }
 }
-.prodlink:hover {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-}
-
-/* ---- featured project card ---- */
-.feat {
-  display: grid;
-  grid-template-columns: 1fr;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  overflow: hidden;
-  background: radial-gradient(
-        color-mix(in srgb, var(--faint) 20%, transparent) 0.7px,
-        transparent 0
-      )
-      0 0 / 13px 13px,
-    var(--frame);
-  margin-bottom: 30px;
-  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease, border-color 0.4s ease;
-}
-.feat:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: var(--dialog-shadow);
-  border-color: color-mix(in srgb, var(--line) 80%, transparent);
-}
-.feat-vis {
-  position: relative;
-  height: 150px;
-  border-bottom: 1px solid var(--line);
-  background: var(--paper);
-  cursor: pointer;
-}
-.feat-vis canvas {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.feat-hint {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  background: color-mix(in srgb, var(--paper) 34%, transparent);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
-.feat-vis:hover .feat-hint,
-.feat-vis:focus-visible .feat-hint {
-  opacity: 1;
-}
-.feat-status {
-  position: absolute;
-  top: 10px;
-  left: 13px;
-  right: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--faint-text);
-  pointer-events: none;
-}
-.feat-body {
-  padding: 16px 19px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 9px;
-  min-width: 0;
-}
-.feat-run {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: var(--accent);
-  color: var(--on-accent);
-  transition: filter 0.18s, transform 0.18s;
-}
-.feat-run:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-}
-.feat-src {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--sub);
-  transition: color 0.2s;
-}
-.feat-src:hover {
-  color: var(--accent);
-}
 /* ---- lab section ---- */
 /* Mirrors the hero shell exactly (max-width + gutter) so the section aligns
    edge-to-edge with the hero on every screen size. */
@@ -281,7 +143,7 @@
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+  padding: 0 var(--space-inset);
 }
 
 /* terminal-flavoured filter rail + live result count */

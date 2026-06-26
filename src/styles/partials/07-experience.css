@@ -9,7 +9,7 @@
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+  padding: 0 var(--space-inset);
 }
 
 .route {
