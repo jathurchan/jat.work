@@ -1,17 +1,37 @@
 .site-header {
   position: sticky;
-  top: 16px;
+  top: 0;
   z-index: 50;
   pointer-events: none;
   display: flex;
   justify-content: center;
-  padding: 0 var(--space-4);
-  /* Force a strict new stacking context to prevent backdrop-filter from 
-     inheriting 3D matrices from elements it floats over (like the 3D hero text) */
+  padding: 12px var(--space-4) 16px;
+  /* Pull content up into the bottom padding so it doesn't push the hero down */
+  margin-bottom: -16px;
+  /* Force a strict new stacking context */
   isolation: isolate;
 }
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* GPU-friendly gradient dissolve (replaces expensive mask-image) */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--paper) 95%, transparent) 0%,
+    color-mix(in srgb, var(--paper) 95%, transparent) 60%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.site-header.is-scrolled::before {
+  opacity: 1;
+}
 .site-header.reveal-down:not(.fast) {
-  animation-delay: 2.2s; /* Stagger after home page name animation (Jathurchan -> jat) */
+  animation-delay: 0.4s; /* Much faster entrance so users aren't waiting for nav */
 }
 .site-header.reveal-down.fast {
   animation-delay: 0.1s; /* Immediate load for post pages */
@@ -49,16 +69,18 @@
   /* Explicit flat 3D transform forces Safari to render this layer 
      independently of any tilted elements underneath it. */
   transform: translate3d(0, 0, 0);
-  background: transparent;
-  box-shadow: 0 4px 24px -4px transparent;
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: background 0.35s ease, box-shadow 0.35s ease;
+  background: color-mix(in srgb, var(--frame) 40%, transparent);
+  box-shadow: 
+    inset 0 1px 1px color-mix(in srgb, #ffffff 20%, transparent), 
+    0 8px 24px -8px color-mix(in srgb, #000000 10%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 .site-header.is-scrolled .site-header-inner {
   padding: 8px 20px;
-  border-color: color-mix(in srgb, var(--line) 40%, transparent);
+  border-color: color-mix(in srgb, var(--line) 30%, transparent);
 }
 
 .site-header.is-scrolled .site-header-inner::before {
@@ -66,7 +88,7 @@
   box-shadow: 
     inset 0 1px 1px color-mix(in srgb, #ffffff 50%, transparent), 
     inset 0 0 0 1px color-mix(in srgb, #ffffff 20%, transparent),
-    0 16px 40px -12px color-mix(in srgb, var(--ink) 25%, transparent);
+    0 16px 40px -12px color-mix(in srgb, #000000 25%, transparent);
   backdrop-filter: blur(40px) saturate(200%);
   -webkit-backdrop-filter: blur(40px) saturate(200%);
 }
@@ -79,7 +101,7 @@
   border-color: color-mix(in srgb, var(--line) 100%, transparent);
 }
 .site-header.is-scrolled .site-header-inner:hover::before {
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 60%, transparent), 0 16px 40px -8px color-mix(in srgb, var(--ink) 20%, transparent);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 60%, transparent), 0 16px 40px -8px color-mix(in srgb, #000000 20%, transparent);
 }
 
 
@@ -187,7 +209,7 @@
   background: color-mix(in srgb, var(--frame) 85%, transparent);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 24px 64px -16px color-mix(in srgb, var(--ink) 25%, transparent), inset 0 0 0 1px color-mix(in srgb, #ffffff 10%, transparent);
+  box-shadow: 0 24px 64px -16px color-mix(in srgb, #000000 25%, transparent), inset 0 0 0 1px color-mix(in srgb, #ffffff 10%, transparent);
   
   /* Dynamic Island style entrance */
   opacity: 1;
@@ -272,7 +294,7 @@
   gap: clamp(8px, 1.4vw, 16px);
 }
 
-/* primary "let's talk" CTA — routes to the footer where socials + email live */
+/* primary "let's talk" CTA — ultra-modern dark glass */
 .header-cta {
   display: inline-flex;
   align-items: center;
@@ -280,25 +302,55 @@
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 500;
-  color: var(--accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 40%, transparent), 0 2px 8px -2px color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--paper); /* High contrast inverse text */
+  background: color-mix(in srgb, var(--ink) 90%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 7px 16px;
+  text-decoration: none;
   border-radius: 999px;
-  padding: 6px 14px;
-  white-space: nowrap;
-  transition: all 0.3s var(--ease-spring);
+  border: 1px solid color-mix(in srgb, var(--paper) 15%, transparent);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  flex: 0 0 auto;
+  
+  box-shadow: 
+    0 4px 12px -4px color-mix(in srgb, #000000 25%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 15%, transparent);
+    
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-spring), background 0.3s ease;
 }
+
+/* Subtle top-light gradient for volume */
+.header-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, #ffffff 10%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
 .header-cta svg {
   width: 15px;
   height: 15px;
   flex: 0 0 auto;
 }
+
 .header-cta:hover {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 50%, transparent), 0 4px 16px -4px color-mix(in srgb, var(--accent) 40%, transparent);
-  transform: translateY(-1.5px);
+  transform: translateY(-2px) scale(1.02);
+  background: var(--ink);
+  box-shadow: 
+    0 12px 24px -8px color-mix(in srgb, #000000 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent);
+}
+
+.header-cta:hover::after {
+  opacity: 1;
 }
 
 /* On phones the floating pill is too narrow to hold the wordmark, a section
@@ -333,6 +385,18 @@
   }
 }
 
+/* The header pill is fixed at the top, so its backdrop-filter is active through
+   every scroll. Its scrolled state ramps to blur(40px) — costly on mobile GPUs.
+   Cap it on phones; at this size the difference is imperceptible but the per-frame
+   cost drops sharply, helping the page glide. */
+@media (max-width: 768px) {
+  .site-header-inner::before,
+  .site-header.is-scrolled .site-header-inner::before {
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+  }
+}
+
 /* land section anchors below the floating header */
 #featured,
 #toolkit,
@@ -342,31 +406,4 @@
 }
 #contact {
   scroll-margin-top: 80px;
-}
-
-/* --- Modern Header "Flat at Top" Override ---
-   When the header is at the top of the page (not scrolled), we remove the backgrounds
-   and borders from all the inner buttons so the header sits perfectly flat and 
-   seamlessly against the hero background. When scrolled, the floating pill activates
-   and the buttons regain their structure. */
-.site-header:not(.is-scrolled) .section-menu-btn,
-.site-header:not(.is-scrolled) .header-cta,
-.site-header:not(.is-scrolled) .resume-btn,
-.site-header:not(.is-scrolled) .theme-btn,
-.site-header:not(.is-scrolled) .header-back-btn {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-/* Allow subtle hover states even when at the top */
-.site-header:not(.is-scrolled) .section-menu-btn:hover,
-.site-header:not(.is-scrolled) .theme-btn:hover,
-.site-header:not(.is-scrolled) .resume-btn:hover,
-.site-header:not(.is-scrolled) .header-back-btn:hover {
-  background: color-mix(in srgb, var(--faint) 10%, transparent);
-}
-
-.site-header:not(.is-scrolled) .header-cta:hover {
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }

@@ -13,8 +13,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.9",
+    "@astrojs/sitemap": "3.2.1",
     "@rollup/plugin-yaml": "^4.1.2",
     "@vercel/analytics": "^2.0.1",
     "astro": "^4.16.18"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.9.3"
   }
 }

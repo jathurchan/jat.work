@@ -31,11 +31,28 @@ class FluidSimulation {
   private lastScrollY = 0;
   private running = false;
   private reduceMotion = false;
+  // Last viewport width we sized the canvas for. iOS Safari fires `resize` on
+  // every URL-bar slide (height changes, width doesn't); we use this to ignore
+  // those so the blurred backdrop isn't cleared and re-rasterised mid-scroll.
+  private lastVw = 0;
+  private resizeTimer = 0;
   // Cap the backdrop's pixel density: it's blurred to a haze, so full retina
   // resolution is wasted work. 1.5 keeps it crisp enough and cheap.
   private dpr = 1;
   private vw = 0;
   private vh = 0;
+  // Mobile / touch devices pay a heavy price for this layer: a viewport-fixed
+  // canvas repainting every frame *under* a big CSS blur forces Safari to
+  // re-rasterise the whole blurred field every frame. Rather than stop painting
+  // during scroll (which made the fixed, blurred — and therefore compositor-
+  // promoted — layer get evicted and vanish mid-scroll on iOS, then snap back),
+  // we keep painting continuously but make each frame cheap: a low-resolution
+  // backing store that CSS upscales (a free, natural softening) plus a capped
+  // frame rate. A layer that is always painted is never dropped.
+  private isMobile = false;
+  private isCoarse = false;
+  private frameInterval = 0; // ms between frames; 0 = uncapped (desktop)
+  private lastFrameTime = 0;
 
   constructor() {
     this.canvas = document.getElementById('fluid-canvas') as HTMLCanvasElement;
@@ -44,7 +61,20 @@ class FluidSimulation {
     this.ctx = this.canvas.getContext('2d', { alpha: true }) as CanvasRenderingContext2D;
     this.lastScrollY = window.scrollY;
     this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    this.isMobile = window.innerWidth < 768 || this.isCoarse;
+    // Touch devices render the backdrop at ~0.6× and let CSS scale it back up:
+    // the upscale softens it for free, and the smaller backing store keeps each
+    // frame cheap enough to paint continuously through a scroll without jank.
+    // Narrow non-touch windows stay at 1×; desktops use capped retina density.
+    this.dpr = this.isCoarse
+      ? 0.6
+      : this.isMobile
+        ? 1
+        : Math.min(window.devicePixelRatio || 1, 1.5);
+    // ~30fps on mobile: the orbs drift slowly, so halving the repaints (and thus
+    // the blur re-rasterisations) is imperceptible but roughly halves GPU cost.
+    this.frameInterval = this.isMobile ? 1000 / 30 : 0;
 
     const css = getComputedStyle(document.documentElement);
     const blue = css.getPropertyValue('--g-blue').trim() || '#4285F4';
@@ -55,6 +85,7 @@ class FluidSimulation {
     this.colors = [blue, green, blue, green, blue, red, green, yellow];
 
     this.resize = this.resize.bind(this);
+    this.onViewportChange = this.onViewportChange.bind(this);
     this.animate = this.animate.bind(this);
     this.handlePointerMove = this.handlePointerMove.bind(this);
     this.handlePointerLeave = this.handlePointerLeave.bind(this);
@@ -65,13 +96,16 @@ class FluidSimulation {
   }
 
   private init() {
+    this.lastVw = window.innerWidth;
     this.resize();
     this.createOrbs();
 
-    bindGlobal(window, 'resize', this.resize);
+    bindGlobal(window, 'resize', this.onViewportChange);
     bindGlobal(window, 'scroll', this.handleScroll, { passive: true });
     bindGlobal(document, 'visibilitychange', this.handleVisibility);
-    if (!this.reduceMotion) {
+    // The orb-push reaction needs a hovering cursor; on touch there isn't one,
+    // and the listener would only add work, so skip it on coarse pointers.
+    if (!this.reduceMotion && !this.isCoarse) {
       bindGlobal(window, 'pointermove', this.handlePointerMove, { passive: true });
       bindGlobal(window, 'pointerleave', this.handlePointerLeave);
     }
@@ -90,6 +124,7 @@ class FluidSimulation {
     if (this.running) return;
     this.running = true;
     this.lastScrollY = window.scrollY;
+    this.lastFrameTime = performance.now();
     this.animationFrame = requestAnimationFrame(this.animate);
   }
 
@@ -99,6 +134,29 @@ class FluidSimulation {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = 0;
     }
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = 0;
+    }
+  }
+
+  /**
+   * iOS Safari fires a stream of `resize` events as its URL/toolbar slides in
+   * and out during a scroll or a pull-to-refresh rubber-band — the width never
+   * moves, only the height. Re-sizing the canvas on each of those clears its
+   * backing store and forces the heavy CSS blur to re-rasterise the whole field,
+   * which reads as the background flickering / jumping (the bug). The layer is a
+   * soft, CSS-stretched colour haze, so a few pixels of height change needs no
+   * redraw at all. On touch devices we therefore ignore height-only changes and
+   * act only on a real width change (an orientation flip); a short debounce
+   * coalesces the burst on every platform.
+   */
+  private onViewportChange() {
+    const w = window.innerWidth;
+    if (this.isCoarse && w === this.lastVw) return;
+    this.lastVw = w;
+    if (this.resizeTimer) clearTimeout(this.resizeTimer);
+    this.resizeTimer = window.setTimeout(this.resize, 150);
   }
 
   private handleVisibility() {
@@ -120,7 +178,7 @@ class FluidSimulation {
   }
 
   private createOrbs() {
-    const isMobile = this.vw < 768;
+    const isMobile = this.isMobile;
     const numOrbs = isMobile ? 7 : 12;
     this.orbs = [];
 
@@ -214,10 +272,21 @@ class FluidSimulation {
     }
   }
 
-  private animate() {
+  private animate(now: number) {
     if (!this.running) return;
-    this.renderFrame(1);
     this.animationFrame = requestAnimationFrame(this.animate);
+
+    if (this.frameInterval > 0) {
+      // Throttle to the target cadence. Scale `motion` by elapsed real time so
+      // the drift speed stays identical to an uncapped 60fps run; clamp it so a
+      // dropped frame can't make the orbs jump.
+      const elapsed = now - this.lastFrameTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastFrameTime = now - (elapsed % this.frameInterval);
+      this.renderFrame(Math.min(elapsed / 16.67, 3));
+    } else {
+      this.renderFrame(1);
+    }
   }
 }
 

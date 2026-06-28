@@ -21,6 +21,7 @@ const year = new Date().getFullYear();
                   href={s.href}
                   class="footer-icon"
                   aria-label={s.label}
+                  data-magnetic
                   {...(s.external ? { target: '_blank', rel: 'noopener' } : {})}
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={socialIcons[s.icon]} />

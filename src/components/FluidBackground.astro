@@ -10,6 +10,8 @@
   <canvas id="fluid-canvas"></canvas>
 </div>
 <div class="page-bg-grid" aria-hidden="true"></div>
+<!-- GPU-friendly vignette overlay replaces expensive CSS masks -->
+<div class="page-vignette" aria-hidden="true"></div>
 
 <style>
   .fluid-bg {
@@ -19,19 +21,36 @@
     pointer-events: none;
     overflow: hidden;
     /* Blur turns the orbs into soft colour fields; saturation keeps the brand
-       hues alive through the heavy blur. */
-    filter: blur(64px) saturate(125%);
-    opacity: 0.58;
-    /* A soft vignette so colour pools toward the edges and thins through the
-       central reading column — keeps copy legible without a hard mask edge. */
-    -webkit-mask-image: radial-gradient(125% 120% at 50% 28%, #000 36%, color-mix(in srgb, #000 55%, transparent) 100%);
-    mask-image: radial-gradient(125% 120% at 50% 28%, #000 36%, color-mix(in srgb, #000 55%, transparent) 100%);
+       hues alive through the heavy blur. Over near-white paper the colour reads
+       fainter than over charcoal, so light mode runs a touch more opaque/saturated
+       to keep the two modes balanced. */
+    filter: blur(64px) saturate(132%);
+    opacity: 0.68;
+    /* Note: deliberately NOT force-promoted with translateZ. A fixed, blurred
+       (already compositor-promoted) layer that gets an explicit GPU layer is the
+       exact recipe iOS Safari evicts mid-scroll — the backdrop would vanish and
+       snap back. Letting the filter manage its own layer, and painting the canvas
+       continuously (fluid.ts), keeps it stable. */
   }
 
   :global(:root[data-theme="dark"]) .fluid-bg {
     /* Charcoal carries the colour better — let it read a touch stronger. */
     opacity: 0.62;
     filter: blur(68px) saturate(135%);
+  }
+
+  /* On phones the blur is re-rasterised every animation frame, and a large
+     Gaussian kernel is the dominant GPU cost. The low-resolution canvas (0.6×,
+     CSS-upscaled in fluid.ts) already softens the field, so a smaller radius
+     still reads as a smooth colour haze while keeping the layer cheap and small
+     — small enough that iOS won't drop it during a scroll. */
+  @media (max-width: 768px) {
+    .fluid-bg {
+      filter: blur(30px) saturate(120%);
+    }
+    :global(:root[data-theme="dark"]) .fluid-bg {
+      filter: blur(32px) saturate(130%);
+    }
   }
 
   #fluid-canvas {
@@ -44,17 +63,27 @@
   .page-bg-grid {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     pointer-events: none;
     background-size: 46px 46px;
     background-image:
       linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
       linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
-    /* Fade the grid out at every edge so it reads as ambient texture, not a
-       rectangle pinned to the viewport. */
-    -webkit-mask-image: radial-gradient(135% 130% at 50% 24%, #000 30%, transparent 88%);
-    mask-image: radial-gradient(135% 130% at 50% 24%, #000 30%, transparent 88%);
     opacity: 0.55;
+  }
+  
+  .page-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* This solid-color gradient overlay fakes the mask effect without using
+       the catastrophic GPU cost of CSS mask-image on fixed/blurred layers. */
+    background: radial-gradient(
+      135% 130% at 50% 24%, 
+      transparent 30%, 
+      color-mix(in srgb, var(--paper) 95%, transparent) 90%
+    );
   }
 
   :global(:root[data-theme="dark"]) .page-bg-grid {

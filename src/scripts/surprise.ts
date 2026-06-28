@@ -69,12 +69,19 @@ export function initSurprise() {
   if (!btn || !reel || !labelEl || !icoEl) return;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Touch devices have no hover, so the roulette never got to *show* its pick —
+  // a tap just teleported you to a random section. On coarse pointers we drive
+  // the wheel from the tap instead (see the bindings at the foot of this fn).
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
 
   let mode: Mode = 'idle';
   let target: Destination | null = null; // the one section this hover landed on
   let i = Math.floor(Math.random() * DESTINATIONS.length);
+  // Touch only: when set, the wheel travels to its pick the moment it lands.
+  let travelOnLand = false;
 
   let arriveTimer = 0;
+  let idleResetTimer = 0;
   const spinTimers = new Set<number>();
   const clearSpin = () => {
     spinTimers.forEach((t) => clearTimeout(t));
@@ -82,6 +89,9 @@ export function initSurprise() {
   };
   const clearArrive = () => {
     if (arriveTimer) { clearTimeout(arriveTimer); arriveTimer = 0; }
+  };
+  const clearIdleReset = () => {
+    if (idleResetTimer) { clearTimeout(idleResetTimer); idleResetTimer = 0; }
   };
 
   const pick = () => DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
@@ -125,6 +135,14 @@ export function initSurprise() {
     flip();
     btn.classList.remove('is-rolling');
     btn.classList.add('is-locked');
+    // Touch: the wheel has visibly settled on its pick — now glide there, then
+    // return to the idle "Explore" prompt so the next tap rolls a fresh one.
+    if (travelOnLand) {
+      travelOnLand = false;
+      travel(target);
+      clearIdleReset();
+      idleResetTimer = window.setTimeout(reset, ARRIVE_MS);
+    }
   };
 
   // One roll → settles on exactly one destination (`target`). The pick is fixed
@@ -188,11 +206,32 @@ export function initSurprise() {
     arriveTimer = window.setTimeout(() => travel(dest), 170);
   };
 
-  btn.addEventListener('pointerenter', roll);
-  btn.addEventListener('focus', roll);
-  btn.addEventListener('pointerleave', reset);
-  btn.addEventListener('blur', reset);
-  btn.addEventListener('click', go);
+  if (coarse) {
+    // Touch: a tap spins the wheel and travels once it lands, so you actually
+    // see which section "I'm feeling lucky" chose on the way there. A second tap
+    // mid-spin skips ahead and goes immediately; tapping a settled pick re-visits
+    // it. Hover/focus rolls are skipped — there's no hover, and `focus` fires on
+    // tap, which would start a spin the click then cut short.
+    btn.addEventListener('click', () => {
+      if (mode === 'idle') {
+        clearIdleReset();
+        travelOnLand = true;
+        roll(); // reduced-motion lands synchronously and travels at once
+      } else if (mode === 'rolling') {
+        clearSpin();
+        travelOnLand = true;
+        land();
+      } else if (target) {
+        travel(target);
+      }
+    });
+  } else {
+    btn.addEventListener('pointerenter', roll);
+    btn.addEventListener('focus', roll);
+    btn.addEventListener('pointerleave', reset);
+    btn.addEventListener('blur', reset);
+    btn.addEventListener('click', go);
+  }
 
   showIdle(); // seed the colourful sparkle at rest
 
@@ -201,5 +240,6 @@ export function initSurprise() {
   trackTeardown(() => {
     clearSpin();
     clearArrive();
+    clearIdleReset();
   });
 }

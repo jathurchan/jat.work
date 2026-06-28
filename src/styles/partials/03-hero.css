@@ -47,6 +47,18 @@
   animation-delay: calc(0.2s + (var(--stagger, 0) * 0.1s));
 }
 
+/* Honour reduced-motion: these load-timer entrances start at opacity:0, so just
+   showing their final state (no slide/fade) keeps content visible without motion.
+   Defined here, after the animations, so it wins the cascade. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-down,
+  .stagger-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* Below-the-fold sections rise as they actually scroll into view. (These used to
    be `.reveal` load-timer animations that fired while still off-screen, so the
    entrance was already over by the time you reached them.) Progressive
@@ -319,8 +331,8 @@
   -webkit-backdrop-filter: blur(20px) saturate(185%);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
-    inset 0 -1px 3px color-mix(in srgb, var(--ink) 5%, transparent),
-    0 10px 30px -12px color-mix(in srgb, var(--ink) 32%, transparent),
+    inset 0 -1px 3px color-mix(in srgb, #000000 5%, transparent),
+    0 10px 30px -12px color-mix(in srgb, #000000 32%, transparent),
     /* a faint resting halo in the live accent so the pill always reads as the
        primary action, even before hover */
     0 8px 26px -14px color-mix(in srgb, var(--c) 45%, transparent);
@@ -645,7 +657,7 @@
   background: var(--glass-sheen), var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, var(--ink) 14%, transparent);
+  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, #000000 14%, transparent);
   opacity: 0;
   transform: translateY(40px) scale(0.95);
   transition: opacity 0.8s var(--ease-spring), transform 0.8s var(--ease-spring),
@@ -1063,7 +1075,7 @@
   font-weight: 600;
   color: var(--ink);
   text-decoration: none;
-  box-shadow: var(--glass-edge), 0 6px 18px -8px color-mix(in srgb, var(--ink) 22%, transparent);
+  box-shadow: var(--glass-edge), 0 6px 18px -8px color-mix(in srgb, #000000 22%, transparent);
   transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-out), border-color 0.3s ease;
   width: max-content;
 }
@@ -1205,7 +1217,7 @@ body.raftlock-open {
   /* a recessed "screen" inset into the panel */
   background: color-mix(in srgb, var(--paper) 60%, transparent);
   border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
-  box-shadow: inset 0 2px 18px color-mix(in srgb, var(--ink) 7%, transparent);
+  box-shadow: inset 0 2px 18px color-mix(in srgb, #000000 7%, transparent);
 }
 .rl-stage-grid {
   position: absolute;

@@ -366,7 +366,7 @@
     linear-gradient(145deg, var(--glass-fill) 0%, color-mix(in srgb, var(--brand) 7%, var(--glass-fill)) 100%);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, #000000 12%, transparent);
   transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
   animation: route-card-in linear both;
   animation-timeline: view();

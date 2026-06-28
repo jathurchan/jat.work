@@ -312,7 +312,7 @@
     var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 12px 32px -16px color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: var(--glass-edge), 0 12px 32px -16px color-mix(in srgb, #000000 12%, transparent);
   transition: transform 0.4s var(--ease-spring),
               border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
   animation: reveal-card linear both;

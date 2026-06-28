@@ -30,6 +30,19 @@
   opacity: 0.55;
   z-index: 1;
 }
+/* Ambient horizon glow grounding the end of the site */
+.site-footer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 400px;
+  background: radial-gradient(circle at bottom center, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 .footer-parallax {
   flex: 1;
   display: flex;
@@ -69,29 +82,55 @@
   align-items: center;
   gap: 24px;
 }
+/* Ultra-modern dark glass footer CTA */
 .footer-email-btn {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: clamp(16px, 2vw, 20px);
-  color: var(--accent);
+  color: var(--paper); /* High contrast inverse text */
   text-decoration: none;
-  padding: 12px 32px;
+  padding: 14px 34px;
   border-radius: 99px;
-  /* Frosted glass, tinted toward the accent so it still reads as the contact CTA. */
-  background: var(--glass-sheen), color-mix(in srgb, var(--accent) 9%, var(--glass-fill));
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--glass-border));
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 8px 24px -14px color-mix(in srgb, var(--accent) 40%, transparent);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  background: color-mix(in srgb, var(--ink) 90%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--paper) 15%, transparent);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  
+  box-shadow: 
+    0 8px 24px -12px color-mix(in srgb, #000000 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 15%, transparent);
+    
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-spring), background 0.3s ease;
 }
+
+/* Subtle top-light gradient for volume */
+.footer-email-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, #ffffff 10%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
 .footer-email-btn:hover {
-  transform: translate3d(0, -4px, 0);
-  background: var(--glass-sheen), color-mix(in srgb, var(--accent) 16%, var(--glass-fill));
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  box-shadow: var(--glass-edge), 0 0 32px -4px color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: translateY(-4px) scale(1.02);
+  background: var(--ink);
+  box-shadow: 
+    0 24px 48px -16px color-mix(in srgb, #000000 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent);
+}
+
+.footer-email-btn:hover::after {
+  opacity: 1;
 }
 .footer-email-btn .arrow {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);

@@ -7,9 +7,17 @@ import Analytics from '@vercel/analytics/astro';
 interface Props {
   title?: string;
   description?: string;
+  /** Open Graph object type. Posts pass "article"; everything else is a site. */
+  ogType?: 'website' | 'article';
 }
 
-const { title = meta.title, description = meta.description } = Astro.props;
+const { title = meta.title, description = meta.description, ogType = 'website' } = Astro.props;
+
+// Canonical URL for this page: absolute, normalised to the path only (no query
+// or hash) so every page advertises a single self-referential canonical and a
+// matching og:url — previously every page shared the site root, which is wrong
+// for posts and weakens sharing/SEO.
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
@@ -18,6 +26,17 @@ const { title = meta.title, description = meta.description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#fcfcfc" />
+    <style is:inline>
+      /* Cold-load FOUC guard. Every icon on the site is an inline <svg> with
+         only a viewBox (no width/height attribute); the main stylesheet — a
+         large, render-blocking file — sizes each one. If that sheet is slow to
+         arrive, fails, or is mid-swap during a reload, browsers fall back to the
+         SVG default of 300x150 and the icons flash as giant glyphs (the stray
+         "chat bubble" and friends). Bounding any unsized SVG to a 1em box keeps
+         that from ever happening. :where() gives this zero specificity, so the
+         real per-icon rules win the instant the stylesheet applies. */
+      :where(svg:not([width])) { width: 1em; height: 1em; }
+    </style>
     <script is:inline>
       (function() {
         // Apply the saved/preferred theme before first paint. Crucially, re-apply
@@ -51,12 +70,17 @@ const { title = meta.title, description = meta.description } = Astro.props;
     <meta name="description" content={description} />
     <meta name="author" content="Jathurchan Selvakumar" />
     <link rel="icon" href="/favicon.svg?v=1" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={Astro.site} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og-image.jpg', Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/og-image.jpg', Astro.site)} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
