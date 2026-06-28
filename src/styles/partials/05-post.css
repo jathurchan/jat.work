@@ -275,3 +275,17 @@
   color: var(--accent);
 }
 
+/* Reading-entrance: the post date, title, blurb and prose rise in on load.
+   (Shared `.rise` utility — used by the article layout. Lives here next to its
+   only consumer; honours reduced-motion.) */
+@keyframes risein {
+  0% { opacity: 0; transform: translateY(20px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.rise {
+  animation: risein 0.8s var(--ease-spring) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+}
+

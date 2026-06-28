@@ -15,12 +15,13 @@ import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
 import { initSectionNav, initHeaderScroll } from './nav';
 import { initRouteProgress } from './route';
-import { initName, initToolkitPulse, initName3D } from './hero';
+import { initName, initToolkitPulse, initName3D, initHeroParallax, initPillarAuras } from './hero';
 import { initSurprise } from './surprise';
 import { initMagnetic } from './magnetic';
 import { initSpotlight } from './spotlight';
 import { initScrollFallback } from './fallback';
 import { initCursor } from './cursor';
+import { initFluid } from './fluid';
 
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
@@ -28,11 +29,13 @@ if ('scrollRestoration' in history) {
 window.scrollTo(0, 0);
 
 function boot() {
+  initFluid();
   initHeaderScroll();
   initName();
   initName3D();
+  initHeroParallax();
+  initPillarAuras();
   initSurprise();
-  initCursor();
   initMagnetic();
   initSpotlight();
   initTeaser();

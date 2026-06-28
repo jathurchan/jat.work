@@ -19,14 +19,22 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
       </h1>
 
       {/* One statement: role + focus, merged. "Google" has a sleek gradient,
-          and focus areas are modern interactive chips. */}
-      <h2 class="hero-statement reveal reveal-delay-2">
-        {rolePrefix}{company ? (
-          <span class="hero-company" aria-label={company}>{company}</span>
-        ) : null}<span class="hero-stmt-focus">{', obsessed with '}{intro.pillars.map((p, i) => {
+          and focus areas are modern interactive chips. Staggered reveal for polish. */}
+      {/* Punctuation hugs the preceding word (comma sits inside Google's span;
+          each pillar carries its trailing separator) so a line wrap never starts
+          a line with a stray comma. */}
+      <h2 class="hero-statement" aria-label={intro.statementLead + ", obsessed with " + intro.pillars.map(p => p.label).join(", ")}>
+        <span class="stagger-reveal" style="--stagger: 1" aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
+          <> <span class="stagger-reveal" style="--stagger: 2" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
+        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> <span class="stagger-reveal" style="--stagger: 3">{company ? 'obsessed with' : ', obsessed with'}</span> {intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;
-          const sep = i === 0 ? '' : isLast ? ' and ' : ', ';
-          return (<>{sep}<span class="pillar" style={`--c:${p.color}`}>{p.label}</span>{isLast ? '.' : ''}</>);
+          const isSecondLast = i === intro.pillars.length - 2;
+          // Punctuation that must stay glued to this pillar (never lead a line),
+          // kept in a nowrap group with the inline-block pillar; the separator
+          // after the group is where a line is allowed to break.
+          const hug = isLast ? '.' : isSecondLast ? '' : ',';
+          const after = isLast ? '' : isSecondLast ? ' and ' : ' ';
+          return (<><span class="pillar-wrap"><span class="pillar stagger-reveal" style={`--c:${p.color}; --stagger: ${4 + i}`}>{p.label}</span>{hug}</span>{after}</>);
         })}</span>
       </h2>
 

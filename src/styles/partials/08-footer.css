@@ -1,27 +1,33 @@
 /* ---- footer ---- */
 .site-footer {
   position: relative;
-  margin-top: var(--space-lg);
-  background: color-mix(in srgb, var(--frame) 80%, var(--paper));
-  border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  margin-top: var(--space-xl);
+  /* No solid panel + hard border: that hid the page-wide ambient backdrop and
+     made the footer "cut" abruptly from the feed. A soft top-down frame tint
+     instead, so the aurora + grid stay continuous through the footer. */
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--frame) 55%, transparent) 22%
+  );
   overflow: hidden;
-  min-height: 80vh;
+  min-height: clamp(520px, 64vh, 720px);
   display: flex;
   flex-direction: column;
 }
-/* Ultra-modern ambient edge glow separator */
+/* Ambient edge glow separator — a soft line of light, no hard 1px border. */
 .site-footer::before {
   content: '';
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%;
-  max-width: 800px;
+  width: 70%;
+  max-width: 760px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--accent) 30%, transparent);
-  opacity: 0.8;
+  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--accent) 22%, transparent);
+  opacity: 0.55;
   z-index: 1;
 }
 .footer-parallax {
@@ -201,8 +207,7 @@
 }
 
 a:focus-visible,
-button:focus-visible,
-.feat-vis:focus-visible {
+button:focus-visible {
   outline: 2.5px solid var(--accent);
   outline-offset: 3px;
   border-radius: 6px;

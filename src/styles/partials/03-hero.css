@@ -40,6 +40,31 @@
 .reveal-delay-5 { animation-delay: 0.5s; }
 .reveal-delay-6 { animation-delay: 0.6s; }
 
+.stagger-reveal {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: calc(0.2s + (var(--stagger, 0) * 0.1s));
+}
+
+/* Below-the-fold sections rise as they actually scroll into view. (These used to
+   be `.reveal` load-timer animations that fired while still off-screen, so the
+   entrance was already over by the time you reached them.) Progressive
+   enhancement: with no scroll-timeline support the content is simply shown. */
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .section-rise {
+      animation: section-rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 32%;
+    }
+  }
+}
+@keyframes section-rise-in {
+  from { opacity: 0; transform: translateY(48px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(36px) scale(0.96); filter: blur(10px); }
   to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
@@ -58,7 +83,9 @@
   align-items: center;
   text-align: center;
   gap: var(--space-lg);
-  padding-top: var(--space-md);
+  /* No per-section top padding: every content section is separated purely by the
+     `.content` flex gap, so the vertical rhythm is identical top to bottom. */
+  padding-top: 0;
   padding-bottom: 0;
   max-width: 1040px;
   margin: 0 auto;
@@ -152,7 +179,7 @@
   font-weight: 500;
   color: var(--sub);
 }
-/* "Google" styled as a sleek, animated gradient text. */
+/* "Google" styled as a sleek, animated liquid gradient text. */
 .hero-company {
   display: inline-block;
   font-family: inherit;
@@ -160,21 +187,49 @@
   letter-spacing: -0.005em;
   white-space: nowrap;
   color: transparent;
-  background: linear-gradient(90deg, var(--g-blue), var(--g-red), var(--g-yellow), var(--g-blue), var(--g-green), var(--g-red));
-  background-size: 200% auto;
+  background: linear-gradient(
+    90deg, 
+    var(--g-blue) 0%, 
+    var(--g-green) 25%, 
+    var(--g-yellow) 50%, 
+    var(--g-red) 75%, 
+    var(--g-blue) 100%
+  );
+  background-size: 300% auto;
   background-clip: text;
   -webkit-background-clip: text;
-  animation: shine 6s linear infinite;
+  animation: shineLiquid 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   transition: transform 0.4s var(--ease-spring), filter 0.4s ease;
 }
 .hero-company:hover {
   transform: translateY(-2px) scale(1.02);
   filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--g-blue) 30%, transparent));
 }
-@keyframes shine {
-  to { background-position: 200% center; }
+@keyframes shineLiquid {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
+.pillar-aura {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform, opacity, background-color, box-shadow;
+  filter: blur(40px);
+}
+
+/* Keeps a focus-area term glued to its trailing punctuation, so a wrap never
+   drops a stray comma/period to the start of the next line. */
+.pillar-wrap {
+  white-space: nowrap;
+}
 .pillar {
   position: relative;
   white-space: nowrap;
@@ -553,7 +608,6 @@
   flex-direction: column;
   align-items: center;
   gap: 18px;
-  margin-top: var(--space-4);
 }
 /* personal lead-in above the skills rail (mirrors the featured lead-in) */
 .hero-skills-lead {
@@ -953,7 +1007,9 @@
 .hw-title.gradient-text {
   margin: 0 0 16px 0;
   font-family: var(--font-sans);
-  font-size: 52px;
+  /* Fluid so it never overflows / clips under the header on small cards (was a
+     fixed 52px that a more-specific selector kept locked even on phones). */
+  font-size: clamp(30px, 5.5vw, 52px);
   font-weight: 800;
   line-height: 1.1;
   background: linear-gradient(to right, var(--ink), color-mix(in srgb, var(--ink) 50%, transparent));
@@ -1360,107 +1416,5 @@ body.raftlock-open {
   .rl-modal { transition: opacity 0.2s ease; }
   .rl-modal { transform: none; }
   .nm-drop { transition: none; }
-  /* Hold the drifting aurora still rather than animating it endlessly. */
-  .page-bg-aurora { animation: none; }
-  /* Focus-area underlines appear without the draw-in sweep. */
-  .pillar::after { animation: none; transform: scaleX(1); }
-}
-.hero-portrait {
-  position: relative;
-  width: 100%;
-  align-self: end;
-}
-.hero-portrait-glow {
-  position: absolute;
-  left: 50%;
-  top: -2%;
-  transform: translateX(-50%);
-  width: 116%;
-  height: 90%;
-  background: radial-gradient(
-    ellipse 50% 52% at 50% 40%,
-    color-mix(in srgb, var(--accent-soft) 80%, transparent),
-    transparent 72%
-  );
-  z-index: 0;
-  pointer-events: none;
-}
-.hero-portrait .portrait {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: saturate(0.96) contrast(1.02)
-    drop-shadow(0 10px 16px color-mix(in srgb, var(--ink) 16%, transparent));
-}
-
-/* signature: faint divider with a slow signal sweep */
-.hero-pulse {
-  position: relative;
-  height: 1px;
-  margin: 0 clamp(32px, 6vw, 80px);
-  background: var(--line);
-  overflow: hidden;
-}
-.hero-pulse::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -16%;
-  height: 100%;
-  width: 16%;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  animation: pulse-sweep 5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-@keyframes pulse-sweep {
-  0% {
-    left: -16%;
-  }
-  60%,
-  100% {
-    left: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-  .hero-visuals {
-    order: -1;
-  }
-  .cluster-glass-container {
-    height: 300px;
-  }
-}
-
-/* ---- intro animations ---- */
-@keyframes risein {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes portin {
-  0% {
-    opacity: 0;
-    transform: translateY(24px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.rise {
-  animation: risein 0.8s var(--ease-spring) both;
-}
-.portrait {
-  animation: portin 0.9s var(--ease-spring) 0.1s both;
 }
 

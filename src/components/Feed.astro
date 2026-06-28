@@ -48,11 +48,24 @@ const partLabel = (title: string) => {
 
 // How many cards show before "Load more posts" reveals the next batch.
 const PAGE_SIZE = 6;
+
+// Content-aware toolbar: only surface controls that match what's actually
+// published, so the rail grows with the writing instead of showing dead filters.
+//   • topic tabs appear once there are ≥2 topics to choose between
+//   • search appears once there are more posts than fit on one page
+// (Today the feed is a single distributed-systems series, so both stay hidden.)
+const presentFilters = filters.filter(
+  (f) => f.id !== 'all' && entries.some((e) => (e.data.tags ?? []).includes(f.id)),
+);
+const showFilters = presentFilters.length >= 2;
+const visibleFilters = showFilters ? [filters.find((f) => f.id === 'all')!, ...presentFilters] : [];
+const showSearch = entries.length > PAGE_SIZE;
+const showToolbar = showFilters || showSearch;
 ---
 
 {/* ---------- Writing Section ---------- */}
 <section id="writing" class="lab-section">
-  <div class="section-lead">
+  <div class="section-lead section-rise">
     <span class="featured-eyebrow">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['writing'] ?? ''} />
       {lab.eyebrow}
@@ -61,26 +74,33 @@ const PAGE_SIZE = 6;
   </div>
 
   {/* Terminal-style filter rail with a live result count (mirrors the hero's
-      monospace, HUD-flavoured voice). */}
-  <div class="lab-toolbar">
-    <div class="ftabs" role="group" aria-label="Filter by topic">
-      <span class="ftabs-prompt" aria-hidden="true">~/</span>
-      {
-        filters.map((f) => (
-          <button class="ftab" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'} style={f.color ? `--accent: ${f.color}` : ''}>
-            {f.label}
-          </button>
-        ))
-      }
-    </div>
-    <div class="lab-toolbar-end">
-      <div class="lab-search">
-        <svg class="lab-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
-        <input type="search" id="jw-search" class="lab-search-input" placeholder="grep posts…" aria-label="Search posts by title, summary, or topic" autocomplete="off" spellcheck="false" />
+      monospace, HUD-flavoured voice). Controls only appear once the content
+      warrants them — see showFilters / showSearch above. */}
+  {showToolbar && (
+    <div class="lab-toolbar">
+      {showFilters ? (
+        <div class="ftabs" role="group" aria-label="Filter by topic">
+          <span class="ftabs-prompt" aria-hidden="true">~/</span>
+          {visibleFilters.map((f) => (
+            <button class="ftab" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'} style={f.color ? `--accent: ${f.color}` : ''}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <span />
+      )}
+      <div class="lab-toolbar-end">
+        {showSearch && (
+          <div class="lab-search">
+            <svg class="lab-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <input type="search" id="jw-search" class="lab-search-input" placeholder="grep posts…" aria-label="Search posts by title, summary, or topic" autocomplete="off" spellcheck="false" />
+          </div>
+        )}
+        <span class="lab-count" id="jw-labcount" aria-live="polite">{entries.length} posts</span>
       </div>
-      <span class="lab-count" id="jw-labcount" aria-live="polite">{entries.length} posts</span>
     </div>
-  </div>
+  )}
 
   <div class="lab-grid" id="jw-worklist" data-page-size={PAGE_SIZE}>
     {entries.length === 0 ? (

@@ -1,5 +1,5 @@
 // Hero niceties: the name collapse and the toolkit scroll-reveal.
-import { trackTeardown } from './lifecycle';
+import { trackTeardown, bindGlobal } from './lifecycle';
 
 /* ----------------------------------------------------------------------- *
  * Hero name: "Jathurchan" collapses to "Jat." — trailing letters shrink to
@@ -120,3 +120,95 @@ export function initName3D() {
     if (frame) cancelAnimationFrame(frame);
   });
 }
+
+export function initHeroParallax() {
+  const heroInner = document.querySelector<HTMLElement>('.hero-cinematic-header');
+  if (!heroInner) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let ticking = false;
+  const onScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        // Parallax translate down at 30% speed of scroll, fade out by 400px
+        const yPos = y * 0.3;
+        const opacity = Math.max(0, 1 - y / 400);
+        heroInner.style.transform = `translate3d(0, ${yPos}px, 0)`;
+        heroInner.style.opacity = opacity.toString();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  bindGlobal(window, 'scroll', onScroll, { passive: true });
+}
+
+export function initPillarAuras() {
+  const heroSection = document.querySelector<HTMLElement>('.hero');
+  const pillars = Array.from(document.querySelectorAll<HTMLElement>('.pillar'));
+  if (!heroSection || pillars.length === 0) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let aura = document.querySelector<HTMLElement>('.pillar-aura');
+  if (!aura) {
+    aura = document.createElement('div');
+    aura.className = 'pillar-aura';
+    heroSection.appendChild(aura);
+  }
+
+  let mouseX = 0, mouseY = 0;
+  let auraX = 0, auraY = 0;
+  let frame = 0;
+  let isActive = false;
+  let activeColor = '';
+
+  const loop = () => {
+    auraX += (mouseX - auraX) * 0.15;
+    auraY += (mouseY - auraY) * 0.15;
+    aura.style.transform = `translate3d(calc(${auraX}px - 50%), calc(${auraY}px - 50%), 0) scale(${isActive ? 1 : 0})`;
+    aura.style.opacity = isActive ? '0.6' : '0';
+    if (isActive) {
+      aura.style.backgroundColor = `color-mix(in srgb, ${activeColor} 40%, transparent)`;
+      aura.style.boxShadow = `0 0 60px 40px color-mix(in srgb, ${activeColor} 40%, transparent)`;
+    }
+    frame = requestAnimationFrame(loop);
+  };
+  frame = requestAnimationFrame(loop);
+
+  const onMouseMove = (e: MouseEvent) => {
+    const rect = heroSection.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  };
+
+  pillars.forEach(p => {
+    const onEnter = () => {
+      isActive = true;
+      activeColor = p.style.getPropertyValue('--c') || 'var(--accent)';
+    };
+    const onLeave = () => {
+      isActive = false;
+    };
+    p.addEventListener('mouseenter', onEnter);
+    p.addEventListener('mouseleave', onLeave);
+    trackTeardown(() => {
+      p.removeEventListener('mouseenter', onEnter);
+      p.removeEventListener('mouseleave', onLeave);
+    });
+  });
+
+  heroSection.addEventListener('mousemove', onMouseMove);
+
+  trackTeardown(() => {
+    heroSection.removeEventListener('mousemove', onMouseMove);
+    if (frame) cancelAnimationFrame(frame);
+    if (aura) aura.remove();
+  });
+}
+

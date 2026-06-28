@@ -1,0 +1,226 @@
+import { bindGlobal, trackTeardown } from './lifecycle';
+
+interface Orb {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  baseRadius: number;
+  color: string;
+  phase: number;
+}
+
+/* ---------------------------------------------------------------------------
+ * Page-wide ambient backdrop.
+ *
+ * A viewport-fixed canvas of soft, drifting colour orbs that sits behind the
+ * whole document (not just the hero) — so the page never "cuts" from a colourful
+ * top to a flat-white bottom, and the frosted-glass surfaces above finally have
+ * real colour to blur. Heavy CSS blur turns the orbs into gentle colour fields;
+ * this only simulates their slow motion + pointer/scroll reaction.
+ * ------------------------------------------------------------------------- */
+class FluidSimulation {
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  private orbs: Orb[] = [];
+  private mouse = { x: -9999, y: -9999, active: false };
+  private animationFrame = 0;
+  private colors: string[] = [];
+  private scrollVelocity = 0;
+  private lastScrollY = 0;
+  private running = false;
+  private reduceMotion = false;
+  // Cap the backdrop's pixel density: it's blurred to a haze, so full retina
+  // resolution is wasted work. 1.5 keeps it crisp enough and cheap.
+  private dpr = 1;
+  private vw = 0;
+  private vh = 0;
+
+  constructor() {
+    this.canvas = document.getElementById('fluid-canvas') as HTMLCanvasElement;
+    if (!this.canvas) return;
+
+    this.ctx = this.canvas.getContext('2d', { alpha: true }) as CanvasRenderingContext2D;
+    this.lastScrollY = window.scrollY;
+    this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+    const css = getComputedStyle(document.documentElement);
+    const blue = css.getPropertyValue('--g-blue').trim() || '#4285F4';
+    const red = css.getPropertyValue('--g-red').trim() || '#EA4335';
+    const yellow = css.getPropertyValue('--g-yellow').trim() || '#FBBC05';
+    const green = css.getPropertyValue('--g-green').trim() || '#34A853';
+    // Weighted toward the brand blue/green, with red/yellow as occasional accents.
+    this.colors = [blue, green, blue, green, blue, red, green, yellow];
+
+    this.resize = this.resize.bind(this);
+    this.animate = this.animate.bind(this);
+    this.handlePointerMove = this.handlePointerMove.bind(this);
+    this.handlePointerLeave = this.handlePointerLeave.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.handleVisibility = this.handleVisibility.bind(this);
+
+    this.init();
+  }
+
+  private init() {
+    this.resize();
+    this.createOrbs();
+
+    bindGlobal(window, 'resize', this.resize);
+    bindGlobal(window, 'scroll', this.handleScroll, { passive: true });
+    bindGlobal(document, 'visibilitychange', this.handleVisibility);
+    if (!this.reduceMotion) {
+      bindGlobal(window, 'pointermove', this.handlePointerMove, { passive: true });
+      bindGlobal(window, 'pointerleave', this.handlePointerLeave);
+    }
+
+    trackTeardown(() => this.stop());
+
+    if (this.reduceMotion) {
+      // Honour reduced-motion: paint one static frame and stop.
+      this.renderFrame(1);
+    } else {
+      this.start();
+    }
+  }
+
+  private start() {
+    if (this.running) return;
+    this.running = true;
+    this.lastScrollY = window.scrollY;
+    this.animationFrame = requestAnimationFrame(this.animate);
+  }
+
+  private stop() {
+    this.running = false;
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = 0;
+    }
+  }
+
+  private handleVisibility() {
+    if (document.hidden) {
+      this.stop();
+    } else if (!this.reduceMotion) {
+      this.start();
+    }
+  }
+
+  private resize() {
+    this.vw = window.innerWidth;
+    this.vh = window.innerHeight;
+    this.canvas.width = Math.round(this.vw * this.dpr);
+    this.canvas.height = Math.round(this.vh * this.dpr);
+    // setTransform (not scale) so repeated resizes don't compound the DPR.
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    if (this.reduceMotion) this.renderFrame(1);
+  }
+
+  private createOrbs() {
+    const isMobile = this.vw < 768;
+    const numOrbs = isMobile ? 7 : 12;
+    this.orbs = [];
+
+    for (let i = 0; i < numOrbs; i++) {
+      const r = Math.random() * 200 + (isMobile ? 140 : 200);
+      this.orbs.push({
+        x: Math.random() * this.vw,
+        y: Math.random() * this.vh,
+        vx: (Math.random() - 0.5) * 0.55,
+        vy: (Math.random() - 0.5) * 0.55,
+        radius: r,
+        baseRadius: r,
+        color: this.colors[i % this.colors.length],
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  private handlePointerMove(e: PointerEvent) {
+    // Canvas is viewport-fixed, so client coordinates map directly (no scrollY).
+    this.mouse.x = e.clientX;
+    this.mouse.y = e.clientY;
+    this.mouse.active = true;
+  }
+
+  private handlePointerLeave() {
+    this.mouse.active = false;
+  }
+
+  private handleScroll() {
+    const current = window.scrollY;
+    this.scrollVelocity = current - this.lastScrollY;
+    this.lastScrollY = current;
+  }
+
+  /** Draw one frame. `motion` 0..1 scales the per-tick movement (0 = frozen). */
+  private renderFrame(motion: number) {
+    const { ctx, vw, vh } = this;
+    ctx.clearRect(0, 0, vw, vh);
+
+    this.scrollVelocity *= 0.9;
+    const stretch = Math.min(1.35, 1 + Math.abs(this.scrollVelocity) * 0.003);
+
+    for (const orb of this.orbs) {
+      orb.x += orb.vx * motion;
+      orb.y += orb.vy * motion;
+      orb.phase += 0.006 * motion;
+      orb.radius = orb.baseRadius + Math.sin(orb.phase) * 26;
+
+      if (this.mouse.active && motion > 0) {
+        const dx = this.mouse.x - orb.x;
+        const dy = this.mouse.y - orb.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const maxDist = 340;
+        if (dist < maxDist) {
+          const force = (maxDist - dist) / maxDist;
+          orb.x -= (dx / dist) * force * 1.8;
+          orb.y -= (dy / dist) * force * 1.8;
+        }
+      }
+
+      // Gentle wrap-around bounce within the viewport.
+      if (orb.x < -orb.radius) orb.vx = Math.abs(orb.vx);
+      if (orb.x > vw + orb.radius) orb.vx = -Math.abs(orb.vx);
+      if (orb.y < -orb.radius) orb.vy = Math.abs(orb.vy);
+      if (orb.y > vh + orb.radius) orb.vy = -Math.abs(orb.vy);
+
+      const gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius);
+      const c = orb.color;
+      if (c.startsWith('#')) {
+        const r = parseInt(c.slice(1, 3), 16);
+        const g = parseInt(c.slice(3, 5), 16);
+        const b = parseInt(c.slice(5, 7), 16);
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.5)`);
+        gradient.addColorStop(0.55, `rgba(${r}, ${g}, ${b}, 0.16)`);
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+      } else {
+        gradient.addColorStop(0, c);
+        gradient.addColorStop(1, 'transparent');
+      }
+
+      ctx.save();
+      ctx.translate(orb.x, orb.y);
+      ctx.scale(1 / stretch, stretch);
+      ctx.translate(-orb.x, -orb.y);
+      ctx.beginPath();
+      ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  private animate() {
+    if (!this.running) return;
+    this.renderFrame(1);
+    this.animationFrame = requestAnimationFrame(this.animate);
+  }
+}
+
+export function initFluid() {
+  new FluidSimulation();
+}

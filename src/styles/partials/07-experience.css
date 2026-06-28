@@ -9,7 +9,8 @@
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+  /* Match the hero/.shell gutter exactly so every section's left edge lines up. */
+  padding: 0 var(--space-inset, clamp(24px, 6vw, 80px));
 }
 
 .route {
