@@ -1,0 +1,71 @@
+---
+---
+{/* Two viewport-fixed layers that sit behind the entire document, so the
+    backdrop is continuous from hero to footer (never cutting to flat paper) and
+    the frosted-glass surfaces above always have real colour to blur.
+      • .fluid-bg   heavily-blurred drifting colour orbs (the "aurora")
+      • .page-bg-grid  a crisp blueprint grid — kept OUT of the blurred layer so
+                       its 1px lines survive. */}
+<div class="fluid-bg" aria-hidden="true">
+  <canvas id="fluid-canvas"></canvas>
+</div>
+<div class="page-bg-grid" aria-hidden="true"></div>
+
+<style>
+  .fluid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+    /* Blur turns the orbs into soft colour fields; saturation keeps the brand
+       hues alive through the heavy blur. */
+    filter: blur(64px) saturate(125%);
+    opacity: 0.58;
+    /* A soft vignette so colour pools toward the edges and thins through the
+       central reading column — keeps copy legible without a hard mask edge. */
+    -webkit-mask-image: radial-gradient(125% 120% at 50% 28%, #000 36%, color-mix(in srgb, #000 55%, transparent) 100%);
+    mask-image: radial-gradient(125% 120% at 50% 28%, #000 36%, color-mix(in srgb, #000 55%, transparent) 100%);
+  }
+
+  :global(:root[data-theme="dark"]) .fluid-bg {
+    /* Charcoal carries the colour better — let it read a touch stronger. */
+    opacity: 0.62;
+    filter: blur(68px) saturate(135%);
+  }
+
+  #fluid-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .page-bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-size: 46px 46px;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+    /* Fade the grid out at every edge so it reads as ambient texture, not a
+       rectangle pinned to the viewport. */
+    -webkit-mask-image: radial-gradient(135% 130% at 50% 24%, #000 30%, transparent 88%);
+    mask-image: radial-gradient(135% 130% at 50% 24%, #000 30%, transparent 88%);
+    opacity: 0.55;
+  }
+
+  :global(:root[data-theme="dark"]) .page-bg-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, #ffffff 6%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, #ffffff 6%, transparent) 1px, transparent 1px);
+    opacity: 0.4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The canvas paints a single static frame in JS; nothing else to calm. */
+    .page-bg-grid { opacity: 0.4; }
+  }
+</style>

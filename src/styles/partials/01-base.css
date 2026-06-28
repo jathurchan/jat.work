@@ -19,8 +19,17 @@
   --line: #e4e4e7;
   --dialog-shadow: rgba(24, 24, 27, 0.15) 0 30px 70px -20px;
   --overlay-bg: color-mix(in srgb, #09090b 40%, transparent);
-  
-  
+
+  /* Frosted-glass recipe — one material shared by every glass surface (hero CTA,
+     toolkit tiles, featured card, buttons): a top-down white sheen over a
+     translucent fill, a bright top edge, and a heavy backdrop blur. */
+  --glass-sheen: linear-gradient(180deg, color-mix(in srgb, #ffffff 15%, transparent), color-mix(in srgb, #ffffff 3%, transparent));
+  --glass-fill: color-mix(in srgb, var(--frame) 60%, transparent);
+  --glass-border: color-mix(in srgb, #ffffff 30%, var(--line));
+  --glass-blur: blur(20px) saturate(180%);
+  --glass-edge: inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent);
+
+
   /* Static spacing scale */
   --space-1: 4px;
   --space-2: 8px;
@@ -35,9 +44,9 @@
 
   
   --space-sm: clamp(16px, 2vw, 24px);
-  --space-md: clamp(24px, 4vw, 48px);
-  --space-lg: clamp(48px, 8vw, 96px);
-  --space-xl: clamp(64px, 12vw, 160px);
+  --space-md: clamp(24px, 4vw, 40px);
+  --space-lg: clamp(48px, 6vw, 80px);
+  --space-xl: clamp(64px, 10vw, 120px);
 
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -45,6 +54,9 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-serif: 'Playfair Display', serif;
+  /* Display face for the hero only — geometric, friendly, a touch more personal
+     than Inter while staying in the same modern-grotesque family. */
+  --font-hero: 'Outfit', 'Inter', system-ui, sans-serif;
   }
 
 :root[data-theme="dark"] {
@@ -67,6 +79,12 @@
   --line: rgba(255, 255, 255, 0.08); /* Translucent borders for elegance */
   --dialog-shadow: rgba(0, 0, 0, 0.4) 0 30px 70px -20px; /* Softer shadow */
   --overlay-bg: color-mix(in srgb, #121214 80%, transparent);
+
+  /* Dark "smoked glass": dial the white sheen + edge right down. */
+  --glass-sheen: linear-gradient(180deg, color-mix(in srgb, #ffffff 9%, transparent), color-mix(in srgb, #ffffff 1%, transparent));
+  --glass-fill: color-mix(in srgb, var(--frame) 52%, transparent);
+  --glass-border: color-mix(in srgb, #ffffff 13%, var(--line));
+  --glass-edge: inset 0 1px 0 color-mix(in srgb, #ffffff 16%, transparent);
 }
 
 * {
@@ -108,6 +126,8 @@ button {
 
 /* ---- root shell ---- */
 .page {
+  position: relative;
+  z-index: 0;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -150,5 +170,64 @@ button {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--sub);
+}
+
+/* ── Safari glass stabiliser ──
+   Safari shears/tilts a backdrop-filter element whenever it's also transformed
+   (a hover lift, the magnetic drift, the sticky header re-compositing on scroll).
+   Pinning these to a flat, GPU-composited layer stops the warp. Paired with
+   dropping `scale()` from their hovers (scale is the worst offender) and using
+   translate3d so the lift stays on the same layer. */
+.site-header-inner,
+.surprise,
+.footer-email-btn,
+.footer-icon,
+.premium-glass-btn,
+.toolkit-cat,
+.route-card,
+.lab-card,
+.cluster-glass-container,
+[data-magnetic] {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ── Cursor spotlight on glass cards ──
+   A radial highlight that tracks the pointer (--mx/--my set by spotlight.ts),
+   tinted with each card's own accent (--c on toolkit, --brand on route,
+   --card-color on lab, else --accent). It sits above the card's frosted
+   background but beneath its content — the cards are stacking contexts via
+   backdrop-filter, so a z-index:-1 pseudo lands exactly there. */
+.toolkit-cat::after,
+.route-card::after,
+.lab-card::after,
+.cluster-glass-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--c, var(--brand, var(--card-color, var(--accent)))) 16%, transparent),
+    transparent 60%
+  );
+}
+.toolkit-cat:hover::after,
+.route-card:hover::after,
+.lab-card:hover::after,
+.cluster-glass-container:hover::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toolkit-cat::after,
+  .route-card::after,
+  .lab-card::after,
+  .cluster-glass-container::after {
+    display: none;
+  }
 }
 

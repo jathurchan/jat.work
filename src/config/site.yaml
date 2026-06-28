@@ -35,38 +35,18 @@ intro:
     - { key: systems, label: distributed systems, color: var(--g-green) }
     - { key: ai,      label: AI,                  color: var(--g-red) }
   bio: I build reliable infrastructure and enjoy solving hard scaling problems.
-  # One achievement I'm proud of per pillar (matched by `key`/`color`). Each card
-  # reads as: a `context` kicker (where/what), a scannable `bodyHtml` line whose
-  # headline metric is wrapped in <strong> (rendered in the pillar colour), and an
-  # optional `cta` that links the proof to the section where you can go deeper.
-  highlights:
-    - key: cloud
-      color: var(--g-blue)
-      context: Amazon DynamoDB · MemDS
-      bodyHtml: >-
-        Cut false alerts <strong>99%</strong> in the metadata layer keeping
-        DynamoDB healthy at <strong>½M+ req/s</strong>.
-      cta: { label: See my AWS experience, href: '#experience' }
-    - key: systems
-      color: var(--g-green)
-      context: RaftLock · open source
-      bodyHtml: >-
-        Kill <strong>2 of 5 nodes</strong> mid-request — the cluster elects a new
-        leader, replays its log, and your lock is still yours.
-      cta: { label: Try the live demo, href: '#featured' }
-    - key: ai
-      color: var(--g-red)
-      context: mistral-router · open source
-      bodyHtml: >-
-        Built a <strong>FastAPI LLM gateway</strong> that routes each request to the
-        cheapest capable model — complexity routing with automatic quality fallback.
-      cta: { label: View on GitHub, href: 'https://github.com/jathurchan/mistral-router' }
+  # A warm, first-person hook under the statement. This is the personal heart of
+  # the hero — it names what the whole site is for: building, breaking, and
+  # writing about what I learn. The CTAs below do the inviting, so this stays a
+  # tight one-liner (no redundant "come explore").
+  invitation: >-
+    I build systems, break them on purpose, and write about what I learn.
 
 # The toolkit that closes the hero. Grouped by the same three focus areas the
 # statement opens with — each category reuses a pillar's `key` and `color`, so
-# the tools land in the colour the eye already learned from the statement and
-# the achievement deck. Languages live in the domain they serve (Go → systems,
-# Python → AI) rather than a category of their own.
+# the tools land in the colour the eye already learned from the statement.
+# Languages live in the domain they serve (Go → systems, Python → AI) rather
+# than a category of their own.
 skills:
   eyebrow: Toolkit
   lead: The languages, frameworks, and tools I build with day to day — grouped by the three areas I work in.
@@ -84,10 +64,29 @@ skills:
       color: var(--g-red)
       items: ["Python", "LLMs", "RAG", "PyTorch", "Langfuse"]
 
-# Section lead-in for the blog. Posts live as Markdown/MDX in src/content/blog/.
+# Section lead-in for the writing. Posts live as Markdown/MDX in src/content/blog/.
 lab:
-  eyebrow: Blog
-  lead: Notes and deep dives from the systems I build, break, and operate.
+  eyebrow: Writing
+  lead: Deep dives and hard-won lessons from the systems I build, break, and operate.
+
+# Post series — grouped, multi-part writing. A series renders as ONE rich card in
+# the feed (its parts listed in reading order) instead of N near-identical cards.
+# `topic` ties it to a filter tag (colour + category); `parts` are blog slugs in
+# the order they should be read. Reorder/rename freely — the feed follows this.
+series:
+  - id: raftlock
+    name: RaftLock
+    topic: systems
+    blurb: >-
+      A crash-tolerant distributed lock built on Raft from first principles —
+      one post per layer, from the consensus core out to the client.
+    parts:
+      - raftlock-a-distributed-lock-that-survives-crashes
+      - raftlock-the-consensus-engine
+      - raftlock-a-storage-engine-built-for-one-job
+      - raftlock-the-state-machine-behind-the-lock
+      - raftlock-the-integration-layer
+      - raftlock-a-smart-client-for-a-hard-problem
 
 # Section lead-in for the Career view.
 careerHead:
@@ -124,6 +123,7 @@ filters:
   - { id: cloud, label: cloud computing, name: Cloud Computing, color: var(--g-blue) }
   - { id: systems, label: distributed systems, name: Distributed Systems, color: var(--g-green) }
   - { id: ai, label: AI, name: AI, color: var(--g-red) }
+  - { id: career, label: career, name: Career, color: var(--g-yellow) }
 
 # Single source of truth for the in-page section nav (header dropdown +
 # scroll-spy). `id` is the section element id; `label` MUST match that
@@ -133,7 +133,7 @@ nav:
     - { id: featured, label: Featured }
     - { id: toolkit, label: Toolkit }
     - { id: experience, label: Experience }
-    - { id: notes, label: Blog }
+    - { id: writing, label: Writing }
 
 # Career path (Career view). Rendered as a self-drawing route, start → now.
 # Order is chronological: the visitor scrolls DOWN to move FORWARD in time.

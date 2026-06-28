@@ -9,7 +9,8 @@
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 var(--space-inset, clamp(32px, 6vw, 80px));
+  /* Match the hero/.shell gutter exactly so every section's left edge lines up. */
+  padding: 0 var(--space-inset, clamp(24px, 6vw, 80px));
 }
 
 .route {
@@ -241,8 +242,9 @@
   z-index: 2;
 }
 @keyframes route-node-in {
-  from { transform: scale(0.7); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 .route-node-disc {
   position: relative;
@@ -345,8 +347,8 @@
 
 /* ---- card --------------------------------------------------- */
 @keyframes route-card-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateX(30px) translateY(10px) rotateZ(3deg); }
+  100% { opacity: 1; transform: translateX(0) translateY(0) rotateZ(0); }
 }
 .route-card {
   position: relative;
@@ -355,31 +357,57 @@
   gap: 18px;
   padding: 26px 28px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  border: 1px solid var(--glass-border);
   border-top: 1px solid color-mix(in srgb, var(--brand) 50%, var(--line));
-  background: linear-gradient(145deg, color-mix(in srgb, var(--frame) 60%, transparent) 0%, color-mix(in srgb, var(--brand) 6%, var(--frame)) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 15%, transparent), 0 8px 24px -12px color-mix(in srgb, var(--ink) 12%, transparent);
+  /* Shared frosted-glass material (sheen + fill), warmed by a hint of the role's
+     brand colour toward the bottom corner. */
+  background:
+    var(--glass-sheen),
+    linear-gradient(145deg, var(--glass-fill) 0%, color-mix(in srgb, var(--brand) 7%, var(--glass-fill)) 100%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, var(--ink) 12%, transparent);
   transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
   animation: route-card-in linear both;
   animation-timeline: view();
   animation-range: entry 2% cover 26%;
 }
+@supports not ((animation-timeline: view()) and (animation-range: entry)) {
+  .route-card {
+    animation: none;
+    opacity: 0;
+    transform: translateX(30px) translateY(10px) rotateZ(3deg);
+  }
+  .route-card.is-inview-fallback {
+    animation: route-card-in 0.6s var(--ease-spring) forwards;
+  }
+  .route-node-disc {
+    animation: none;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  .route-node-disc.is-inview-fallback {
+    animation: route-node-in 0.6s var(--ease-spring) forwards;
+  }
+}
 .route-card:hover {
-  transform: translateY(-4px) scale(1.01);
+  transform: translate3d(0, -4px, 0);
   border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
   border-top-color: var(--brand);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--brand) 4%, var(--frame)) 0%, color-mix(in srgb, var(--brand) 12%, var(--frame)) 100%);
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 25%, transparent), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
+  background:
+    var(--glass-sheen),
+    linear-gradient(145deg, color-mix(in srgb, var(--brand) 5%, var(--glass-fill)) 0%, color-mix(in srgb, var(--brand) 13%, var(--glass-fill)) 100%);
+  box-shadow: var(--glass-edge), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
 }
 /* Scroll-driven active state: same brand lift as hover, minus the translate so
    the card doesn't jump while the page is moving under it. */
 .route-stop.is-active .route-card {
   border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
   border-top-color: var(--brand);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--brand) 4%, var(--frame)) 0%, color-mix(in srgb, var(--brand) 12%, var(--frame)) 100%);
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 25%, transparent), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
+  background:
+    var(--glass-sheen),
+    linear-gradient(145deg, color-mix(in srgb, var(--brand) 5%, var(--glass-fill)) 0%, color-mix(in srgb, var(--brand) 13%, var(--glass-fill)) 100%);
+  box-shadow: var(--glass-edge), 0 16px 40px -16px color-mix(in srgb, var(--brand) 40%, transparent);
 }
 
 .route-card-head {

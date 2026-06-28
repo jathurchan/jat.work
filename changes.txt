@@ -1,0 +1,559 @@
+---
+FILE: "/Users/jat/Workplace/jat.work/src/layouts/Base.astro"
+START: 63
+END: 66
+TARGET:
+"    <link\n      rel=\"stylesheet\"\n      href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap\"\n    />"
+REPLACEMENT:
+"    <link\n      rel=\"stylesheet\"\n      href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap\"\n    />"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/01-base.css"
+START: 50
+END: 52
+TARGET:
+"  --font-sans: 'Inter', system-ui, sans-serif;\n  --font-mono: 'JetBrains Mono', monospace;\n  --font-serif: 'Playfair Display', serif;"
+REPLACEMENT:
+"  --font-sans: 'Inter', system-ui, sans-serif;\n  --font-display: 'Outfit', var(--font-sans);\n  --font-mono: 'JetBrains Mono', monospace;\n  --font-serif: 'Playfair Display', serif;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 46
+END: 94
+TARGET:
+"  <div class=\"shell hero-inner\">\n    <h1 class=\"hero-name reveal reveal-delay-1\" aria-label={`${intro.greeting} ${intro.name}`}>\n      <span class=\"hero-greeting\">{intro.greeting}</span>\n      <span class=\"hero-fullname\" id=\"hero-name\" aria-hidden=\"true\">{keepLetters.map((c) => <span class=\"nm-keep\">{c}</span>)}{dropLetters.map((c) => <span class=\"nm-drop\">{c}</span>)}<span class=\"nm-dot\">.</span></span>\n    </h1>\n\n    <h2 class=\"hero-statement reveal reveal-delay-2\">\n      {statementNodes ? statementNodes.map((n) => (\n        n.type === 'company'\n          ? <span class=\"company-wrap\"><span class=\"company-highlight\">{intro.company}</span>{n.glue}</span>\n          : n.value\n      )) : intro.statementLead}.\n    </h2>\n\n    <p class=\"hero-bio reveal reveal-delay-3\">{bioBefore}{intro.pillars.map((p, i) => {\n        const isLast = i === intro.pillars.length - 1;\n        const sep = i === 0 ? '' : isLast ? ', and ' : ', ';\n        // Kept on one line: a newline between {sep} and the <span> renders as a\n        // stray space before each comma.\n        return (<>{sep}<span class=\"pillar\" style={`--c:${p.color}`}>{p.label}</span></>);\n      })}{bioAfter}</p>\n\n    <div class=\"hero-actions reveal reveal-delay-4\">\n      {intro.actions.map((a) => (\n        a.surprise ? (\n          <a\n            class=\"hero-action hero-action--surprise\"\n            href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n            data-surprise\n            data-pool={JSON.stringify(intro.surprise)}\n            aria-label=\"Surprise me — jump to a random part of the site\"\n          >\n            <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n            <span class=\"hero-action-label\" data-surprise-label>{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        ) : (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.hr
+<truncated 297 bytes>
+REPLACEMENT:
+"  <div class=\"shell hero-inner\">\n    <div class=\"hero-glass-panel\">\n      <div class=\"hero-noise\" aria-hidden=\"true\"></div>\n      <div class=\"hero-glass-content\">\n        <h1 class=\"hero-name reveal reveal-delay-1\" aria-label={`${intro.greeting} ${intro.name}`}>\n          <span class=\"hero-greeting\">{intro.greeting}</span>\n          <span class=\"hero-fullname\" id=\"hero-name\" aria-hidden=\"true\">{keepLetters.map((c) => <span class=\"nm-keep\">{c}</span>)}{dropLetters.map((c) => <span class=\"nm-drop\">{c}</span>)}<span class=\"nm-dot\">.</span></span>\n        </h1>\n\n        <h2 class=\"hero-statement reveal reveal-delay-2\">\n          {statementNodes ? statementNodes.map((n) => (\n            n.type === 'company'\n              ? <span class=\"company-wrap\"><span class=\"company-highlight\">{intro.company}</span>{n.glue}</span>\n              : n.value\n          )) : intro.statementLead}.\n        </h2>\n\n        <p class=\"hero-bio reveal reveal-delay-3\">{bioBefore}{intro.pillars.map((p, i) => {\n            const isLast = i === intro.pillars.length - 1;\n            const sep = i === 0 ? '' : isLast ? ', and ' : ', ';\n            // Kept on one line: a newline between {sep} and the <span> renders as a\n            // stray space before each comma.\n            return (<>{sep}<span class=\"pillar\" style={`--c:${p.color}`}>{p.label}</span></>);\n          })}{bioAfter}</p>\n\n        <div class=\"hero-actions reveal reveal-delay-4\">\n          {intro.actions.map((a) => (\n            a.surprise ? (\n              <a\n                class=\"hero-action hero-action--surprise\"\n                href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n                data-surprise\n                data-pool={JSON.stringify(intro.surprise)}\n                aria-label=\"Surprise me — jump to a random part of the site\"\n              >\n                <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n                <span class=\"hero-action-label\" data-surprise-label>{a.labe
+<truncated 640 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 333
+END: 342
+TARGET:
+"  transition: transform 0.3s var(--ease-spring), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  font-size: 1em;\n  transition: transform 0.3s var(--ease-spring);\n}\n.hero-action:hover {\n  transform: translateY(-2px);"
+REPLACEMENT:
+"  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  font-size: 1em;\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: translateY(-4px) scale(1.02);"
+---
+FILE: "/Users/jat/.gemini/antigravity/brain/b93d1958-3575-4431-a4b8-508b2ba75390/task.md"
+START: 1
+END: 11
+TARGET:
+"- `[/]` 1. Typography & Layout Base\n  - `[ ]` Update `Base.astro` to import `Outfit` font\n  - `[ ]` Update `01-base.css` to add `--font-display` token\n- `[ ]` 2. Hero Structure & Styling\n  - `[ ]` Modify `Hero.astro` to wrap content in `.hero-glass-panel` and add noise texture\n  - `[ ]` Modify `03-hero.css` to style `.hero-glass-panel`\n  - `[ ]` Modify `03-hero.css` to apply `--font-display` and animated gradient to text\n  - `[ ]` Modify `03-hero.css` to enhance orb animations and button hover states\n- `[ ]` 3. Verification\n  - `[ ]` Run dev server and verify visual changes"
+REPLACEMENT:
+"- `[x]` 1. Typography & Layout Base\n  - `[x]` Update `Base.astro` to import `Outfit` font\n  - `[x]` Update `01-base.css` to add `--font-display` token\n- `[x]` 2. Hero Structure & Styling\n  - `[x]` Modify `Hero.astro` to wrap content in `.hero-glass-panel` and add noise texture\n  - `[x]` Modify `03-hero.css` to style `.hero-glass-panel`\n  - `[x]` Modify `03-hero.css` to apply `--font-display` and animated gradient to text\n  - `[x]` Modify `03-hero.css` to enhance orb animations and button hover states\n- `[/]` 3. Verification\n  - `[ ]` Run dev server and verify visual changes"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 38
+END: 45
+TARGET:
+"  <div class=\"hero-ambient-bg\"></div>\n  {/* Soft, slowly drifting brand-colour orbs. They give the frosted-glass\n      buttons something to refract and keep the hero quietly alive. */}\n  <div class=\"hero-orbs\" aria-hidden=\"true\">\n    <span class=\"hero-orb hero-orb--1\"></span>\n    <span class=\"hero-orb hero-orb--2\"></span>\n    <span class=\"hero-orb hero-orb--3\"></span>\n  </div>"
+REPLACEMENT:
+"  <div class=\"hero-ambient-bg\"></div>"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 46
+END: 94
+TARGET:
+"  <div class=\"shell hero-inner\">\n    <div class=\"hero-glass-panel\">\n      <div class=\"hero-noise\" aria-hidden=\"true\"></div>\n      <div class=\"hero-glass-content\">\n        <h1 class=\"hero-name reveal reveal-delay-1\" aria-label={`${intro.greeting} ${intro.name}`}>\n          <span class=\"hero-greeting\">{intro.greeting}</span>\n          <span class=\"hero-fullname\" id=\"hero-name\" aria-hidden=\"true\">{keepLetters.map((c) => <span class=\"nm-keep\">{c}</span>)}{dropLetters.map((c) => <span class=\"nm-drop\">{c}</span>)}<span class=\"nm-dot\">.</span></span>\n        </h1>\n\n        <h2 class=\"hero-statement reveal reveal-delay-2\">\n          {statementNodes ? statementNodes.map((n) => (\n            n.type === 'company'\n              ? <span class=\"company-wrap\"><span class=\"company-highlight\">{intro.company}</span>{n.glue}</span>\n              : n.value\n          )) : intro.statementLead}.\n        </h2>\n\n        <p class=\"hero-bio reveal reveal-delay-3\">{bioBefore}{intro.pillars.map((p, i) => {\n            const isLast = i === intro.pillars.length - 1;\n            const sep = i === 0 ? '' : isLast ? ', and ' : ', ';\n            // Kept on one line: a newline between {sep} and the <span> renders as a\n            // stray space before each comma.\n            return (<>{sep}<span class=\"pillar\" style={`--c:${p.color}`}>{p.label}</span></>);\n          })}{bioAfter}</p>\n\n        <div class=\"hero-actions reveal reveal-delay-4\">\n          {intro.actions.map((a) => (\n            a.surprise ? (\n              <a\n                class=\"hero-action hero-action--surprise\"\n                href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n                data-surprise\n                data-pool={JSON.stringify(intro.surprise)}\n                aria-label=\"Surprise me — jump to a random part of the site\"\n              >\n                <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n                <span class=\"hero-action-label\" data-surprise-label>{a.labe
+<truncated 640 bytes>
+REPLACEMENT:
+"  <div class=\"shell hero-inner\">\n    <h1 class=\"hero-name reveal reveal-delay-1\" aria-label={`${intro.greeting} ${intro.name}`}>\n      <span class=\"hero-greeting\">{intro.greeting}</span>\n      <span class=\"hero-fullname\" id=\"hero-name\" aria-hidden=\"true\">{keepLetters.map((c) => <span class=\"nm-keep\">{c}</span>)}{dropLetters.map((c) => <span class=\"nm-drop\">{c}</span>)}<span class=\"nm-dot\">.</span></span>\n    </h1>\n\n    <h2 class=\"hero-statement reveal reveal-delay-2\">\n      {statementNodes ? statementNodes.map((n) => (\n        n.type === 'company'\n          ? <span class=\"company-wrap\"><span class=\"company-highlight\">{intro.company}</span>{n.glue}</span>\n          : n.value\n      )) : intro.statementLead}.\n    </h2>\n\n    <p class=\"hero-bio reveal reveal-delay-3\">{bioBefore}{intro.pillars.map((p, i) => {\n        const isLast = i === intro.pillars.length - 1;\n        const sep = i === 0 ? '' : isLast ? ', and ' : ', ';\n        // Kept on one line: a newline between {sep} and the <span> renders as a\n        // stray space before each comma.\n        return (<>{sep}<span class=\"pillar\" style={`--c:${p.color}`}>{p.label}</span></>);\n      })}{bioAfter}</p>\n\n    <div class=\"hero-actions reveal reveal-delay-4\">\n      {intro.actions.map((a) => (\n        a.surprise ? (\n          <a\n            class=\"hero-action hero-action--surprise\"\n            href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n            data-surprise\n            data-pool={JSON.stringify(intro.surprise)}\n            aria-label=\"Surprise me — jump to a random part of the site\"\n          >\n            <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n            <span class=\"hero-action-label\" data-surprise-label>{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        ) : (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.hr
+<truncated 297 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/02-header.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 26
+END: 28
+TARGET:
+":root[data-theme=\"dark\"] .hero-ambient-bg {\n  opacity: 0.65;\n}"
+REPLACEMENT:
+":root[data-theme=\"dark\"] .hero-ambient-bg {\n  /* In dark mode, glowing colours need higher intensity to cut through the \n     dark background. 0.65 opacity with 15% mix made them look muddy. \n     This makes them glow vibrantly. */\n  opacity: 0.95;\n  background: \n    radial-gradient(60% 420px at 50% 360px, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),\n    radial-gradient(42% 320px at 12% 380px, color-mix(in srgb, var(--g-blue) 18%, transparent), transparent 70%),\n    radial-gradient(42% 320px at 88% 380px, color-mix(in srgb, var(--g-red) 18%, transparent), transparent 70%);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/config/site.yaml"
+START: 53
+END: 56
+TARGET:
+"  surprise:\n    - { id: featured,   label: RaftLock }\n    - { id: toolkit,    label: my toolkit }\n    - { id: experience, label: my journey }"
+REPLACEMENT:
+"  surprise:\n    - { id: notes,      label: Read the notes }\n    - { id: featured,   label: Dive into RaftLock }\n    - { id: toolkit,    label: Explore the toolkit }\n    - { id: experience, label: Trace the journey }"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 52
+END: 123
+TARGET:
+"export function initSurprise() {\n  const btn = document.querySelector<HTMLAnchorElement>('[data-surprise]');\n  if (!btn) return;\n  const labelEl = btn.querySelector<HTMLElement>('[data-surprise-label]');\n  let pool: { id: string; label: string }[] = [];\n  try {\n    pool = JSON.parse(btn.dataset.pool || '[]');\n  } catch {\n    /* leave pool empty → falls back to the anchor href */\n  }\n  if (!labelEl || pool.length === 0) return;\n\n  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;\n  const idle = labelEl.textContent || 'Surprise me';\n  let last = -1;\n  let rolling = false;\n\n  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length; // never the same detour twice\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  btn.addEventListener('click', (e) => {\n    e.preventDefault();\n    if (rolling) return;\n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n\n    // Reduced motion (or no roll needed): skip the theatrics, just travel.\n    if (reduce) {\n      goTo(dest.id);\n      return;\n    }\n\n    rolling = true;\n    btn.classList.add('is-rolling');\n\n    // A short roulette: two passes through the labels, decelerating onto the\n    // winner so it reads as \"landing\" rather than just stopping.\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    let k = 0;\n    const tick = () => {\n      labelEl.textContent = seq[k];\n      k += 1;\n      if (k < seq.length) {\n        window.setTimeout(tick, 55 + k * 18); // ease-out: each step a touch slower\n      } else {\n        btn.classList.remove('is-rolling');\n        btn.classList.add('is-landed');\n        goTo(dest.id);\n        window.setTi
+<truncated 186 bytes>
+REPLACEMENT:
+"export function initSurprise() {\n  const btn = document.querySelector<HTMLAnchorElement>('[data-surprise]');\n  if (!btn) return;\n  const labelEl = btn.querySelector<HTMLElement>('[data-surprise-label]');\n  let pool: { id: string; label: string }[] = [];\n  try {\n    pool = JSON.parse(btn.dataset.pool || '[]');\n  } catch {\n    /* leave pool empty → falls back to the anchor href */\n  }\n  if (!labelEl || pool.length === 0) return;\n\n  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;\n  const idle = labelEl.textContent || 'Surprise me';\n  let last = -1;\n  let rolling = false;\n  let hovered = false;\n  let rollTimeout: number | undefined;\n  let currentDestId = pool[0]?.id ?? 'featured';\n\n  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length;\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.textContent = idle;\n    btn.classList.remove('is-rolling', 'is-landed');\n    currentDestId = pool[0]?.id ?? 'featured';\n    btn.setAttribute('href', `#${currentDestId}`);\n  };\n\n  btn.addEventListener('mouseenter', () => {\n    if (rolling || reduce) return;\n    hovered = true;\n    rolling = true;\n    btn.classList.add('is-rolling');\n\n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      labelEl.textContent = seq[k];\n      k +=
+<truncated 412 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 69
+END: 117
+TARGET:
+"  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length;\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.textContent = idle;\n    btn.classList.remove('is-rolling', 'is-landed');\n    currentDestId = pool[0]?.id ?? 'featured';\n    btn.setAttribute('href', `#${currentDestId}`);\n  };\n\n  btn.addEventListener('mouseenter', () => {\n    if (rolling || reduce) return;\n    hovered = true;\n    rolling = true;\n    btn.classList.add('is-rolling');\n\n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      labelEl.textContent = seq[k];\n      k += 1;\n      if (k < seq.length) {\n        rollTimeout = window.setTimeout(tick, 35 + k * 12);\n      } else {\n        btn.classList.remove('is-rolling');\n        btn.classList.add('is-landed');\n        rolling = false;\n      }\n    };\n    tick();\n  });\n\n  btn.addEventListener('mouseleave', reset);\n\n  btn.addEventListener('click', (e) => {\n    e.preventDefault();\n    goTo(currentDestId);\n  });"
+REPLACEMENT:
+"  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length;\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.textContent = idle;\n    btn.classList.remove('is-rolling', 'is-landed');\n    // We don't reset currentDestId, so if they tab and press enter, it goes to the last picked or default.\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      // Reduced motion: no roll, just change text and land immediately\n      labelEl.textContent = dest.label;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      labelEl.textContent = seq[k];\n      k += 1;\n      if (k < seq.length) {\n        rollTimeout = window.setTimeout(tick, 35 + k * 12);\n      } else {\n        btn.classList.remove('is-rolling');\n        btn.classList.add('is-landed');\n        rolling = false;\n      }\n    };\n    tick();\n  };\n\n  btn.addEventListener('mouseenter', roll);\n  btn.addEventListener('mouseleave', reset);\n\n  btn.addEventListener('click', (e) => {\n    e.preventDefault();\n    if (rolling && !reduce) {\n      // If clicked while still rolling, snap to the end immediately\n      if (rollTi
+<truncated 253 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/config/site.yaml"
+START: 46
+END: 57
+TARGET:
+"  actions:\n    - { label: Read the writing, href: '#notes', primary: true }\n    - { label: Surprise me, surprise: true }\n  # \"Surprise me\" spins a four-colour dial (the wordmark dot) and drops the\n  # visitor into one of these — the work, the toolkit, or the journey. It never\n  # repeats the last pick, so every roll is a fresh detour. `label` is what\n  # flashes on the dial as it lands; the no-JS fallback links to the first entry.\n  surprise:\n    - { id: notes,      label: Read the notes }\n    - { id: featured,   label: Dive into RaftLock }\n    - { id: toolkit,    label: Explore the toolkit }\n    - { id: experience, label: Trace the journey }"
+REPLACEMENT:
+"  actions:\n    - { label: Read my notes, href: '#notes', primary: true }\n    - { label: Surprise me, surprise: true }\n  # \"Surprise me\" spins a four-colour dial (the wordmark dot) and drops the\n  # visitor into one of these — the work, the toolkit, or the journey. It never\n  # repeats the last pick, so every roll is a fresh detour. `label` is what\n  # flashes on the dial as it lands; the no-JS fallback links to the first entry.\n  surprise:\n    - { id: notes,      label: Let's read my notes }\n    - { id: featured,   label: Let me show you RaftLock }\n    - { id: toolkit,    label: Check out my toolkit }\n    - { id: experience, label: Follow my journey }"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 281
+TARGET:
+".hero-action--surprise .hero-action-label {\n  display: inline-block;\n  min-width: 9.5em; /* Keeps button width stable while text swaps rapidly */\n  text-align: center;\n  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  display: inline-block;\n  min-width: 12.5em; /* Keeps button width stable while text swaps rapidly */\n  text-align: center;\n  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Feed.astro"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/config/site.yaml"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/lib/icons.ts"
+START: 5
+END: 5
+TARGET:
+"  'notes': '<path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" /><path d=\"M14 6l4 4\" />',"
+REPLACEMENT:
+"  'writing': '<path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" /><path d=\"M14 6l4 4\" />',"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/02-header.css"
+START: 315
+END: 315
+TARGET:
+"#notes,"
+REPLACEMENT:
+"#writing,"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 64
+END: 65
+TARGET:
+"          <a\n            class=\"hero-action hero-action--surprise\""
+REPLACEMENT:
+"          <a\n            class={`hero-action hero-action--surprise${a.primary ? ' hero-action--primary' : ''}`}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/config/site.yaml"
+START: 46
+END: 56
+TARGET:
+"  actions:\n    - { label: Read my writing, href: '#writing', primary: true }\n    - { label: Surprise me, surprise: true }\n  # \"Surprise me\" spins a four-colour dial (the wordmark dot) and drops the\n  # visitor into one of these — the work, the toolkit, or the journey. It never\n  # repeats the last pick, so every roll is a fresh detour. `label` is what\n  # flashes on the dial as it lands; the no-JS fallback links to the first entry.\n  surprise:\n    - { id: writing,      label: Let's read my writing }\n    - { id: featured,   label: Let me show you RaftLock }\n    - { id: toolkit,    label: Check out my toolkit }\n    - { id: experience, label: Follow my journey }"
+REPLACEMENT:
+"  actions:\n    - { label: Show me around, primary: true, surprise: true }\n  # \"Show me around\" spins a four-colour dial (the wordmark dot) and drops the\n  # visitor into one of these — the work, the toolkit, or the journey. It never\n  # repeats the last pick, so every roll is a fresh detour. `label` is what\n  # flashes on the dial as it lands; the no-JS fallback links to the first entry.\n  surprise:\n    - { id: writing,    label: Read my writing }\n    - { id: featured,   label: Dive into RaftLock }\n    - { id: toolkit,    label: View my toolkit }\n    - { id: experience, label: Trace my journey }"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 281
+TARGET:
+".hero-action--surprise .hero-action-label {\n  display: inline-block;\n  min-width: 12.5em; /* Keeps button width stable while text swaps rapidly */\n  text-align: center;\n  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  display: inline-block;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 84
+END: 149
+TARGET:
+"  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.textContent = idle;\n    btn.classList.remove('is-rolling', 'is-landed');\n    // We don't reset currentDestId, so if they tab and press enter, it goes to the last picked or default.\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      // Reduced motion: no roll, just change text and land immediately\n      labelEl.textContent = dest.label;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      labelEl.textContent = seq[k];\n      k += 1;\n      if (k < seq.length) {\n        rollTimeout = window.setTimeout(tick, 35 + k * 12);\n      } else {\n        btn.classList.remove('is-rolling');\n        btn.classList.add('is-landed');\n        rolling = false;\n      }\n    };\n    tick();\n  };\n\n  btn.addEventListener('mouseenter', roll);\n  btn.addEventListener('mouseleave', reset);\n\n  btn.addEventListener('click', (e) => {\n    e.preventDefault();\n    if (rolling && !reduce) {\n      // If clicked while still rolling, snap to the end immediately\n      if (rollTimeout) clearTimeout(rollTimeout);\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      const dest = pool[last];\n      labelEl.textContent = dest.label;\n      rolling = false;\n    }"
+REPLACEMENT:
+"  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.innerHTML = `<span class=\"slot-text\">${idle}</span>`;\n    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.transform = '';\n    // We don't reset currentDestId, so if they tab and press enter, it goes to the last picked or default.\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      // Reduced motion: no roll, just change text and land immediately\n      labelEl.innerHTML = `<span class=\"slot-text\">${dest.label}</span>`;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    // Initial setup for slot\n    if (!labelEl.firstElementChild) {\n      const initialText = labelEl.textContent;\n      labelEl.innerHTML = `<span class=\"slot-text\">${initialText}</span>`;\n    }\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      \n      // Haptic bump\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 40);\n\n      // Slot machine animation\n      const newSpan = document.createElement('span');\n      newSpan.className = 'slot-text slot-in';\n      newSpan.textContent = seq[k];\n      \n      Array.from(labelEl.children).forEach(child => {\n        child.className = 'slot-text slot-out';\n      });\n      labelEl.appendChild(newSpan);\n\n      // cleanup old spans\n      setTimeout(() => {\n        if (newSpan.parentElement) {\n          Array.from(labelEl.children).forEach(child => {\n            if (child !==
+<truncated 969 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 356
+END: 358
+TARGET:
+"@keyframes surprise-spin {\n  to { transform: rotate(360deg) scale(1.05); }\n}"
+REPLACEMENT:
+"@keyframes surprise-spin {\n  from { transform: rotate(0deg) scale(1.05); }\n  to { transform: rotate(360deg) scale(1.05); }\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 111
+END: 126
+TARGET:
+"    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    // Initial setup for slot\n    if (!labelEl.firstElementChild) {\n      const initialText = labelEl.textContent;\n      labelEl.innerHTML = `<span class=\"slot-text\">${initialText}</span>`;\n    }\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      \n      // Haptic bump\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 40);\n\n      // Slot machine animation\n      const newSpan = document.createElement('span');\n      newSpan.className = 'slot-text slot-in';\n      newSpan.textContent = seq[k];\n      \n      Array.from(labelEl.children).forEach(child => {\n        child.className = 'slot-text slot-out';\n      });\n      labelEl.appendChild(newSpan);\n\n      // cleanup old spans\n      setTimeout(() => {\n        if (newSpan.parentElement) {\n          Array.from(labelEl.children).forEach(child => {\n            if (child !== newSpan) child.remove();\n          });\n        }\n      }, 200);\n\n      k += 1;\n      if (k < seq.length) {\n        rollTimeout = window.setTimeout(tick, 35 + k * 12);"
+REPLACEMENT:
+"    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    // 1 full cycle instead of 2 for a much snappier, <400ms interaction\n    for (let s = 0; s < 1; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    // Initial setup for slot\n    if (!labelEl.firstElementChild) {\n      const initialText = labelEl.textContent;\n      labelEl.innerHTML = `<span class=\"slot-text\">${initialText}</span>`;\n    }\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      \n      // Haptic bump\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 40);\n\n      // Slot machine animation\n      const newSpan = document.createElement('span');\n      newSpan.className = 'slot-text slot-in';\n      newSpan.textContent = seq[k];\n      \n      Array.from(labelEl.children).forEach(child => {\n        child.className = 'slot-text slot-out';\n      });\n      labelEl.appendChild(newSpan);\n\n      // cleanup old spans\n      setTimeout(() => {\n        if (newSpan.parentElement) {\n          Array.from(labelEl.children).forEach(child => {\n            if (child !== newSpan) child.remove();\n          });\n        }\n      }, 200);\n\n      k += 1;\n      if (k < seq.length) {\n        // Stronger deceleration over fewer ticks\n        rollTimeout = window.setTimeout(tick, 30 + k * 18);"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 298
+TARGET:
+".hero-action--surprise .hero-action-label {\n  display: inline-grid;\n  place-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  perspective: 400px;\n}\n.slot-text {\n  grid-area: 1 / 1;\n  width: 100%;\n  will-change: transform, opacity, filter;\n}\n.slot-in {\n  animation: slot-enter 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;\n}\n.slot-out {\n  animation: slot-exit 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;\n}\n\n@keyframes slot-enter {\n  from { transform: translateY(60%) rotateX(-45deg); opacity: 0; filter: blur(2px); }\n  to { transform: translateY(0) rotateX(0deg); opacity: 1; filter: blur(0); }\n}\n@keyframes slot-exit {\n  from { transform: translateY(0) rotateX(0deg); opacity: 1; filter: blur(0); }\n  to { transform: translateY(-60%) rotateX(45deg); opacity: 0; filter: blur(2px); }\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  display: inline-grid;\n  place-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.slot-reel {\n  grid-area: 1 / 1;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);\n  will-change: transform, filter;\n}\n.slot-item {\n  flex: 0 0 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n}\n.hero-action--surprise.is-rolling .slot-reel {\n  filter: blur(1.5px);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 93
+END: 155
+TARGET:
+"  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      // Reduced motion: no roll, just change text and land immediately\n      labelEl.innerHTML = `<span class=\"slot-text\">${dest.label}</span>`;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    const seq: string[] = [];\n    // 1 full cycle instead of 2 for a much snappier, <400ms interaction\n    for (let s = 0; s < 1; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    // Initial setup for slot\n    if (!labelEl.firstElementChild) {\n      const initialText = labelEl.textContent;\n      labelEl.innerHTML = `<span class=\"slot-text\">${initialText}</span>`;\n    }\n\n    let k = 0;\n    const tick = () => {\n      if (!hovered) {\n        reset();\n        return;\n      }\n      \n      // Haptic bump\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 40);\n\n      // Slot machine animation\n      const newSpan = document.createElement('span');\n      newSpan.className = 'slot-text slot-in';\n      newSpan.textContent = seq[k];\n      \n      Array.from(labelEl.children).forEach(child => {\n        child.className = 'slot-text slot-out';\n      });\n      labelEl.appendChild(newSpan);\n\n      // cleanup old spans\n      setTimeout(() => {\n        if (newSpan.parentElement) {\n          Array.from(labelEl.children).forEach(child => {\n            if (child !== newSpan) child.remove();\n          });\n        }\n      }, 200);\n\n      k += 1;\n      if (k < seq.length) {\n        // Stronger deceleration over fewer ticks\n        rollTimeout = window.setTimeout(tick, 30 + k * 18);\n      } else {\n        btn.classList.remove('is-rolling');\n        btn.classList.add('
+<truncated 738 bytes>
+REPLACEMENT:
+"  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      labelEl.innerHTML = `<span class=\"slot-text\">${dest.label}</span>`;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    const initialText = labelEl.textContent || idle;\n    const seq = [initialText];\n    for (let s = 0; s < 1; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    labelEl.innerHTML = `\n      <span style=\"opacity: 0; display: block; pointer-events: none;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    void reel.offsetWidth; // force reflow\n\n    btn.classList.add('is-rolling');\n    \n    // Start continuous roll\n    reel.style.transform = `translateY(-${(seq.length - 1) * 100}%)`;\n\n    const duration = 350; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 30);\n      tickCount++;\n      if (tickCount < maxTicks) {\n        rollTimeout = window.setTimeout(hapticTick, tickInterval);\n      }\n    };\n    hapticTick();\n\n    setTimeout(() => {\n      if (!hovered) return;\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      rolling = false;\n      \n      btn.style.transform = 'scale(0.95)';\n      setTimeout(() => btn.style.transform = '', 100);\n    }, duration);\n  };\n\n  btn.addEventListener('mouseenter', roll);\n  btn.addEventListen
+<truncated 405 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 114
+END: 119
+TARGET:
+"    labelEl.innerHTML = `\n      <span style=\"opacity: 0; display: block; pointer-events: none;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;"
+REPLACEMENT:
+"    labelEl.innerHTML = `\n      <span style=\"grid-area: 1 / 1; opacity: 0; pointer-events: none;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 88
+END: 88
+TARGET:
+"    labelEl.innerHTML = `<span class=\"slot-text\">${idle}</span>`;"
+REPLACEMENT:
+"    labelEl.innerHTML = `<span style=\"grid-area: 1 / 1;\">${idle}</span>`;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 179
+END: 179
+TARGET:
+"      labelEl.innerHTML = `<span class=\"slot-text\">${pool[last].label}</span>`;"
+REPLACEMENT:
+"      labelEl.innerHTML = `<span style=\"grid-area: 1 / 1;\">${pool[last].label}</span>`;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 106
+END: 106
+TARGET:
+"      labelEl.innerHTML = `<span class=\"slot-text\">${dest.label}</span>`;"
+REPLACEMENT:
+"      labelEl.innerHTML = `<span style=\"grid-area: 1 / 1;\">${dest.label}</span>`;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 298
+TARGET:
+".hero-action--surprise .hero-action-label {\n  display: inline-grid;\n  place-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.slot-reel {\n  grid-area: 1 / 1;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);\n  will-change: transform, filter;\n}\n.slot-item {\n  flex: 0 0 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n}\n.hero-action--surprise.is-rolling .slot-reel {\n  filter: blur(1.5px);\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);\n  will-change: transform, filter;\n}\n.slot-item {\n  flex: 0 0 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n}\n.hero-action--surprise.is-rolling .slot-reel {\n  filter: blur(1.5px);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 114
+END: 119
+TARGET:
+"    labelEl.innerHTML = `\n      <span style=\"grid-area: 1 / 1; opacity: 0; pointer-events: none;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;"
+REPLACEMENT:
+"    labelEl.innerHTML = `\n      <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 
+END: 
+TARGET:
+
+REPLACEMENT:
+
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 298
+TARGET:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);\n  will-change: transform, filter;\n}\n.slot-item {\n  flex: 0 0 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n}\n.hero-action--surprise.is-rolling .slot-reel {\n  filter: blur(1.5px);\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transition: transform 0.6s cubic-bezier(0.2, 1, 0.4, 1);\n  will-change: transform;\n}\n.slot-item {\n  flex: 0 0 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  /* Ensure a smooth transition if we snap colors back to white when it lands */\n  transition: color 0.2s ease;\n}\n/* Force the text back to standard color when the roll is finished */\n.hero-action--surprise.is-landed .slot-item {\n  color: inherit !important;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 112
+END: 149
+TARGET:
+"    const initialText = labelEl.textContent || idle;\n    const seq = [initialText];\n    for (let s = 0; s < 1; s++) for (const p of pool) seq.push(p.label);\n    seq.push(dest.label);\n\n    labelEl.innerHTML = `\n      <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(text => `<span class=\"slot-item\">${text}</span>`).join('')}\n      </div>\n    `;\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    void reel.offsetWidth; // force reflow\n\n    btn.classList.add('is-rolling');\n    \n    // Start continuous roll\n    reel.style.transform = `translateY(-${(seq.length - 1) * 100}%)`;\n\n    const duration = 350; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 30);\n      tickCount++;\n      if (tickCount < maxTicks) {\n        rollTimeout = window.setTimeout(hapticTick, tickInterval);\n      }\n    };\n    hapticTick();\n\n    setTimeout(() => {\n      if (!hovered) return;\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      rolling = false;\n      \n      btn.style.transform = 'scale(0.95)';\n      setTimeout(() => btn.style.transform = '', 100);\n    }, duration);"
+REPLACEMENT:
+"    const colors: Record<string, string> = {\n      writing: 'var(--g-red)',\n      featured: 'var(--g-green)',\n      toolkit: 'var(--g-yellow)',\n      experience: 'var(--g-blue)'\n    };\n\n    const initialText = labelEl.textContent || idle;\n    const seq = [{ label: initialText, id: '' }];\n    // 2 full cycles for a longer, more chaotic and random feel\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p);\n    seq.push(dest);\n\n    labelEl.innerHTML = `\n      <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(item => `<span class=\"slot-item\" style=\"${item.id ? `color: ${colors[item.id]};` : ''}\">${item.label}</span>`).join('')}\n      </div>\n    `;\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    void reel.offsetWidth; // force reflow\n\n    btn.classList.add('is-rolling');\n    \n    // Start continuous roll\n    reel.style.transform = `translateY(-${(seq.length - 1) * 100}%)`;\n\n    const duration = 600; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 30);\n      tickCount++;\n      if (tickCount < maxTicks) {\n        rollTimeout = window.setTimeout(hapticTick, tickInterval);\n      }\n    };\n    hapticTick();\n\n    setTimeout(() => {\n      if (!hovered) return;\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      rolling = false;\n      \n      btn.style.transform = 'scale(0.95)';\n      setTimeout(() => btn.style.transform = '', 100);\n    }, duration);"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 278
+END: 288
+TARGET:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.hero-action--surprise.is-rolling .hero-action-label {\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 211
+END: 249
+TARGET:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 9px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 12px 22px;\n  border-radius: 999px;\n  /* Refined, softer frosted glass that doesn't overpower the main panel */\n  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);\n  background: color-mix(in srgb, var(--frame) 30%, transparent);\n  backdrop-filter: blur(12px) saturate(120%);\n  -webkit-backdrop-filter: blur(12px) saturate(120%);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent),\n    0 4px 12px -8px color-mix(in srgb, var(--ink) 20%, transparent);\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  font-size: 1em;\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: translateY(-3px) scale(1.01);\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}"
+REPLACEMENT:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 9px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 12px 22px;\n  border-radius: 999px;\n  /* Refined, softer frosted glass that doesn't overpower the main panel */\n  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);\n  background: color-mix(in srgb, var(--frame) 30%, transparent);\n  backdrop-filter: blur(12px) saturate(120%);\n  -webkit-backdrop-filter: blur(12px) saturate(120%);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent),\n    0 4px 12px -8px color-mix(in srgb, var(--ink) 20%, transparent);\n  transform: translateY(var(--haptic-y, 0px)) scale(var(--haptic-scale, 1));\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  font-size: 1em;\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: translateY(calc(-3px + var(--haptic-y, 0px))) scale(calc(1.01 * var(--haptic-scale, 1)));\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 133
+END: 149
+TARGET:
+"    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.transform = 'translateY(1px) scale(0.99)';\n      setTimeout(() => btn.style.transform = '', 30);\n      tickCount++;\n      if (tickCount < maxTicks) {\n        rollTimeout = window.setTimeout(hapticTick, tickInterval);\n      }\n    };\n    hapticTick();\n\n    setTimeout(() => {\n      if (!hovered) return;\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      rolling = false;\n      \n      btn.style.transform = 'scale(0.95)';\n      setTimeout(() => btn.style.transform = '', 100);\n    }, duration);"
+REPLACEMENT:
+"    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.setProperty('--haptic-y', '1px');\n      btn.style.setProperty('--haptic-scale', '0.99');\n      setTimeout(() => {\n        btn.style.setProperty('--haptic-y', '0px');\n        btn.style.setProperty('--haptic-scale', '1');\n      }, 30);\n      tickCount++;\n      if (tickCount < maxTicks) {\n        rollTimeout = window.setTimeout(hapticTick, tickInterval);\n      }\n    };\n    hapticTick();\n\n    setTimeout(() => {\n      if (!hovered) return;\n      btn.classList.remove('is-rolling');\n      btn.classList.add('is-landed');\n      rolling = false;\n      \n      btn.style.setProperty('--haptic-scale', '0.95');\n      setTimeout(() => btn.style.setProperty('--haptic-scale', '1'), 100);\n    }, duration);"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 140
+END: 141
+TARGET:
+"    const duration = 600; // matches CSS transition duration\n    const hapticTick = () => {"
+REPLACEMENT:
+"    const duration = 600; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 89
+END: 91
+TARGET:
+"    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.transform = '';"
+REPLACEMENT:
+"    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.removeProperty('--haptic-y');\n    btn.style.removeProperty('--haptic-scale');"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 62
+END: 83
+TARGET:
+"      {intro.actions.map((a) => (\n        a.surprise ? (\n          <a\n            class={`hero-action hero-action--surprise${a.primary ? ' hero-action--primary' : ''}`}\n            href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n            data-surprise\n            data-pool={JSON.stringify(intro.surprise)}\n            aria-label=\"Surprise me — jump to a random part of the site\"\n          >\n            <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n            <span class=\"hero-action-label\" data-surprise-label>{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        ) : (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}\n          >\n            <span class=\"hero-action-label\">{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        )\n      ))}"
+REPLACEMENT:
+"      {intro.actions.map((a) => {\n        if (a.surprise) {\n          const surpriseColors: Record<string, string> = {\n            writing: 'var(--g-red)',\n            featured: 'var(--g-green)',\n            toolkit: 'var(--g-yellow)',\n            experience: 'var(--g-blue)'\n          };\n          \n          const surpriseReel = [];\n          if (intro.surprise) {\n            for (let i = 0; i < 2; i++) {\n              surpriseReel.push(...intro.surprise);\n            }\n          }\n\n          return (\n            <a\n              class={`hero-action hero-action--surprise${a.primary ? ' hero-action--primary' : ''}`}\n              href={`#${intro.surprise[0]?.id ?? 'featured'}`}\n              data-surprise\n              data-pool={JSON.stringify(intro.surprise)}\n              aria-label=\"Surprise me — jump to a random part of the site\"\n            >\n              <span class=\"surprise-dot\" aria-hidden=\"true\"></span>\n              <span class=\"hero-action-label\" data-surprise-label>\n                <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">{a.label}</span>\n                <div class=\"slot-reel\">\n                  <span class=\"slot-item\">{a.label}</span>\n                  {surpriseReel.map(item => (\n                    <span class=\"slot-item\" style={`color: ${surpriseColors[item.id]};`}>{item.label}</span>\n                  ))}\n                </div>\n              </span>\n              <span class=\"hero-action-arrow\" aria-hidden=\"true\">↓</span>\n            </a>\n          );\n        }\n        \n        return (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}\n          >\n            <span class=\"hero-action-label\">{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        );\
+<truncated 11 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 275
+END: 302
+TARGET:
+".hero-action--surprise {\n  overflow: hidden;\n}\n.hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.hero-action--surprise.is-rolling .hero-action-label {\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transition: transform 0.6s cubic-bezier(0.2, 1, 0.4, 1);\n  will-change: transform;\n}"
+REPLACEMENT:
+".hero-action--surprise:hover .hero-action-arrow {\n  transform: translateY(3px);\n}\n\n.hero-action--surprise {\n  overflow: hidden;\n}\n.hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.hero-action--surprise.is-rolling .hero-action-label {\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transform: translateY(calc(-100% * var(--spin-target, 0)));\n  transition: transform 0.6s cubic-bezier(0.2, 1, 0.4, 1);\n  will-change: transform;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 84
+END: 168
+TARGET:
+"  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    labelEl.innerHTML = `<span>${idle}</span>`;\n    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.removeProperty('--haptic-y');\n    btn.style.removeProperty('--haptic-scale');\n    // We don't reset currentDestId, so if they tab and press enter, it goes to the last picked or default.\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    if (reduce) {\n      labelEl.innerHTML = `<span>${dest.label}</span>`;\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    const colors: Record<string, string> = {\n      writing: 'var(--g-red)',\n      featured: 'var(--g-green)',\n      toolkit: 'var(--g-yellow)',\n      experience: 'var(--g-blue)'\n    };\n\n    const initialText = labelEl.textContent || idle;\n    const seq = [{ label: initialText, id: '' }];\n    // 2 full cycles for a longer, more chaotic and random feel\n    for (let s = 0; s < 2; s++) for (const p of pool) seq.push(p);\n    seq.push(dest);\n\n    labelEl.innerHTML = `\n      <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">${initialText}</span>\n      <div class=\"slot-reel\">\n        ${seq.map(item => `<span class=\"slot-item\" style=\"${item.id ? `color: ${colors[item.id]};` : ''}\">${item.label}</span>`).join('')}\n      </div>\n    `;\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    void reel.offsetWidth; // force reflow\n\n    btn.classList.add('is-rolling');\n    \n    // Start continuous roll\n    reel.style.transform = `translateY(-${(seq.length - 1) * 100}%)`;\n\n    const duration = 600; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = seq.length - 1;\n    c
+<truncated 1302 bytes>
+REPLACEMENT:
+"  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.removeProperty('--haptic-y');\n    btn.style.removeProperty('--haptic-scale');\n    \n    // Instantly snap the reel back to the beginning when un-hovered\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    if (reel) {\n      reel.style.transition = 'none';\n      reel.style.setProperty('--spin-target', '0');\n      void reel.offsetWidth; // force reflow\n      reel.style.transition = '';\n    }\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n\n    if (reduce) {\n      if (reel) {\n        reel.style.transition = 'none';\n        reel.style.setProperty('--spin-target', `${1 + pool.length + idx}`);\n      }\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    \n    // The sequence is: initialText (1 item), cycle 1 (N items), cycle 2 (N items)\n    // To land randomly but reliably far down, we target the second cycle.\n    const targetIdx = 1 + pool.length + idx;\n    \n    if (reel) {\n      reel.style.setProperty('--spin-target', `${targetIdx}`);\n    }\n\n    const duration = 600; // matches CSS transition duration\n    let tickCount = 0;\n    const maxTicks = targetIdx;\n    const tickInterval = duration / maxTicks;\n    \n    const hapticTick = () => {\n      if (!hovered) return;\n      btn.style.setProperty('--haptic-y', '1px');\n      btn.style.setProperty('--haptic-scale', '0.99');\n      setTimeout(() => {\n        btn.style.setProperty('--haptic-y', '0px');\n        btn.style.setProperty('--haptic-scale', '1');\n      }, 30);\n      tickCo
+<truncated 862 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 63
+END: 68
+TARGET:
+"          const surpriseColors: Record<string, string> = {\n            writing: 'var(--g-red)',\n            featured: 'var(--g-green)',\n            toolkit: 'var(--g-yellow)',\n            experience: 'var(--g-blue)'\n          };"
+REPLACEMENT:
+"          const surpriseColors = {\n            writing: 'var(--g-red)',\n            featured: 'var(--g-green)',\n            toolkit: 'var(--g-yellow)',\n            experience: 'var(--g-blue)'\n          };"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 254
+END: 273
+TARGET:
+"/* Primary — elegant accent-tinted glass */\n.hero-action--primary {\n  color: var(--on-accent);\n  border-color: color-mix(in srgb, var(--accent) 30%, transparent);\n  background: color-mix(in srgb, var(--accent) 75%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 25%, transparent),\n    0 6px 16px -8px color-mix(in srgb, var(--accent) 40%, transparent);\n}\n.hero-action--primary:hover {\n  filter: none;\n  background: color-mix(in srgb, var(--accent) 85%, transparent);\n  border-color: color-mix(in srgb, var(--accent) 45%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 35%, transparent),\n    0 10px 24px -10px color-mix(in srgb, var(--accent) 55%, transparent);\n}"
+REPLACEMENT:
+"/* Primary — elegant accent-tinted glass */\n.hero-action--primary:not(.hero-action--surprise) {\n  color: var(--on-accent);\n  border-color: color-mix(in srgb, var(--accent) 30%, transparent);\n  background: color-mix(in srgb, var(--accent) 75%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 25%, transparent),\n    0 6px 16px -8px color-mix(in srgb, var(--accent) 40%, transparent);\n}\n.hero-action--primary:not(.hero-action--surprise):hover {\n  filter: none;\n  background: color-mix(in srgb, var(--accent) 85%, transparent);\n  border-color: color-mix(in srgb, var(--accent) 45%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 35%, transparent),\n    0 10px 24px -10px color-mix(in srgb, var(--accent) 55%, transparent);\n}\n\n/* Primary Surprise — Ultra-premium neutral glass to let the rainbow text shine */\n.hero-action--surprise.hero-action--primary {\n  color: var(--ink);\n  background: color-mix(in srgb, var(--paper) 60%, transparent);\n  border-color: color-mix(in srgb, var(--ink) 12%, transparent);\n  backdrop-filter: blur(24px) saturate(150%);\n  -webkit-backdrop-filter: blur(24px) saturate(150%);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 50%, transparent),\n    inset 0 -1px 0 color-mix(in srgb, var(--ink) 5%, transparent),\n    0 8px 24px -8px color-mix(in srgb, var(--ink) 20%, transparent);\n}\n.hero-action--surprise.hero-action--primary:hover {\n  background: color-mix(in srgb, var(--paper) 80%, transparent);\n  border-color: color-mix(in srgb, var(--ink) 20%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 60%, transparent),\n    inset 0 -1px 0 color-mix(in srgb, var(--ink) 5%, transparent),\n    0 12px 32px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 74
+END: 83
+TARGET:
+"              <span class=\"hero-action-label\" data-surprise-label>\n                <span style=\"opacity: 0; pointer-events: none; visibility: hidden;\" aria-hidden=\"true\">{a.label}</span>\n                <div class=\"slot-reel\">\n                  <span class=\"slot-item\">{a.label}</span>\n                  {surpriseReel.map(item => (\n                    <span class=\"slot-item\" style={`color: ${surpriseColors[item.id]};`}>{item.label}</span>\n                  ))}\n                </div>\n              </span>"
+REPLACEMENT:
+"              <span class=\"hero-action-label\" data-surprise-label>\n                <div class=\"slot-spacer\" aria-hidden=\"true\">\n                  <span>{a.label}</span>\n                  {intro.surprise && intro.surprise.map(item => (\n                    <span>{item.label}</span>\n                  ))}\n                </div>\n                <div class=\"slot-reel\">\n                  <span class=\"slot-item\">{a.label}</span>\n                  {surpriseReel.map(item => (\n                    <span class=\"slot-item\" style={`color: ${surpriseColors[item.id]};`}>{item.label}</span>\n                  ))}\n                </div>\n              </span>"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 304
+END: 324
+TARGET:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 10.5em; /* Keeps button width stable for the new 15-18 character labels */\n  text-align: center;\n  overflow: hidden;\n}\n.hero-action--surprise.is-rolling .hero-action-label {\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transform: translateY(calc(-100% * var(--spin-target, 0)));\n  transition: transform 0.6s cubic-bezier(0.2, 1, 0.4, 1);\n  will-change: transform;\n}"
+REPLACEMENT:
+".hero-action--surprise .hero-action-label {\n  position: relative;\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n  overflow: hidden;\n}\n\n.slot-spacer {\n  display: grid;\n  visibility: hidden;\n  pointer-events: none;\n}\n.slot-spacer > span {\n  grid-area: 1 / 1;\n}\n\n.hero-action--surprise.is-rolling .hero-action-label {\n  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);\n}\n.slot-reel {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  flex-direction: column;\n  transform: translateY(calc(-100% * var(--spin-target, 0)));\n  transition: transform 0.5s var(--ease-spring);\n  will-change: transform;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 139
+END: 141
+TARGET:
+"    const duration = 600; // matches CSS transition duration"
+REPLACEMENT:
+"    const duration = 500; // matches CSS transition duration"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/components/Hero.astro"
+START: 82
+END: 104
+TARGET:
+"              <span class=\"hero-action-arrow\" aria-hidden=\"true\">↓</span>\n            </a>\n          );\n        }\n        \n        return (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}\n          >\n            <span class=\"hero-action-label\">{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">→</span>\n          </a>\n        );"
+REPLACEMENT:
+"              <span class=\"hero-action-arrow\" aria-hidden=\"true\">\n                <svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                  <path d=\"M8 3.5V12.5M8 12.5L3.5 8M8 12.5L12.5 8\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n                </svg>\n              </span>\n            </a>\n          );\n        }\n        \n        return (\n          <a\n            class={`hero-action${a.primary ? ' hero-action--primary' : ''}`}\n            href={a.href}\n            {...(a.href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}\n          >\n            <span class=\"hero-action-label\">{a.label}</span>\n            <span class=\"hero-action-arrow\" aria-hidden=\"true\">\n              <svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M3.5 8H12.5M12.5 8L8 3.5M12.5 8L8 12.5\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n              </svg>\n            </span>\n          </a>\n        );"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 211
+END: 252
+TARGET:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 9px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 12px 22px;\n  border-radius: 999px;\n  /* Refined, softer frosted glass that doesn't overpower the main panel */\n  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);\n  background: color-mix(in srgb, var(--frame) 30%, transparent);\n  backdrop-filter: blur(12px) saturate(120%);\n  -webkit-backdrop-filter: blur(12px) saturate(120%);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent),\n    0 4px 12px -8px color-mix(in srgb, var(--ink) 20%, transparent);\n  transform: translateY(var(--haptic-y, 0px)) scale(var(--haptic-scale, 1));\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  font-size: 1em;\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: translateY(calc(-3px + var(--haptic-y, 0px))) scale(calc(1.01 * var(--haptic-scale, 1)));\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}\n.hero-action:hover .hero-action-arrow {\n  transform: translateX(3px);\n}"
+REPLACEMENT:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 10px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  line-height: 1;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 13px 24px;\n  border-radius: 999px;\n  /* Refined, softer frosted glass that doesn't overpower the main panel */\n  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);\n  background: color-mix(in srgb, var(--frame) 30%, transparent);\n  backdrop-filter: blur(12px) saturate(120%);\n  -webkit-backdrop-filter: blur(12px) saturate(120%);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent),\n    0 4px 12px -8px color-mix(in srgb, var(--ink) 20%, transparent);\n  transform: translateY(var(--haptic-y, 0px)) scale(var(--haptic-scale, 1));\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease,\n              background 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;\n}\n.hero-action-arrow {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1em;\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: translateY(calc(-3px + var(--haptic-y, 0px))) scale(calc(1.01 * var(--haptic-scale, 1)));\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}\n.hero-action:hover .hero-action-arrow {\n  transform: translateX(3px);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 355
+END: 371
+TARGET:
+".surprise-dot {\n  position: relative;\n  width: 15px;\n  height: 15px;\n  border-radius: 50%;\n  flex: 0 0 auto;\n  background: conic-gradient(\n    from 0deg,\n    var(--g-blue) 0 90deg,\n    var(--g-red) 90deg 180deg,\n    var(--g-yellow) 180deg 270deg,\n    var(--g-green) 270deg 360deg\n  );\n  box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 30%, transparent);\n  transition: transform 0.5s var(--ease-spring);\n}"
+REPLACEMENT:
+".surprise-dot {\n  position: relative;\n  width: 16px;\n  height: 16px;\n  border-radius: 50%;\n  flex: 0 0 auto;\n  background: conic-gradient(\n    from 0deg,\n    var(--g-blue) 0 90deg,\n    var(--g-red) 90deg 180deg,\n    var(--g-yellow) 180deg 270deg,\n    var(--g-green) 270deg 360deg\n  );\n  box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 30%, transparent);\n  transition: transform 0.5s var(--ease-spring);\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 211
+END: 225
+TARGET:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 10px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  line-height: 1;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 13px 24px;\n  border-radius: 999px;"
+REPLACEMENT:
+".hero-action {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  gap: 10px;\n  font-family: var(--font-sans);\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n  padding: 10px 24px;\n  border-radius: 999px;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 312
+END: 320
+TARGET:
+".slot-spacer {\n  display: grid;\n  visibility: hidden;\n  pointer-events: none;\n}\n.slot-spacer > span {\n  grid-area: 1 / 1;\n}"
+REPLACEMENT:
+".slot-spacer {\n  display: grid;\n  visibility: hidden;\n  pointer-events: none;\n  opacity: 0;\n}\n.slot-spacer > span {\n  grid-area: 1 / 1;\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 68
+END: 179
+TARGET:
+"  let hovered = false;\n  let rollTimeout: number | undefined;\n  let currentDestId = pool[0]?.id ?? 'featured';\n\n  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length;\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    btn.classList.remove('is-rolling', 'is-landed');\n    btn.style.removeProperty('--haptic-y');\n    btn.style.removeProperty('--haptic-scale');\n    \n    // Instantly snap the reel back to the beginning when un-hovered\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    if (reel) {\n      reel.style.transition = 'none';\n      reel.style.setProperty('--spin-target', '0');\n      void reel.offsetWidth; // force reflow\n      reel.style.transition = '';\n    }\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n\n    if (reduce) {\n      if (reel) {\n        reel.style.transition = 'none';\n        reel.style.setProperty('--spin-target', `${1 + pool.length + idx}`);\n      }\n      btn.classList.add('is-landed');\n      rolling = false;\n      return;\n    }\n\n    btn.classList.add('is-rolling');\n    \n    // The sequence is: initialText (1 item), cycle 1 (N items), cycle 2 (N items)\n    // To land randomly but reliably far down, we target the second cycle.\n    const targetIdx = 1 + pool.length + idx;\n    \n    if (reel) {\n      reel.style.setProperty('--spin-target', `${targetIdx}`);\n    }\n\n    
+<truncated 1359 bytes>
+REPLACEMENT:
+"  let hovered = false;\n  let rolling = false;\n  let rollTimeout: number | undefined;\n  let rewindingTimeout: number | undefined;\n  let currentDestId = pool[0]?.id ?? 'featured';\n\n  const pickIndex = () => {\n    if (pool.length === 1) return 0;\n    let i = Math.floor(Math.random() * pool.length);\n    if (i === last) i = (i + 1) % pool.length;\n    return i;\n  };\n\n  const goTo = (id: string) => {\n    const target = document.getElementById(id);\n    if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });\n  };\n\n  const reset = () => {\n    hovered = false;\n    rolling = false;\n    if (rollTimeout) clearTimeout(rollTimeout);\n    \n    btn.style.removeProperty('--haptic-y');\n    btn.style.removeProperty('--haptic-scale');\n    \n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n    if (reel) {\n      // Fluidly rewind back to 0 using the CSS spring transition\n      reel.style.setProperty('--spin-target', '0');\n      \n      // Ensure the mask stays on during the rewind\n      btn.classList.add('is-rolling');\n      btn.classList.remove('is-landed');\n      \n      if (rewindingTimeout) clearTimeout(rewindingTimeout);\n      rewindingTimeout = window.setTimeout(() => {\n        // Only remove the mask if they haven't re-hovered\n        if (!hovered && !rolling) {\n          btn.classList.remove('is-rolling');\n        }\n      }, 500); // Matches CSS transition duration\n    }\n  };\n\n  const roll = () => {\n    if (rolling) return;\n    hovered = true;\n    rolling = true;\n    if (rewindingTimeout) clearTimeout(rewindingTimeout);\n    \n    const idx = pickIndex();\n    last = idx;\n    const dest = pool[idx];\n    currentDestId = dest.id;\n    btn.setAttribute('href', `#${currentDestId}`);\n\n    const reel = labelEl.querySelector('.slot-reel') as HTMLElement;\n\n    if (reduce) {\n      if (reel) {\n        reel.style.transition = 'none';\n        reel.style.setProperty('--spin-target', `${1 + pool.length + idx}`);\n      }\n      btn.
+<truncated 1886 bytes>
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 66
+END: 69
+TARGET:
+"  let last = -1;\n  let rolling = false;\n  let hovered = false;\n  let rolling = false;"
+REPLACEMENT:
+"  let last = -1;\n  let rolling = false;\n  let hovered = false;"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/hero.ts"
+START: 197
+END: 211
+TARGET:
+"  const io = new IntersectionObserver(\n    (entries) => {\n      for (const e of entries) {\n        if (e.isIntersecting) {\n          (e.target as HTMLElement).classList.add('is-inview');\n          io.unobserve(e.target); // one-way reveal\n        }\n      }\n    },\n    { threshold: 0.45, rootMargin: '0px 0px -8% 0px' },\n  );\n  cards.forEach((c) => io.observe(c));\n  trackTeardown(() => io.disconnect());\n}"
+REPLACEMENT:
+"  const io = new IntersectionObserver(\n    (entries) => {\n      for (const e of entries) {\n        if (e.isIntersecting) {\n          (e.target as HTMLElement).classList.add('is-inview');\n          io.unobserve(e.target); // one-way reveal\n        }\n      }\n    },\n    { threshold: 0.45, rootMargin: '0px 0px -8% 0px' },\n  );\n  cards.forEach((c) => io.observe(c));\n  trackTeardown(() => io.disconnect());\n}\n\nexport function initMagneticButtons() {\n  const btns = document.querySelectorAll<HTMLElement>('.hero-action');\n  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;\n  if (reduce || btns.length === 0) return;\n\n  btns.forEach((btn) => {\n    let animationFrame: number;\n    \n    const onMouseMove = (e: MouseEvent) => {\n      const rect = btn.getBoundingClientRect();\n      // Calculate cursor position relative to button center\n      const x = e.clientX - rect.left - rect.width / 2;\n      const y = e.clientY - rect.top - rect.height / 2;\n      \n      // Normalize to a subtle -1 to 1 range (intensity multiplier)\n      // Dividing by larger numbers makes the magnetic pull subtler\n      const mx = (x / rect.width) * 0.8; \n      const my = (y / rect.height) * 0.8;\n      \n      if (!animationFrame) {\n        animationFrame = requestAnimationFrame(() => {\n          btn.style.setProperty('--mx', mx.toFixed(3));\n          btn.style.setProperty('--my', my.toFixed(3));\n          animationFrame = 0;\n        });\n      }\n    };\n\n    const resetMagnetic = () => {\n      btn.style.removeProperty('--mx');\n      btn.style.removeProperty('--my');\n      if (animationFrame) {\n        cancelAnimationFrame(animationFrame);\n        animationFrame = 0;\n      }\n    };\n\n    btn.addEventListener('mousemove', onMouseMove);\n    btn.addEventListener('mouseleave', resetMagnetic);\n    \n    trackTeardown(() => {\n      btn.removeEventListener('mousemove', onMouseMove);\n      btn.removeEventListener('mouseleave', resetMagnetic);\n      resetMagnetic();\n    });\n  });\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/scripts/app.ts"
+START: 18
+END: 28
+TARGET:
+"import { initName, initToolkitPulse, initSurprise } from './hero';\n\ndocument.addEventListener('DOMContentLoaded', () => {\n  initShell();\n  initThemeToggle();\n  initScrollSpy();\n  \n  initName();\n  initSurprise();\n  initToolkitPulse();"
+REPLACEMENT:
+"import { initName, initToolkitPulse, initSurprise, initMagneticButtons } from './hero';\n\ndocument.addEventListener('DOMContentLoaded', () => {\n  initShell();\n  initThemeToggle();\n  initScrollSpy();\n  \n  initName();\n  initSurprise();\n  initMagneticButtons();\n  initToolkitPulse();"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 242
+END: 252
+TARGET:
+".hero-action:hover {\n  transform: translateY(calc(-3px + var(--haptic-y, 0px))) scale(calc(1.01 * var(--haptic-scale, 1)));\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}\n.hero-action:hover .hero-action-arrow {\n  transform: translateX(3px);\n}"
+REPLACEMENT:
+".hero-action-label {\n  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);\n}\n.hero-action:hover {\n  transform: \n    translateY(calc(-3px + var(--haptic-y, 0px))) \n    scale(calc(1.01 * var(--haptic-scale, 1)))\n    translate(calc(var(--mx, 0) * 12px), calc(var(--my, 0) * 12px));\n  border-color: color-mix(in srgb, var(--ink) 15%, transparent);\n  background: color-mix(in srgb, var(--frame) 40%, transparent);\n  box-shadow:\n    inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent),\n    0 8px 20px -10px color-mix(in srgb, var(--ink) 25%, transparent);\n}\n.hero-action:hover .hero-action-label {\n  transform: translate(calc(var(--mx, 0) * 5px), calc(var(--my, 0) * 5px));\n}\n.hero-action:hover .hero-action-arrow {\n  transform: translateX(3px) translate(calc(var(--mx, 0) * 5px), calc(var(--my, 0) * 5px));\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/styles/partials/03-hero.css"
+START: 376
+END: 381
+TARGET:
+".hero-action--surprise:hover .surprise-dot {\n  transform: rotate(140deg) scale(1.06);\n}\n.hero-action--surprise:hover .hero-action-arrow {\n  transform: translateY(3px);\n}"
+REPLACEMENT:
+".hero-action--surprise:hover .surprise-dot {\n  transform: rotate(140deg) scale(1.06) translate(calc(var(--mx, 0) * 5px), calc(var(--my, 0) * 5px));\n}\n.hero-action--surprise:hover .hero-action-arrow {\n  transform: translateY(3px) translate(calc(var(--mx, 0) * 5px), calc(var(--my, 0) * 5px));\n}"
+---
+FILE: "/Users/jat/Workplace/jat.work/src/config/site.yaml"
+START: 46
+END: 48
+TARGET:
+"  actions:\n    - { label: Show me around, primary: true, surprise: true }\n  # \"Show me around\" spins a four-colour dial (the wordmark dot) and drops the"
+REPLACEMENT:
+"  actions:\n    - { label: Surprise me, primary: true, surprise: true }\n  # \"Surprise me\" spins a four-colour dial (the wordmark dot) and drops the"

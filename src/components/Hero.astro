@@ -4,45 +4,13 @@ import { intro } from '../lib/site';
 const keepLetters = intro.nameShort.split('');
 const dropLetters = intro.name.slice(intro.nameShort.length).split('');
 
-const pillarIcons: Record<string, string> = {
-  cloud:
-    '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.34 9.5 4 4 0 0 0 7 19h10.5Z"/>',
-  systems:
-    '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4 6.5 16M12 7.4 17.5 16M7 18h10"/>',
-  ai:
-    '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
-};
-
-// Pre-split the statement around the company name so it can be colour-highlighted.
-// We pull any punctuation that immediately follows the company (e.g. the comma in
-// "…at Google, obsessed with…") into the company node so the template can keep the
-// two glued together — otherwise the inline-block highlight lets the comma orphan
-// onto its own line on small screens (notably iOS Safari).
-const statementNodes: ({ type: 'text'; value: string } | { type: 'company'; glue: string })[] | null =
-  intro.company
-    ? (() => {
-        const parts = intro.statementLead.split(intro.company);
-        const nodes: ({ type: 'text'; value: string } | { type: 'company'; glue: string })[] = [];
-        parts.forEach((part, i) => {
-          let text = part;
-          if (i > 0) {
-            const prev = nodes[nodes.length - 1];
-            const prevGlue = prev && prev.type === 'company' ? prev.glue : '';
-            text = text.slice(prevGlue.length);
-          }
-          nodes.push({ type: 'text', value: text });
-          if (i < parts.length - 1) {
-            const glue = (parts[i + 1] ?? '').match(/^[.,;:!?…)]+/)?.[0] ?? '';
-            nodes.push({ type: 'company', glue });
-          }
-        });
-        return nodes;
-      })()
-    : null;
+// The role line reads "<lead> at Google" — split off the prefix so we can colour
+// the company. When there's no recognised company we render the lead verbatim.
+const company = intro.company ?? null;
+const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.statementLead;
 ---
 
 <section class="hero" aria-label="Introduction">
-  <div class="hero-ambient-bg"></div>
   <div class="shell hero-inner">
     <div class="hero-cinematic-header">
       <h1 class="hero-name reveal reveal-delay-1" aria-label={`${intro.greeting} ${intro.name}`}>
@@ -50,165 +18,59 @@ const statementNodes: ({ type: 'text'; value: string } | { type: 'company'; glue
         <span class="hero-fullname" id="hero-name" aria-hidden="true">{keepLetters.map((c) => <span class="nm-keep">{c}</span>)}{dropLetters.map((c) => <span class="nm-drop">{c}</span>)}<span class="nm-dot">.</span></span>
       </h1>
 
-      <h2 class="hero-statement reveal reveal-delay-2">
-        {statementNodes ? statementNodes.map((n) => (
-          n.type === 'company'
-            ? <span class="company-wrap"><span class="company-highlight">{intro.company}</span>{n.glue}</span>
-            : n.value
-        )) : intro.statementLead}
-        <br aria-hidden="true" />
-        <span class="hero-stmt-secondary">{'obsessed with '}</span>
-        {intro.pillars.map((p, i) => {
+      {/* One statement: role + focus, merged. "Google" has a sleek gradient,
+          and focus areas are modern interactive chips. Staggered reveal for polish. */}
+      {/* Punctuation hugs the preceding word (comma sits inside Google's span;
+          each pillar carries its trailing separator) so a line wrap never starts
+          a line with a stray comma. */}
+      <h2 class="hero-statement" aria-label={intro.statementLead + ", obsessed with " + intro.pillars.map(p => p.label).join(", ")}>
+        <span class="stagger-reveal" style="--stagger: 1" aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
+          <> <span class="stagger-reveal" style="--stagger: 2" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
+        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> <span class="stagger-reveal" style="--stagger: 3">{company ? 'obsessed with' : ', obsessed with'}</span> {intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;
-          const prefix = i === 0 ? '' : isLast ? ' and ' : ' ';
-          return (
-            <>
-              {prefix}
-              <span class="pillar-wrap"><button type="button" class="pillar" data-pillar-id={i} aria-pressed="false" aria-controls={`card-${i}`} style={`--c:${p.color};--d:${0.6 + i * 0.18}s`}>{p.label}</button>{isLast ? '.' : ','}</span>
-            </>
-          );
-        })}
+          const isSecondLast = i === intro.pillars.length - 2;
+          // Punctuation that must stay glued to this pillar (never lead a line),
+          // kept in a nowrap group with the inline-block pillar; the separator
+          // after the group is where a line is allowed to break.
+          const hug = isLast ? '.' : isSecondLast ? '' : ',';
+          const after = isLast ? '' : isSecondLast ? ' and ' : ' ';
+          return (<><span class="pillar-wrap"><span class="pillar stagger-reveal" style={`--c:${p.color}; --stagger: ${4 + i}`}>{p.label}</span>{hug}</span>{after}</>);
+        })}</span>
       </h2>
 
-      <div class="hero-proof reveal reveal-delay-3">
-        <ul class="hero-achievements" aria-label="Things I'm proud of">
-          {intro.highlights.map((h, i) => (
-            <li class="ach" data-card-id={i} id={`card-${i}`} style={`--c:${h.color}`}>
-              {h.context && (
-                <span class="ach-context">
-                  <svg class="ach-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={pillarIcons[h.key] ?? ''} />
-                  {h.context}
-                </span>
-              )}
-              <p class="ach-line" set:html={h.bodyHtml} />
-              {h.cta && (
-                <a class="ach-cta" href={h.cta.href} tabindex="-1"
-                  {...(h.cta.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-                  <span>{h.cta.label}</span>
-                  <span class="ach-cta-arrow" aria-hidden="true">→</span>
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
+      <p class="hero-invitation reveal reveal-delay-3">{intro.invitation}</p>
 
-        {/* Pager: makes the deck legible as "3 highlights, one per area" and lets
-            you jump between them. The active dot grows into its pillar colour. */}
-        <div class="ach-pager" role="group" aria-label="Choose a highlight">
-          {intro.highlights.map((h, i) => (
-            <button type="button" class="ach-dot" data-dot={i} style={`--c:${h.color}`} aria-label={h.context ?? `Highlight ${i + 1}`}></button>
-          ))}
-        </div>
+      <div class="hero-actions reveal reveal-delay-4">
+        {/* The single hook: an "I'm feeling lucky" roulette. Click spins a real
+            decelerating wheel that slot-machines through the site's sections,
+            lands on a random one (theming the button in that section's colour),
+            then flies you there. Reduced-motion picks instantly. See surprise.ts. */}
+        <button
+          type="button"
+          class="surprise"
+          data-surprise
+          data-magnetic
+          aria-label="Explore — jump to a random part of the site"
+        >
+          <span class="surprise-reel" aria-hidden="true">
+            <span class="surprise-ico" data-surprise-ico></span>
+            <span class="surprise-label" data-surprise-label>Explore</span>
+          </span>
+          <span class="surprise-arrow" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M6 13l6 6 6-6" />
+            </svg>
+          </span>
+        </button>
+
+        {/* Writing is the heart of the site — kept reachable, but quiet. */}
+        <a class="hero-quietlink" href="#writing" data-magnetic>
+          <span>or just read my writing</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14M6 13l6 6 6-6" />
+          </svg>
+        </a>
       </div>
     </div>
   </div>
 </section>
-
-<script>
-  function initPillarCycle() {
-    const pillars = document.querySelectorAll('.pillar');
-    const cards = document.querySelectorAll('.ach');
-    const dots = Array.from(document.querySelectorAll('.ach-dot'));
-    if (pillars.length === 0 || cards.length === 0) return;
-
-    let currentIndex = 0;
-    const CYCLE_DELAY = 4000;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function setActive(index) {
-      pillars.forEach((p, i) => {
-        if (i === index) {
-          p.classList.add('is-active');
-          p.setAttribute('aria-pressed', 'true');
-        } else {
-          p.classList.remove('is-active');
-          p.setAttribute('aria-pressed', 'false');
-        }
-      });
-      cards.forEach((c, i) => {
-        const offset = (i - index + cards.length) % cards.length;
-        (c as HTMLElement).style.setProperty('--stack', String(offset));
-        const active = i === index;
-        c.classList.toggle('is-active', active);
-        // Only the front card is interactive; keep buried cards out of the tab order.
-        const cta = c.querySelector('.ach-cta') as HTMLElement | null;
-        if (cta) cta.tabIndex = active ? 0 : -1;
-      });
-      dots.forEach((d, i) => {
-        const active = i === index;
-        d.classList.toggle('is-active', active);
-        d.setAttribute('aria-current', active ? 'true' : 'false');
-      });
-      currentIndex = index;
-    }
-
-    function startCycle() {
-      stopCycle();
-      if (reduceMotion) return;
-      (window as any).__pillarCycle = setInterval(() => {
-        const nextIndex = (currentIndex + 1) % pillars.length;
-        setActive(nextIndex);
-      }, CYCLE_DELAY);
-    }
-
-    function stopCycle() {
-      if ((window as any).__pillarCycle) {
-        clearInterval((window as any).__pillarCycle);
-        (window as any).__pillarCycle = null;
-      }
-    }
-
-    setActive(0);
-
-    if (reduceMotion) {
-      // The deck is flattened to a static column for reduced motion (see CSS),
-      // so reveal and enable every card instead of a single cycling front one.
-      cards.forEach((c) => {
-        c.classList.add('is-active');
-        const cta = c.querySelector('.ach-cta') as HTMLElement | null;
-        if (cta) cta.tabIndex = 0;
-      });
-      return;
-    }
-
-    startCycle();
-
-    // Pause the auto-cycle while the visitor is reading or steering the deck
-    // (hovering anywhere in the proof block, or focusing a dot/CTA), so a card
-    // never slides away from under the pointer.
-    const proof = document.querySelector('.hero-proof');
-    if (proof) {
-      proof.addEventListener('pointerenter', stopCycle);
-      proof.addEventListener('pointerleave', startCycle);
-      proof.addEventListener('focusin', stopCycle);
-      proof.addEventListener('focusout', startCycle);
-    }
-
-    // Dots: jump straight to a highlight (hover/focus to preview, click to pick).
-    dots.forEach((dot, i) => {
-      dot.addEventListener('mouseenter', () => setActive(i));
-      dot.addEventListener('focus', () => setActive(i));
-      dot.addEventListener('click', () => setActive(i));
-    });
-
-    pillars.forEach((pillar) => {
-      const triggerActive = (e) => {
-        stopCycle();
-        const id = parseInt(e.target.getAttribute('data-pillar-id'), 10);
-        if (!isNaN(id)) setActive(id);
-      };
-
-      pillar.addEventListener('mouseenter', triggerActive);
-      pillar.addEventListener('focus', triggerActive);
-
-      pillar.addEventListener('mouseleave', startCycle);
-      pillar.addEventListener('blur', startCycle);
-    });
-  }
-
-  if ((window as any).__pillarCycle) {
-    clearInterval((window as any).__pillarCycle);
-    (window as any).__pillarCycle = null;
-  }
-  document.addEventListener('astro:page-load', initPillarCycle);
-</script>

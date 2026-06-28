@@ -1,27 +1,33 @@
 /* ---- footer ---- */
 .site-footer {
   position: relative;
-  margin-top: var(--space-lg);
-  background: color-mix(in srgb, var(--frame) 80%, var(--paper));
-  border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  margin-top: var(--space-xl);
+  /* No solid panel + hard border: that hid the page-wide ambient backdrop and
+     made the footer "cut" abruptly from the feed. A soft top-down frame tint
+     instead, so the aurora + grid stay continuous through the footer. */
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--frame) 55%, transparent) 22%
+  );
   overflow: hidden;
-  min-height: 80vh;
+  min-height: clamp(520px, 64vh, 720px);
   display: flex;
   flex-direction: column;
 }
-/* Ultra-modern ambient edge glow separator */
+/* Ambient edge glow separator — a soft line of light, no hard 1px border. */
 .site-footer::before {
   content: '';
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%;
-  max-width: 800px;
+  width: 70%;
+  max-width: 760px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--accent) 30%, transparent);
-  opacity: 0.8;
+  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--accent) 22%, transparent);
+  opacity: 0.55;
   z-index: 1;
 }
 .footer-parallax {
@@ -47,13 +53,6 @@
   justify-content: center;
   text-align: center;
   gap: 32px;
-  animation: footer-parallax-anim linear both;
-  animation-timeline: view();
-  animation-range: entry 10% cover 40%;
-}
-@keyframes footer-parallax-anim {
-  from { transform: translateY(120px) scale(0.95); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 .footer-cta-title {
   font-family: var(--font-serif);
@@ -80,15 +79,19 @@
   text-decoration: none;
   padding: 12px 32px;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  /* Frosted glass, tinted toward the accent so it still reads as the contact CTA. */
+  background: var(--glass-sheen), color-mix(in srgb, var(--accent) 9%, var(--glass-fill));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--glass-border));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge), 0 8px 24px -14px color-mix(in srgb, var(--accent) 40%, transparent);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .footer-email-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  transform: translate3d(0, -4px, 0);
+  background: var(--glass-sheen), color-mix(in srgb, var(--accent) 16%, var(--glass-fill));
   border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  box-shadow: 0 0 32px -4px color-mix(in srgb, var(--accent) 45%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: var(--glass-edge), 0 0 32px -4px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 .footer-email-btn .arrow {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -107,7 +110,11 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--line) 30%, transparent);
+  background: var(--glass-sheen), var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
   color: var(--sub);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -118,7 +125,7 @@
 .footer-icon:hover {
   color: var(--ink);
   background: color-mix(in srgb, var(--accent) 20%, transparent);
-  transform: translateY(-4px) scale(1.1);
+  transform: translate3d(0, -4px, 0);
   box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .footer-massive-text {
@@ -186,8 +193,7 @@
 }
 
 a:focus-visible,
-button:focus-visible,
-.feat-vis:focus-visible {
+button:focus-visible {
   outline: 2.5px solid var(--accent);
   outline-offset: 3px;
   border-radius: 6px;

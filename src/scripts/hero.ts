@@ -1,5 +1,5 @@
 // Hero niceties: the name collapse and the toolkit scroll-reveal.
-import { trackTeardown } from './lifecycle';
+import { trackTeardown, bindGlobal } from './lifecycle';
 
 /* ----------------------------------------------------------------------- *
  * Hero name: "Jathurchan" collapses to "Jat." — trailing letters shrink to
@@ -63,3 +63,30 @@ export function initToolkitPulse() {
   cards.forEach((c) => io.observe(c));
   trackTeardown(() => io.disconnect());
 }
+
+export function initHeroParallax() {
+  const heroInner = document.querySelector<HTMLElement>('.hero-cinematic-header');
+  if (!heroInner) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let ticking = false;
+  const onScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        // Parallax translate down at 30% speed of scroll, fade out by 400px
+        const yPos = y * 0.3;
+        const opacity = Math.max(0, 1 - y / 400);
+        heroInner.style.transform = `translate3d(0, ${yPos}px, 0)`;
+        heroInner.style.opacity = opacity.toString();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  bindGlobal(window, 'scroll', onScroll, { passive: true });
+}
+

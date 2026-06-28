@@ -15,7 +15,12 @@ import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
 import { initSectionNav, initHeaderScroll } from './nav';
 import { initRouteProgress } from './route';
-import { initName, initToolkitPulse } from './hero';
+import { initName, initToolkitPulse, initHeroParallax } from './hero';
+import { initSurprise } from './surprise';
+import { initMagnetic } from './magnetic';
+import { initSpotlight } from './spotlight';
+import { initScrollFallback } from './fallback';
+import { initFluid } from './fluid';
 
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
@@ -23,14 +28,20 @@ if ('scrollRestoration' in history) {
 window.scrollTo(0, 0);
 
 function boot() {
+  initFluid();
   initHeaderScroll();
   initName();
+  initHeroParallax();
+  initSurprise();
+  initMagnetic();
+  initSpotlight();
   initTeaser();
   initDemo();
   initFilters();
   initToolkitPulse();
   initSectionNav();
   initRouteProgress();
+  initScrollFallback();
 
   // Handle deep-linking to the RaftLock demo
   if (window.location.hash === '#raftlock') {
