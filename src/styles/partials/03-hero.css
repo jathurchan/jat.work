@@ -1,34 +1,72 @@
 /* ---- full-width hero ---- */
 .hero {
   position: relative;
-  /* No overflow clip: the blurred ambient glow must bleed up behind the
-     floating header instead of being cut into a hard seam at the hero's top
-     edge. Horizontal bleed is contained by `.page { overflow-x: clip }`. */
-}
-/* Soft colour aura behind the top of the hero. It extends above the hero so it
-   sits seamlessly behind the floating header — the glow centres on the
-   name/statement zone (offsets in px, not %, so it's independent of height). */
-.hero-ambient-bg {
-  position: absolute;
-  top: -140px; left: 0; right: 0; height: 820px;
-  z-index: -1;
-  background: radial-gradient(60% 420px at 50% 360px, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
-              radial-gradient(42% 320px at 12% 380px, color-mix(in srgb, var(--g-blue) 10%, transparent), transparent 70%),
-              radial-gradient(42% 320px at 88% 380px, color-mix(in srgb, var(--g-red) 10%, transparent), transparent 70%);
-  filter: blur(70px);
-  opacity: 0.8;
-  animation: slowPulseGlow 8s infinite alternate;
-  pointer-events: none;
-}
-/* Breathe between 0.97 and 1.0 (never above 1) so the full-width glow can't
-   bleed sideways past the viewport — scaling >1 here was a source of stray
-   horizontal scroll on small screens. */
-@keyframes slowPulseGlow {
-  from { opacity: 0.6; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+  overflow: clip;
 }
 
-/* Micro-animations */
+/* ══ Page-wide ambient backdrop ══
+   One continuous decorative surface for the whole home page, sitting behind
+   all content (.page is the stacking context; this is its z-index:-1 child).
+   The aurora is anchored to the top and the grid fades down the page, so the
+   hero dissolves into the rest of the site instead of ending on a hard edge.
+   Both reuse the four Google hues + HUD-grid language of the RaftLock demo. */
+.page-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* Brand-colour aurora — top-anchored (~130vh) and masked so it melts away just
+   past the hero. */
+.page-bg-aurora {
+  position: absolute;
+  top: -12vh;
+  left: -10%;
+  right: -10%;
+  height: 132vh;
+  background:
+    radial-gradient(34% 38% at 18% 16%, color-mix(in srgb, var(--g-blue) 24%, transparent), transparent 66%),
+    radial-gradient(30% 34% at 84% 12%, color-mix(in srgb, var(--g-red) 16%, transparent), transparent 70%),
+    radial-gradient(40% 42% at 78% 58%, color-mix(in srgb, var(--g-green) 18%, transparent), transparent 70%),
+    radial-gradient(38% 40% at 20% 66%, color-mix(in srgb, var(--g-yellow) 15%, transparent), transparent 70%);
+  filter: blur(40px) saturate(120%);
+  opacity: 0.6;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 52%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 52%, transparent 96%);
+  animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+/* Engineering grid — strong across the hero, fading to a faint whisper that
+   carries down the page for cohesion (in viewport units so page height never
+   changes where it lands). */
+.page-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 46px 46px;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 50vh, color-mix(in srgb, #000 18%, transparent) 118vh);
+  mask-image: linear-gradient(to bottom, #000 0, #000 50vh, color-mix(in srgb, #000 18%, transparent) 118vh);
+  opacity: 0.6;
+}
+@keyframes auroraDrift {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+  50%  { transform: translate3d(2.5%, 1.5%, 0) scale(1.07); }
+  100% { transform: translate3d(-1%, 2.5%, 0) scale(1.03); }
+}
+:root[data-theme="dark"] .page-bg-aurora {
+  opacity: 0.46;
+  filter: blur(44px) saturate(130%);
+}
+:root[data-theme="dark"] .page-bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, #ffffff 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, #ffffff 7%, transparent) 1px, transparent 1px);
+  opacity: 0.5;
+}
+
+/* ── Micro-animations ── */
 .reveal {
   opacity: 0;
   animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -45,14 +83,18 @@
 .reveal-delay-6 { animation-delay: 1.1s; }
 
 @keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeSlideDown {
   from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Layout ── */
 .hero-inner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,8 +109,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(16px, 2vh, 24px);
+  gap: clamp(18px, 3vh, 30px);
+  padding: clamp(56px, 9vh, 104px) 0 clamp(40px, 6vh, 72px);
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
 }
+
+/* ── Name ── */
 .hero-name {
   margin: 0;
   display: flex;
@@ -87,17 +135,15 @@
   margin-bottom: clamp(8px, 1.4vh, 14px);
 }
 .hero-fullname {
-  font-family: var(--font-sans);
+  font-family: var(--font-hero);
   font-weight: 800;
-  font-size: clamp(32px, 10vw, 108px);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  font-size: clamp(46px, 12vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
   white-space: nowrap;
-  background: linear-gradient(135deg, var(--ink) 0%, color-mix(in srgb, var(--ink) 60%, transparent) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--ink);
 }
+
 /* Name collapse: trailing letters shrink to width 0 and the dot glides left.
    Driven by app.ts (initName), which measures each letter then toggles
    `.drop-gone`. The dot is the brand signal, echoing the wordmark's blue dot. */
@@ -121,230 +167,304 @@
 .nm-dot {
   color: var(--accent);
 }
+
+/* ── Statement ── role + focus in one sentence ──
+   "Software Engineer & SRE at Google, obsessed with <a>, <b> and <c>." */
 .hero-statement {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: clamp(16px, 4.5vw, 30px);
-  line-height: 1.45;
-  color: var(--ink);
-  text-wrap: pretty;
-  max-width: 760px;
-}
-.hero-stmt-secondary {
-  font-weight: 500;
-  color: var(--sub);
-}
-@media (max-width: 640px) {
-  .hero-statement {
-    line-height: 1.35;
-  }
-}
-/* Keep the company name glued to any punctuation right after it (e.g. the comma
-   in "…at Google, obsessed with…"). The highlight below is inline-block, which
-   otherwise lets the comma wrap onto its own line on small screens. */
-.company-wrap {
-  white-space: nowrap;
-}
-.company-highlight {
-  display: inline-block;
-  background: linear-gradient(90deg, var(--g-blue) 0%, var(--g-red) 33%, var(--g-yellow) 66%, var(--g-green) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
+  font-size: clamp(19px, 3.2vw, 30px);
+  line-height: 1.4;
   letter-spacing: -0.02em;
-  padding: 0 1px;
+  color: var(--ink);
+  text-wrap: balance;
+  max-width: 740px;
 }
-/* Colour-coded focus areas. `--c` is set per pillar; the underline wipes in
-   with a staggered `--d` delay, threading the colour through to the cards. */
-.pillar-wrap {
+/* The "obsessed with …" half is lighter, so the role reads first and the
+   colour-coded focus terms pop against it. */
+.hero-stmt-focus {
+  font-weight: 500;
+  color: var(--sub);
+}
+/* "Google" spelled in its own brand letters — the same four hues the site runs
+   on. A small, recognisable wordmark that gives the employer real presence. */
+.hero-company {
+  display: inline-flex;
+  font-family: var(--font-hero);
+  font-weight: 800;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
+.hero-company-ltr {
+  display: inline-block;
+  color: var(--c);
+  transition: transform 0.35s var(--ease-spring);
+}
+.hero-statement:hover .hero-company-ltr {
+  transform: translateY(-3px);
+}
+.hero-statement:hover .hero-company-ltr:nth-child(2) { transition-delay: 0.03s; }
+.hero-statement:hover .hero-company-ltr:nth-child(3) { transition-delay: 0.06s; }
+.hero-statement:hover .hero-company-ltr:nth-child(4) { transition-delay: 0.09s; }
+.hero-statement:hover .hero-company-ltr:nth-child(5) { transition-delay: 0.12s; }
+.hero-statement:hover .hero-company-ltr:nth-child(6) { transition-delay: 0.15s; }
+
 .pillar {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
   position: relative;
+  white-space: nowrap;
   font-weight: 600;
-  color: var(--ink);
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.4s ease, color 0.4s ease, background-size 0.4s ease;
-  background-image: linear-gradient(transparent 62%, color-mix(in srgb, var(--c) 26%, transparent) 0);
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: 0% 100%;
-  border-radius: 4px;
+  color: color-mix(in srgb, var(--c) 78%, var(--ink));
+  transition: color 0.3s ease;
 }
-.pillar:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-  opacity: 1;
+.pillar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.12em;
+  height: 0.09em;
+  min-height: 2px;
+  border-radius: 2px;
+  background: var(--c);
+  transform: scaleX(0);
+  transform-origin: left;
+  /* Drawn after the focus line has revealed; staggered per term by --i. */
+  animation: pillarDraw 0.6s var(--ease-spring) forwards;
+  animation-delay: calc(1.05s + var(--i) * 0.22s);
 }
-.pillar.is-active {
-  opacity: 1;
-  color: var(--c);
-  background-size: 100% 100%;
+@keyframes pillarDraw {
+  to { transform: scaleX(1); }
 }
-.pillar:hover {
-  opacity: 0.8;
-}
-.hero-proof {
-  width: 100%;
-  max-width: 560px;
-  margin: clamp(20px, 3.5vh, 36px) auto 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-/* Key achievements: stacked card deck, one per focus area. The active pillar
-   (hovered or auto-cycled) brings its card to the front via --stack = 0. */
-.hero-achievements {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 28px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  text-align: left;
-}
-.ach {
-  grid-area: 1 / 1;
-  display: flex;
-  flex-direction: column;
-  /* The deck forces every card to the height of the tallest (2-line) one.
-     Centre the tight context → proof → CTA group so the leftover space on
-     shorter cards splits evenly above and below, instead of pooling as dead
-     space at the bottom or as a gap between the proof and its action. */
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 18px;
-  /* Only the front (active) card is interactive — buried cards peek out below
-     but must not swallow clicks. */
-  pointer-events: none;
-  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
-  border-left: 2.5px solid color-mix(in srgb, var(--c) 30%, var(--line));
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--frame) 94%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--ink) 12%, transparent);
-  transform: translateY(calc(var(--stack, 0) * 13px)) scale(calc(1 - var(--stack, 0) * 0.04));
-  transform-origin: top center;
-  opacity: calc(1 - var(--stack, 0) * 0.3);
-  z-index: calc(10 - var(--stack, 0));
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.5s ease,
-              border-color 0.35s ease,
-              background 0.35s ease,
-              box-shadow 0.35s ease;
-}
-.ach.is-active {
-  pointer-events: auto;
-  border-color: color-mix(in srgb, var(--c) 38%, var(--line));
-  border-left-color: var(--c);
-  background: color-mix(in srgb, var(--c) 8%, var(--frame));
-  box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--c) 55%, transparent);
-}
-/* Context "where" label — a quiet, muted eyebrow. The pillar colour rides on
-   the small glyph (and the spine) only, so the metric below is the one thing
-   that reads in colour. */
-.ach-context {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--faint-text);
-  opacity: 0.8;
-}
-.ach-glyph {
-  flex: 0 0 auto;
-  width: 12px;
-  height: 12px;
-  color: var(--c);
-}
-/* The proof — the focal hook. Sized up a touch so it reads first. */
-.ach-line {
-  margin: 0;
-  font-size: clamp(14.5px, 1.3vw, 16px);
-  line-height: 1.5;
-  color: var(--sub);
-  text-wrap: pretty;
-}
-/* The metric literally highlights — same marker stripe the statement pillars
-   use, in the matching pillar colour, so the proof reads as the headline. */
-.ach-line strong {
-  font-weight: 700;
-  color: var(--c);
-  background-image: linear-gradient(transparent 62%, color-mix(in srgb, var(--c) 20%, transparent) 0);
-  background-repeat: no-repeat;
-  padding: 0 1px;
-}
-/* CTA links the proof to the section where you can go deeper (demo, blog, work). */
-.ach-cta {
-  margin-top: 4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: max-content;
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--c);
-  transition: gap 0.25s var(--ease-spring);
-}
-.ach-cta-arrow {
-  transition: transform 0.25s var(--ease-spring);
-}
-.ach-cta:hover {
-  gap: 9px;
-}
-.ach-cta:hover .ach-cta-arrow {
-  transform: translateX(2px);
-}
-.ach-cta:focus-visible {
-  outline: 2px solid var(--c);
-  outline-offset: 3px;
-  border-radius: 4px;
+:root[data-theme="dark"] .pillar {
+  color: color-mix(in srgb, var(--c) 88%, var(--ink));
 }
 
-/* Pager — the at-a-glance "3 highlights, here's which one" control. */
-.ach-pager {
+/* ── Invitation ── */
+.hero-invitation {
+  margin: 0;
+  max-width: 528px;
+  font-family: var(--font-sans);
+  font-size: clamp(14.5px, 1.7vw, 16.5px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--sub);
+  text-wrap: pretty;
+}
+
+/* ── Hero action row ── */
+.hero-actions {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 16px;
+  margin-top: clamp(10px, 2.4vh, 22px);
 }
-.ach-dot {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border: none;
+
+/* Base for magnetic.ts-driven elements */
+[data-magnetic] {
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease,
+    border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+  will-change: transform;
+}
+
+/* ══ "Surprise me" roulette ══
+   The single hook of the hero. A glassy pill: hovering spins it to *one*
+   random section (theming itself in that section's brand colour --c, set by
+   surprise.ts); clicking flies you there. No circle — the colour lives in the
+   symbol, the label, and the glow. */
+.surprise {
+  --c: var(--accent);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  height: 58px;
+  padding: 0 23px;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--faint) 55%, transparent);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
   cursor: pointer;
-  transition: width 0.45s var(--ease-spring), background 0.3s ease;
+  white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  /* Frosted glass: a translucent fill with a top-down sheen, heavy backdrop
+     blur + saturation, a bright top edge and soft drop — Apple-style glass. */
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, #ffffff 16%, transparent),
+      color-mix(in srgb, #ffffff 3%, transparent)),
+    color-mix(in srgb, var(--frame) 58%, transparent);
+  border: 1px solid color-mix(in srgb, #ffffff 30%, var(--line));
+  backdrop-filter: blur(20px) saturate(185%);
+  -webkit-backdrop-filter: blur(20px) saturate(185%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
+    inset 0 -1px 3px color-mix(in srgb, var(--ink) 5%, transparent),
+    0 10px 30px -12px color-mix(in srgb, var(--ink) 32%, transparent);
+  transition: transform 0.35s var(--ease-spring), box-shadow 0.4s var(--ease-out),
+    border-color 0.4s ease, background 0.35s ease;
 }
-.ach-dot:hover {
-  background: color-mix(in srgb, var(--c) 55%, var(--faint));
+.surprise:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 60%, transparent),
+    0 16px 40px -14px color-mix(in srgb, var(--c) 50%, transparent);
 }
-.ach-dot.is-active {
-  width: 22px;
-  background: var(--c);
+.surprise:active {
+  transform: scale(0.97);
 }
-.ach-dot:focus-visible {
+.surprise:focus-visible {
   outline: 2px solid var(--c);
   outline-offset: 3px;
 }
+/* While the wheel spins, the live --c changes each tick; the transitioned glow
+   + border morph through the four hues, so the spin itself reads as colourful. */
+.surprise.is-rolling {
+  border-color: color-mix(in srgb, var(--c) 55%, var(--line));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 60%, transparent),
+    0 14px 38px -12px color-mix(in srgb, var(--c) 60%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--c) 14%, transparent);
+}
+.surprise.is-locked {
+  border-color: color-mix(in srgb, var(--c) 48%, var(--line));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
+    0 14px 34px -12px color-mix(in srgb, var(--c) 52%, transparent);
+}
+/* Dark glass: dial the white sheen right down so it reads as smoked glass, not
+   a grey slab. */
+:root[data-theme="dark"] .surprise {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, #ffffff 10%, transparent),
+      color-mix(in srgb, #ffffff 1%, transparent)),
+    color-mix(in srgb, var(--frame) 52%, transparent);
+  border-color: color-mix(in srgb, #ffffff 14%, var(--line));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 16%, transparent),
+    0 12px 32px -14px rgba(0, 0, 0, 0.55);
+}
+
+/* Fixed-width reel so the slot-machine label never resizes the button. */
+.surprise-reel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  overflow: hidden;
+}
+/* The symbol — a colourful gradient sparkle at rest, then the spinning /
+   landed section's icon (inheriting the live --c). */
+.surprise-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--c);
+  transition: color 0.25s ease, transform 0.4s var(--ease-spring);
+}
+.surprise-ico svg {
+  width: 18px;
+  height: 18px;
+}
+.surprise-ico:empty {
+  display: none;
+}
+.surprise.is-locked .surprise-ico {
+  transform: scale(1.08);
+}
+.surprise-label {
+  display: inline-block;
+  min-width: 11ch;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+.surprise.is-rolling .surprise-label {
+  color: color-mix(in srgb, var(--c) 64%, var(--ink));
+}
+.surprise.is-locked .surprise-label {
+  color: color-mix(in srgb, var(--c) 74%, var(--ink));
+}
+.surprise-arrow {
+  display: inline-flex;
+  align-items: center;
+  margin-left: -1px;
+  color: var(--faint-text);
+  transition: transform 0.3s var(--ease-spring), color 0.3s ease;
+}
+.surprise:hover .surprise-arrow,
+.surprise.is-locked .surprise-arrow {
+  transform: translateY(3px);
+  color: color-mix(in srgb, var(--c) 72%, var(--ink));
+}
+
+/* The quiet path to the writing — present, but deliberately subordinate. */
+.hero-quietlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--faint-text);
+  transition: color 0.25s ease;
+}
+.hero-quietlink svg {
+  opacity: 0.7;
+  transition: transform 0.3s var(--ease-spring), opacity 0.25s ease;
+}
+.hero-quietlink:hover {
+  color: var(--sub);
+}
+.hero-quietlink:hover svg {
+  transform: translateY(2px);
+  opacity: 1;
+}
+.hero-quietlink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ══ Roulette landing payoff ══
+   When the wheel flies you to a section, that section briefly blooms with a
+   glow in the landed colour (--surprise-c, set by surprise.ts) — a clear
+   "you've arrived here" flourish. Sits behind the section's content. */
+.is-surprise-target {
+  position: relative;
+}
+.is-surprise-target::after {
+  content: '';
+  position: absolute;
+  inset: -3% -6%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 62% at 50% 0%,
+      color-mix(in srgb, var(--surprise-c, var(--accent)) 34%, transparent),
+      transparent 70%),
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--surprise-c, var(--accent)) 22%, transparent),
+      transparent 18%);
+  animation: surpriseArrive 1.25s var(--ease-out) forwards;
+}
+@keyframes surpriseArrive {
+  0%   { opacity: 0; transform: translateY(-16px) scale(0.985); }
+  24%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(0) scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-surprise-target::after { animation: none; }
+}
+
+
 
 .hero-cinematic-visuals {
   width: 100%;
@@ -1221,32 +1341,10 @@ body.raftlock-open {
   .rl-modal { transition: opacity 0.2s ease; }
   .rl-modal { transform: none; }
   .nm-drop { transition: none; }
-  /* Auto-cycle is disabled for reduced motion, so present every pillar and
-     row at full strength instead of leaving two-thirds dimmed. */
-  .pillar {
-    animation: none;
-    opacity: 1;
-    color: var(--c);
-    background-size: 100% 100%;
-  }
-  /* Deck doesn't cycle — flatten to a readable column with every card visible. */
-  .hero-achievements {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    padding-bottom: 0;
-  }
-  .ach {
-    transform: none;
-    opacity: 1;
-    pointer-events: auto;
-    border-color: color-mix(in srgb, var(--c) 30%, var(--line));
-    border-left-color: var(--c);
-  }
-  /* Every card is shown at once, so the carousel pager is meaningless. */
-  .ach-pager {
-    display: none;
-  }
+  /* Hold the drifting aurora still rather than animating it endlessly. */
+  .page-bg-aurora { animation: none; }
+  /* Focus-area underlines appear without the draw-in sweep. */
+  .pillar::after { animation: none; transform: scaleX(1); }
 }
 .hero-portrait {
   position: relative;

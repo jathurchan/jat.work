@@ -16,6 +16,8 @@ import { initFilters } from './feed';
 import { initSectionNav, initHeaderScroll } from './nav';
 import { initRouteProgress } from './route';
 import { initName, initToolkitPulse } from './hero';
+import { initSurprise } from './surprise';
+import { initMagnetic } from './magnetic';
 
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
@@ -25,6 +27,8 @@ window.scrollTo(0, 0);
 function boot() {
   initHeaderScroll();
   initName();
+  initSurprise();
+  initMagnetic();
   initTeaser();
   initDemo();
   initFilters();

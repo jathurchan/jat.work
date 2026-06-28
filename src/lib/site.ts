@@ -68,13 +68,7 @@ export interface SiteConfig {
     statementLead: string;
     pillars: { key: string; label: string; color: string }[];
     bio: string;
-    highlights: {
-      key: string;
-      color: string;
-      context?: string;
-      bodyHtml: string;
-      cta?: { label: string; href: string };
-    }[];
+    invitation: string;
   };
   skills: {
     eyebrow: string;

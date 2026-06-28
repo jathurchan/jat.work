@@ -35,9 +35,9 @@
 
   
   --space-sm: clamp(16px, 2vw, 24px);
-  --space-md: clamp(24px, 4vw, 48px);
-  --space-lg: clamp(48px, 8vw, 96px);
-  --space-xl: clamp(64px, 12vw, 160px);
+  --space-md: clamp(24px, 4vw, 40px);
+  --space-lg: clamp(48px, 6vw, 80px);
+  --space-xl: clamp(64px, 10vw, 120px);
 
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -45,6 +45,9 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-serif: 'Playfair Display', serif;
+  /* Display face for the hero only — geometric, friendly, a touch more personal
+     than Inter while staying in the same modern-grotesque family. */
+  --font-hero: 'Outfit', 'Inter', system-ui, sans-serif;
   }
 
 :root[data-theme="dark"] {
@@ -108,6 +111,8 @@ button {
 
 /* ---- root shell ---- */
 .page {
+  position: relative;
+  z-index: 0;
   min-height: 100svh;
   display: flex;
   flex-direction: column;

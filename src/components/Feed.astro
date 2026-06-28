@@ -23,11 +23,11 @@ const topicIcons: Record<string, string> = {
 const PAGE_SIZE = 6;
 ---
 
-{/* ---------- Blog Section ---------- */}
-<section id="notes" class="lab-section">
+{/* ---------- Writing Section ---------- */}
+<section id="writing" class="lab-section">
   <div class="section-lead">
     <span class="featured-eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['notes'] ?? ''} />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['writing'] ?? ''} />
       {lab.eyebrow}
     </span>
     <h2 class="featured-lead-text">{lab.lead}</h2>
@@ -62,8 +62,8 @@ const PAGE_SIZE = 6;
           <path d="M4 20h4L19 9l-4-4L4 16v4Z"></path>
           <path d="M14 6l4 4"></path>
         </svg>
-        <h3 class="lab-empty-title">Building the archives</h3>
-        <p class="lab-empty-text">I'm currently writing up my notes on cloud computing, distributed systems, and AI. Check back soon.</p>
+        <h3 class="lab-empty-title">The first words are coming</h3>
+        <p class="lab-empty-text">I'm currently writing about cloud computing, distributed systems, and AI — what I build, break, and learn. Check back soon.</p>
       </div>
     ) : (
       entries.map((e, index) => {
