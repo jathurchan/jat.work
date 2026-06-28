@@ -33,12 +33,18 @@
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
   
-  /* Force hardware acceleration to prevent iOS Safari from shearing/tilting the backdrop-filter */
+  /* Force hardware acceleration to prevent iOS Safari from shearing/tilting the
+     backdrop-filter. (No `will-change` — leaving it on permanently kept the
+     element on its own layer every frame and made the pill jitter while
+     scrolling.) */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  will-change: transform, backdrop-filter;
-  
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Transition only the cheap visual properties. Crucially NOT `backdrop-filter`
+     (animating blur 0→24px stutters) and NOT `all` (which swept it in). The blur
+     now snaps on; the rest eases. */
+  transition: padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
 .site-header.is-scrolled .site-header-inner {

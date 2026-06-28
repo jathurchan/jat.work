@@ -14,19 +14,25 @@ export function initMagnetic() {
   const handlers = new Map<HTMLElement, { move: (e: MouseEvent) => void, leave: () => void }>();
 
   magnets.forEach(el => {
+    let frame = 0;
     const handleMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const h = rect.width / 2;
-      const v = rect.height / 2;
-      
-      const x = e.clientX - rect.left - h;
-      const y = e.clientY - rect.top - v;
-      
-      el.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+      const x = e.clientX;
+      const y = e.clientY;
+      if (frame) return; // rAF-throttle: one transform write per frame
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const rect = el.getBoundingClientRect();
+        const dx = x - rect.left - rect.width / 2;
+        const dy = y - rect.top - rect.height / 2;
+        // translate3d keeps it on the same GPU layer as the element's glass, so
+        // the pull doesn't shear backdrop-filter on Safari.
+        el.style.transform = `translate3d(${dx * 0.2}px, ${dy * 0.2}px, 0)`;
+      });
     };
-    
+
     const handleLeave = () => {
-      el.style.transform = `translate(0px, 0px)`;
+      if (frame) { cancelAnimationFrame(frame); frame = 0; }
+      el.style.transform = 'translate3d(0, 0, 0)';
     };
 
     el.addEventListener('mousemove', handleMove);

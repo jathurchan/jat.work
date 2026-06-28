@@ -18,6 +18,7 @@ import { initRouteProgress } from './route';
 import { initName, initToolkitPulse } from './hero';
 import { initSurprise } from './surprise';
 import { initMagnetic } from './magnetic';
+import { initSpotlight } from './spotlight';
 
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
@@ -29,6 +30,7 @@ function boot() {
   initName();
   initSurprise();
   initMagnetic();
+  initSpotlight();
   initTeaser();
   initDemo();
   initFilters();

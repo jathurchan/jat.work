@@ -69,6 +69,25 @@ lab:
   eyebrow: Writing
   lead: Deep dives and hard-won lessons from the systems I build, break, and operate.
 
+# Post series — grouped, multi-part writing. A series renders as ONE rich card in
+# the feed (its parts listed in reading order) instead of N near-identical cards.
+# `topic` ties it to a filter tag (colour + category); `parts` are blog slugs in
+# the order they should be read. Reorder/rename freely — the feed follows this.
+series:
+  - id: raftlock
+    name: RaftLock
+    topic: systems
+    blurb: >-
+      A crash-tolerant distributed lock built on Raft from first principles —
+      one post per layer, from the consensus core out to the client.
+    parts:
+      - raftlock-a-distributed-lock-that-survives-crashes
+      - raftlock-the-consensus-engine
+      - raftlock-a-storage-engine-built-for-one-job
+      - raftlock-the-state-machine-behind-the-lock
+      - raftlock-the-integration-layer
+      - raftlock-a-smart-client-for-a-hard-problem
+
 # Section lead-in for the Career view.
 careerHead:
   eyebrow: Work Experience
@@ -104,6 +123,7 @@ filters:
   - { id: cloud, label: cloud computing, name: Cloud Computing, color: var(--g-blue) }
   - { id: systems, label: distributed systems, name: Distributed Systems, color: var(--g-green) }
   - { id: ai, label: AI, name: AI, color: var(--g-red) }
+  - { id: career, label: career, name: Career, color: var(--g-yellow) }
 
 # Single source of truth for the in-page section nav (header dropdown +
 # scroll-spy). `id` is the section element id; `label` MUST match that

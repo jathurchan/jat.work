@@ -22,12 +22,12 @@ interface Destination {
 // The full site, in engaging language. Labels are kept short and similar in
 // length so the fixed-width reel never resizes the button as it cycles.
 const DESTINATIONS: Destination[] = [
-  { id: 'featured', label: 'Open source', color: 'var(--g-blue)' },
+  { id: 'featured', label: 'My project', color: 'var(--g-blue)' },
   { id: 'toolkit', label: 'My toolkit', color: 'var(--g-green)' },
   { id: 'experience', label: 'My journey', color: 'var(--g-yellow)' },
   { id: 'writing', label: 'My writing', color: 'var(--g-red)' },
 ];
-const IDLE_LABEL = 'Surprise me';
+const IDLE_LABEL = 'Explore';
 
 // Quick but legible: ~1s total. Early ticks blur past (you're not meant to read
 // them); the deceleration stretches the last couple so the wheel visibly slows,

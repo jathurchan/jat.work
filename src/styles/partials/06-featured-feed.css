@@ -412,14 +412,16 @@
   position: relative;
   overflow: hidden;
   text-decoration: none;
-  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  border: 1px solid var(--glass-border);
   border-radius: 22px;
+  /* Shared frosted glass, with a topic-coloured wash glowing from the top-right. */
   background:
-    radial-gradient(120% 100% at 100% 0%, color-mix(in srgb, var(--card-color, var(--accent)) 8%, transparent), transparent 60%),
-    color-mix(in srgb, var(--frame) 72%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 15%, transparent), 0 12px 32px -16px color-mix(in srgb, var(--ink) 12%, transparent);
+    var(--glass-sheen),
+    radial-gradient(120% 100% at 100% 0%, color-mix(in srgb, var(--card-color, var(--accent)) 9%, transparent), transparent 60%),
+    var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge), 0 12px 32px -16px color-mix(in srgb, var(--ink) 12%, transparent);
   transition: transform 0.4s var(--ease-spring),
               border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
   animation: reveal-card linear both;
@@ -437,9 +439,9 @@
   transition: opacity 0.3s ease, width 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 .lab-card:hover {
-  transform: translateY(-6px);
+  transform: translate3d(0, -6px, 0);
   border-color: color-mix(in srgb, var(--card-color, var(--accent)) 45%, var(--line));
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 25%, transparent), 0 24px 48px -18px color-mix(in srgb, var(--card-color, var(--accent)) 30%, transparent);
+  box-shadow: var(--glass-edge), 0 24px 48px -18px color-mix(in srgb, var(--card-color, var(--accent)) 30%, transparent);
 }
 .lab-card:hover::before { 
   opacity: 1; 
@@ -550,8 +552,11 @@
   font-weight: 500;
   color: var(--sub);
   cursor: pointer;
-  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  background: color-mix(in srgb, var(--frame) 60%, transparent);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-sheen), var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
   border-radius: 999px;
   padding: 11px 22px;
   transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease, transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
@@ -666,4 +671,107 @@
   max-width: 380px;
   margin: 0;
   text-wrap: balance;
+}
+
+/* ---- series card ---- */
+/* A series reuses the full-width feature layout (text-left, glyph-right) but
+   swaps the single blurb for a numbered list of its parts. It's a container,
+   not a single link — so it doesn't lift on hover (each part lifts instead). */
+.lab-card--series:hover {
+  transform: none;
+}
+.lab-series-name {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.lab-series-name:hover {
+  color: var(--card-color, var(--accent));
+}
+.lab-series-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sub);
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.lab-series-parts {
+  list-style: none;
+  margin: clamp(18px, 2.4vw, 26px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 60ch;
+}
+.lab-series-part {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  border-radius: 13px;
+  text-decoration: none;
+  position: relative;
+  transition: background 0.25s ease;
+}
+.lab-series-part + .lab-series-part::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 46px;
+  right: 14px;
+  height: 1px;
+  background: color-mix(in srgb, var(--line) 45%, transparent);
+}
+.lab-series-part:hover {
+  background: color-mix(in srgb, var(--card-color, var(--accent)) 9%, transparent);
+}
+.lab-series-part:hover::before,
+.lab-series-part:hover + .lab-series-part::before {
+  background: transparent;
+}
+.lab-series-num {
+  flex: 0 0 auto;
+  width: 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--card-color, var(--accent));
+  opacity: 0.75;
+}
+.lab-series-ptitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(14.5px, 1.5vw, 16px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.lab-series-pdate {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.lab-series-arrow {
+  flex: 0 0 auto;
+  color: var(--card-color, var(--accent));
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease-spring);
+}
+.lab-series-part:hover .lab-series-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (max-width: 560px) {
+  .lab-series-pdate {
+    display: none;
+  }
 }

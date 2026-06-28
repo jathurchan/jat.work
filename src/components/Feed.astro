@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { filters, lab, topicColor, topicLabel, formatDate } from '../lib/site';
+import { filters, lab, series as seriesDefs, topicColor, topicLabel, formatDate } from '../lib/site';
 import { sectionIcons } from '../lib/icons';
 
 // The blog comes from src/content/blog/*.{md,mdx}, newest first.
@@ -17,6 +17,33 @@ const topicIcons: Record<string, string> = {
     '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4 6.5 16M12 7.4 17.5 16M7 18h10"/>',
   ai:
     '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
+  // career — a rising trend line into an arrowhead (growth, the climb)
+  career:
+    '<path d="M3 17l6-6 4 4 8-8"/><path d="M16 7h5v5"/>',
+};
+
+// ── Group posts into series + standalone ────────────────────────────────────
+// A series (defined in site.yaml) collapses its parts into a single rich card;
+// everything else renders as an individual card. Parts keep the order declared
+// in the config (reading order), not publish date.
+const bySlug = new Map(entries.map((e) => [e.slug, e]));
+const seriesGroups = (seriesDefs ?? [])
+  .map((s) => {
+    const parts = s.parts.map((slug) => bySlug.get(slug)).filter((e): e is NonNullable<typeof e> => Boolean(e));
+    return { def: s, parts };
+  })
+  .filter((g) => g.parts.length > 0);
+
+const inSeries = new Set(seriesGroups.flatMap((g) => g.parts.map((p) => p.slug)));
+const standalone = entries.filter((e) => !inSeries.has(e.slug));
+
+// "Latest" badge follows the single newest article across the whole feed.
+const latestSlug = entries[0]?.slug;
+// Strip the repeated "RaftLock:" / "Inside RaftLock:" prefix from part titles so
+// the list reads cleanly inside the series card.
+const partLabel = (title: string) => {
+  const s = title.replace(/^(inside\s+)?[\w.-]+:\s*/i, '');
+  return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 // How many cards show before "Load more posts" reveals the next batch.
@@ -66,51 +93,100 @@ const PAGE_SIZE = 6;
         <p class="lab-empty-text">I'm currently writing about cloud computing, distributed systems, and AI — what I build, break, and learn. Check back soon.</p>
       </div>
     ) : (
-      entries.map((e, index) => {
-        const tags = e.data.tags?.length ? e.data.tags : ['all'];
-        const primaryTag = tags[0];
-        const cardColor = topicColor[primaryTag] || 'var(--ink)';
-        const isFeature = index === 0;
-
-        return (
-          <a
-            href={`/blog/${e.slug}`}
-            class={`lab-card${isFeature ? ' lab-card--feature' : ''}`}
-            data-tags={JSON.stringify(e.data.tags ?? [])}
-            style={`--card-color: ${cardColor};`}
-          >
-            <div class="lab-card-body">
-              <div class="lab-card-top">
-                <span class="lab-kinds">
-                  {tags.map((tag) => (
-                    <span class="lab-kind" style={topicColor[tag] ? `--chip-color: ${topicColor[tag]};` : ''}>
-                      {topicIcons[tag] && (
-                        <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[tag]} />
+      <>
+        {/* ── Series cards: one per series, parts listed in reading order ── */}
+        {seriesGroups.map((g) => {
+          const color = topicColor[g.def.topic] || 'var(--ink)';
+          const isLatest = g.parts.some((p) => p.slug === latestSlug);
+          return (
+            <article
+              class="lab-card lab-card--feature lab-card--series"
+              data-tags={JSON.stringify([g.def.topic])}
+              data-count={g.parts.length}
+              style={`--card-color: ${color};`}
+            >
+              <div class="lab-card-body">
+                <div class="lab-card-top">
+                  <span class="lab-kinds">
+                    <span class="lab-kind" style={`--chip-color: ${color};`}>
+                      {topicIcons[g.def.topic] && (
+                        <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[g.def.topic]} />
                       )}
-                      {topicLabel[tag] ?? 'Article'}
+                      {topicLabel[g.def.topic] ?? 'Series'}
                     </span>
+                  </span>
+                  <span class="lab-series-badge">{g.parts.length}-part series</span>
+                  {isLatest && <span class="lab-latest">Latest</span>}
+                </div>
+
+                <h3 class="lab-card-title">
+                  <a class="lab-series-name" href={`/blog/${g.parts[0].slug}`}>{g.def.name}</a>
+                </h3>
+                <p class="lab-card-blurb">{g.def.blurb}</p>
+
+                <ol class="lab-series-parts">
+                  {g.parts.map((p, i) => (
+                    <li>
+                      <a class="lab-series-part" href={`/blog/${p.slug}`}>
+                        <span class="lab-series-num">{String(i + 1).padStart(2, '0')}</span>
+                        <span class="lab-series-ptitle">{partLabel(p.data.title)}</span>
+                        <span class="lab-series-pdate">{formatDate(p.data.pubDate)}</span>
+                        <span class="lab-series-arrow" aria-hidden="true">→</span>
+                      </a>
+                    </li>
                   ))}
-                </span>
-                {isFeature && <span class="lab-latest">Latest</span>}
-                <span class="lab-arrow" aria-hidden="true">→</span>
+                </ol>
               </div>
 
-              <h3 class="lab-card-title">{e.data.title}</h3>
-              <p class="lab-card-blurb">{e.data.blurb}</p>
-
-              <div class="lab-card-foot">
-                <span class="lab-date">{formatDate(e.data.pubDate)}</span>
-              </div>
-            </div>
-
-            {isFeature && primaryTag !== 'all' && (
               <div class="lab-feature-aside" aria-hidden="true">
-                <svg class="lab-feature-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" set:html={topicIcons[primaryTag] ?? ''} />
+                <svg class="lab-feature-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" set:html={topicIcons[g.def.topic] ?? ''} />
               </div>
-            )}
-          </a>
-        );
-      })
+            </article>
+          );
+        })}
+
+        {/* ── Standalone posts ── */}
+        {standalone.map((e) => {
+          const tags = e.data.tags?.length ? e.data.tags : ['all'];
+          const primaryTag = tags[0];
+          const cardColor = topicColor[primaryTag] || 'var(--ink)';
+          const isLatest = e.slug === latestSlug;
+
+          return (
+            <a
+              href={`/blog/${e.slug}`}
+              class="lab-card"
+              data-tags={JSON.stringify(e.data.tags ?? [])}
+              data-count="1"
+              style={`--card-color: ${cardColor};`}
+            >
+              <div class="lab-card-body">
+                <div class="lab-card-top">
+                  <span class="lab-kinds">
+                    {tags.map((tag) => (
+                      <span class="lab-kind" style={topicColor[tag] ? `--chip-color: ${topicColor[tag]};` : ''}>
+                        {topicIcons[tag] && (
+                          <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[tag]} />
+                        )}
+                        {topicLabel[tag] ?? 'Article'}
+                      </span>
+                    ))}
+                  </span>
+                  {isLatest && <span class="lab-latest">Latest</span>}
+                  <span class="lab-arrow" aria-hidden="true">→</span>
+                </div>
+
+                <h3 class="lab-card-title">{e.data.title}</h3>
+                <p class="lab-card-blurb">{e.data.blurb}</p>
+
+                <div class="lab-card-foot">
+                  <span class="lab-date">{formatDate(e.data.pubDate)}</span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </>
     )}
   </div>
 

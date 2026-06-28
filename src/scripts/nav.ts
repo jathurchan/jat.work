@@ -9,10 +9,18 @@ export function initHeaderScroll() {
   if (!header) return;
 
   let ticking = false;
+  // Hysteresis: switch ON above 24px, OFF below 8px. A single threshold let the
+  // class flip-flop when scrollY hovered right at the line (the condensing pill
+  // changes layout height, which can nudge scrollY back across it) — that was
+  // the jitter. The dead-band between 8 and 24 stops the oscillation.
+  let scrolled = window.scrollY > 24;
   const update = () => {
-    if (window.scrollY > 20) {
+    const y = window.scrollY;
+    if (!scrolled && y > 24) {
+      scrolled = true;
       header.classList.add('is-scrolled');
-    } else {
+    } else if (scrolled && y < 8) {
+      scrolled = false;
       header.classList.remove('is-scrolled');
     }
     ticking = false;
