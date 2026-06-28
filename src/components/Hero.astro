@@ -4,20 +4,9 @@ import { intro } from '../lib/site';
 const keepLetters = intro.nameShort.split('');
 const dropLetters = intro.name.slice(intro.nameShort.length).split('');
 
-// "Google" rendered in its own brand colours — the very four tokens this whole
-// site is built on (see the wordmark dot). It honours the employer and quietly
-// reveals why the palette exists. Falls back to a calm bold-ink anchor for any
-// other company name.
-const companyColors: Record<string, string[]> = {
-  Google: ['var(--g-blue)', 'var(--g-red)', 'var(--g-yellow)', 'var(--g-blue)', 'var(--g-green)', 'var(--g-red)'],
-};
-const company = intro.company ?? null;
-const companyLetters =
-  company && companyColors[company]
-    ? company.split('').map((ch, i) => ({ ch, color: companyColors[company][i] }))
-    : null;
 // The role line reads "<lead> at Google" — split off the prefix so we can colour
 // the company. When there's no recognised company we render the lead verbatim.
+const company = intro.company ?? null;
 const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.statementLead;
 ---
 
@@ -29,17 +18,15 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
         <span class="hero-fullname" id="hero-name" aria-hidden="true">{keepLetters.map((c) => <span class="nm-keep">{c}</span>)}{dropLetters.map((c) => <span class="nm-drop">{c}</span>)}<span class="nm-dot">.</span></span>
       </h1>
 
-      {/* One statement: role + focus, merged. "Google" in its own brand letters;
-          the three focus areas as colour-coded terms whose underlines draw in. */}
+      {/* One statement: role + focus, merged. "Google" has a sleek gradient,
+          and focus areas are modern interactive chips. */}
       <h2 class="hero-statement reveal reveal-delay-2">
-        {rolePrefix}{companyLetters ? (
-          <span class="hero-company" aria-label={company}>{companyLetters.map((l) => (
-            <span class="hero-company-ltr" style={`--c:${l.color}`} aria-hidden="true">{l.ch}</span>
-          ))}</span>
+        {rolePrefix}{company ? (
+          <span class="hero-company" aria-label={company}>{company}</span>
         ) : null}<span class="hero-stmt-focus">{', obsessed with '}{intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;
           const sep = i === 0 ? '' : isLast ? ' and ' : ', ';
-          return (<>{sep}<span class="pillar" style={`--c:${p.color};--i:${i}`}>{p.label}</span>{isLast ? '.' : ''}</>);
+          return (<>{sep}<span class="pillar" style={`--c:${p.color}`}>{p.label}</span>{isLast ? '.' : ''}</>);
         })}</span>
       </h2>
 

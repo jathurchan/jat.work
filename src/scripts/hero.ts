@@ -63,3 +63,60 @@ export function initToolkitPulse() {
   cards.forEach((c) => io.observe(c));
   trackTeardown(() => io.disconnect());
 }
+
+export function initName3D() {
+  const name = document.getElementById('hero-name');
+  const heroSection = document.querySelector('.hero');
+  if (!name || !heroSection) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let frame = 0;
+  const onMove = (e: Event) => {
+    const ev = e as MouseEvent;
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const rect = name.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      
+      const maxDistX = window.innerWidth / 2;
+      const maxDistY = window.innerHeight / 2;
+      
+      let dx = (ev.clientX - cx) / maxDistX;
+      let dy = (ev.clientY - cy) / maxDistY;
+      
+      dx = Math.max(-1, Math.min(1, dx));
+      dy = Math.max(-1, Math.min(1, dy));
+
+      const rotX = dy * -14; 
+      const rotY = dx * 14;
+
+      const shadowX = dx * -30;
+      const shadowY = Math.max(0, dy * -20) + 4; // keep shadow mostly pulling down
+      
+      name.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.04, 1.04, 1.04)`;
+      name.style.textShadow = `${shadowX}px ${shadowY}px 32px color-mix(in srgb, var(--frame) 90%, transparent)`;
+    });
+  };
+
+  const onLeave = () => {
+    if (frame) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+    name.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    name.style.textShadow = `0 4px 24px color-mix(in srgb, var(--frame) 80%, transparent)`;
+  };
+
+  heroSection.addEventListener('mousemove', onMove);
+  heroSection.addEventListener('mouseleave', onLeave);
+  
+  trackTeardown(() => {
+    heroSection.removeEventListener('mousemove', onMove);
+    heroSection.removeEventListener('mouseleave', onLeave);
+    if (frame) cancelAnimationFrame(frame);
+  });
+}

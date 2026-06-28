@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
+import FluidBackground from '../components/FluidBackground.astro';
 import Hero from '../components/Hero.astro';
 import FeaturedTeaser from '../components/FeaturedTeaser.astro';
 import Toolkit from '../components/Toolkit.astro';
@@ -12,14 +13,8 @@ import Footer from '../components/Footer.astro';
 
 <Base>
   <div class="page" id="top">
-    {/* Page-wide ambient backdrop: a drift of brand-colour aurora anchored to
-        the hero, over a faint engineering grid — both dissolving down the page
-        so the hero never ends on a hard edge. Decorative; sits behind all
-        content. Styles in partials/03-hero.css. */}
-    <div class="page-bg" aria-hidden="true">
-      <div class="page-bg-aurora"></div>
-      <div class="page-bg-grid"></div>
-    </div>
+    {/* Page-wide ambient backdrop: interactive fluid canvas simulation */}
+    <FluidBackground />
     <Header sections />
     <main class="content" id="main" tabindex="-1">
       <Hero />

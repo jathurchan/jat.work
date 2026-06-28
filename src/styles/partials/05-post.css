@@ -97,8 +97,16 @@
   color: var(--accent);
   font-weight: 500;
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease, background 0.2s ease;
+}
+.prose a:hover {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 4px;
 }
 .prose ul,
 .prose ol {
@@ -186,10 +194,15 @@
   font-size: inherit;
 }
 .prose blockquote {
-  border-left: 2px solid var(--accent);
-  padding-left: var(--space-4);
-  color: var(--faint-text);
+  position: relative;
+  border-left: 3px solid var(--accent);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-radius: 0 8px 8px 0;
   font-style: italic;
+  font-size: 1.05em;
 }
 
 /* rich text rendered from YAML/markdown (intro body, taglines) */
