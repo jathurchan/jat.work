@@ -71,6 +71,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta name="author" content="Jathurchan Selvakumar" />
     <link rel="icon" href="/favicon.svg?v=1" type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Jathurchan Selvakumar — Writing" href="/rss.xml" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />

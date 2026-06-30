@@ -51,7 +51,7 @@ const { sections = false, backButton = false } = Astro.props;
 
       {backButton && (
         <a
-          href="/"
+          href="/#writing"
           class="header-back-btn"
           aria-label="Go back"
         >
@@ -148,8 +148,9 @@ const { sections = false, backButton = false } = Astro.props;
   // Back button (post pages). Delegated on document so it survives View
   // Transitions swaps (the button element is replaced on navigation).
   //
-  // The anchor's href="/" is the no-JS / deep-link fallback: someone who opened
-  // the post directly (or from an external link) is taken to the home page.
+  // The anchor's href="/#writing" is the no-JS / deep-link fallback: someone who
+  // opened the post directly (or from an external link) is taken to the writing
+  // feed on the home page, where the post lives.
   // When the visitor reached the post from elsewhere on the site, we instead
   // step back through history so the home page is restored at the exact scroll
   // position and section they left — Astro's router handles that on popstate.

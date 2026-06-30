@@ -36,6 +36,9 @@ const SPIN_TICKS = 7; // slots that flick past before it settles
 const MIN_TICK = 42; // fastest tick (ms) at the start of the spin
 const MAX_TICK = 205; // slowest tick (ms) as the wheel comes to rest
 const ARRIVE_MS = 1250; // how long the destination glow lingers (ms)
+// Touch only: how long the wheel rests on its final pick before flying there, so
+// the landed section is clearly readable and never mistaken for the prior tick.
+const LAND_SETTLE_MS = 470;
 
 // Colourful idle glyph — a sparkle drawn with a four-hue gradient (the same
 // Google palette the site runs on). With the conic dot gone, the symbol is what
@@ -129,19 +132,27 @@ export function initSurprise() {
 
   const land = () => {
     if (!target) return;
+    const dest = target;
     mode = 'locked';
-    i = DESTINATIONS.indexOf(target);
-    showDestination(target);
+    i = DESTINATIONS.indexOf(dest);
+    showDestination(dest);
     flip();
     btn.classList.remove('is-rolling');
     btn.classList.add('is-locked');
-    // Touch: the wheel has visibly settled on its pick — now glide there, then
-    // return to the idle "Explore" prompt so the next tap rolls a fresh one.
+    // Touch: hold on the landed pick for a beat so it visibly *settles* and can
+    // be read, THEN glide there (and afterwards reset to the idle "Explore"
+    // prompt so the next tap rolls a fresh one). Travelling on the same frame the
+    // label updates made the scroll begin before the eye registered the final
+    // pick, so the previous — longer-held — tick looked like the choice. That was
+    // the apparent off-by-one on mobile.
     if (travelOnLand) {
       travelOnLand = false;
-      travel(target);
-      clearIdleReset();
-      idleResetTimer = window.setTimeout(reset, ARRIVE_MS);
+      clearArrive();
+      arriveTimer = window.setTimeout(() => {
+        travel(dest);
+        clearIdleReset();
+        idleResetTimer = window.setTimeout(reset, ARRIVE_MS);
+      }, LAND_SETTLE_MS);
     }
   };
 
@@ -182,19 +193,18 @@ export function initSurprise() {
   };
 
   const go = () => {
-    // Hover already chose one (settled, or still settling) → travel instantly.
-    if (target) {
-      travel(target);
-      return;
-    }
-    // No hover yet (touch tap, or a fast first click before the spin starts):
-    // pick now, snap it onto the button, and fly almost immediately — so a click
-    // always works from the very start and never waits on a spin.
+    // Mouse path: the reel is *live*. A click commits to the section showing on
+    // the button right now — snapping the spin to a stop there — so you always
+    // land where you looked, even mid-spin. (roll()'s up-front pick is merely
+    // where the reel comes to rest on its own if you hover and never click.)
     clearSpin();
-    const dest = pick();
+    // The section currently painted on the button: DESTINATIONS[i] once a roll
+    // has begun (every tick leaves `i` on what's shown); otherwise — a click with
+    // no prior hover — pick one now so the button always does something.
+    const dest = mode === 'idle' ? pick() : DESTINATIONS[i];
     target = dest;
-    mode = 'locked';
     i = DESTINATIONS.indexOf(dest);
+    mode = 'locked';
     showDestination(dest);
     flip();
     btn.classList.remove('is-rolling');
@@ -203,7 +213,10 @@ export function initSurprise() {
       travel(dest);
       return;
     }
-    arriveTimer = window.setTimeout(() => travel(dest), 170);
+    // A brief lock-in beat so the caught section visibly commits (colour + scale)
+    // before the page glides to it.
+    clearArrive();
+    arriveTimer = window.setTimeout(() => travel(dest), 150);
   };
 
   if (coarse) {
@@ -222,7 +235,12 @@ export function initSurprise() {
         travelOnLand = true;
         land();
       } else if (target) {
+        // Already settled (or settling): go now, cancelling the pending
+        // auto-travel so we don't scroll twice.
+        clearArrive();
         travel(target);
+        clearIdleReset();
+        idleResetTimer = window.setTimeout(reset, ARRIVE_MS);
       }
     });
   } else {

@@ -1,50 +1,23 @@
 ---
-import { getCollection } from 'astro:content';
-import { filters, lab, series as seriesDefs, topicColor, topicLabel, formatDate } from '../lib/site';
-import { sectionIcons } from '../lib/icons';
+import { filters, lab, topicColor, topicLabel, formatDate } from '../lib/site';
+import { sectionIcons, topicIcons } from '../lib/icons';
+import { getPosts, buildSeries, partLabel } from '../lib/posts';
 
 // The blog comes from src/content/blog/*.{md,mdx}, newest first.
-const entries = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-
-// One small line-icon per topic, reusing the pillar glyphs from the hero so a
-// post reads in the same visual language as the rest of the site.
-const topicIcons: Record<string, string> = {
-  cloud:
-    '<path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.34 9.5 4 4 0 0 0 7 19h10.5Z"/>',
-  systems:
-    '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4 6.5 16M12 7.4 17.5 16M7 18h10"/>',
-  ai:
-    '<path d="M12 3l1.8 4.9L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.1L12 3Z"/><path d="M18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>',
-  // career — a rising trend line into an arrowhead (growth, the climb)
-  career:
-    '<path d="M3 17l6-6 4 4 8-8"/><path d="M16 7h5v5"/>',
-};
+const entries = await getPosts();
 
 // ── Group posts into series + standalone ────────────────────────────────────
 // A series (defined in site.yaml) collapses its parts into a single rich card;
 // everything else renders as an individual card. Parts keep the order declared
-// in the config (reading order), not publish date.
-const bySlug = new Map(entries.map((e) => [e.slug, e]));
-const seriesGroups = (seriesDefs ?? [])
-  .map((s) => {
-    const parts = s.parts.map((slug) => bySlug.get(slug)).filter((e): e is NonNullable<typeof e> => Boolean(e));
-    return { def: s, parts };
-  })
-  .filter((g) => g.parts.length > 0);
+// in the config (reading order), not publish date. buildSeries() is the same
+// grouping the post pages use, so the feed and the in-post rails never drift.
+const seriesGroups = buildSeries(entries).map((s) => ({ def: s, parts: s.parts }));
 
 const inSeries = new Set(seriesGroups.flatMap((g) => g.parts.map((p) => p.slug)));
 const standalone = entries.filter((e) => !inSeries.has(e.slug));
 
 // "Latest" badge follows the single newest article across the whole feed.
 const latestSlug = entries[0]?.slug;
-// Strip the repeated "RaftLock:" / "Inside RaftLock:" prefix from part titles so
-// the list reads cleanly inside the series card.
-const partLabel = (title: string) => {
-  const s = title.replace(/^(inside\s+)?[\w.-]+:\s*/i, '');
-  return s.charAt(0).toUpperCase() + s.slice(1);
-};
 
 // How many cards show before "Load more posts" reveals the next batch.
 const PAGE_SIZE = 6;

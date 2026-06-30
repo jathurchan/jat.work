@@ -3,6 +3,25 @@
 import { bindGlobal, trackTeardown } from './lifecycle';
 import { makeNodes, fitCanvas, nodeXY, drawCluster, QUORUM, type DrawOpts } from './cluster';
 
+/**
+ * Push a history entry for the fullscreen demo WITHOUT clobbering Astro's View
+ * Transitions state.
+ *
+ * Astro stamps every entry it controls with `{ index, scrollX, scrollY }` and —
+ * crucially — its router *ignores any popstate whose `history.state` is null*
+ * (see astro/dist/transitions/router.js `onPopState`). This used to push `null`,
+ * so any later Back into one of these entries left the previous page's DOM
+ * frozen on screen: open the demo, navigate to a post, hit Back, and you'd land
+ * on the post's markup under the home URL — the "white screen / wrong page on
+ * Back" bug. Carrying the current state through keeps every entry a valid Astro
+ * navigation target, so the router swaps correctly. (nav.ts solves the same
+ * footgun for the scroll-spy's replaceState.)
+ */
+function pushStateKeepingAstro(url: string) {
+  const state = history.state ?? { index: 0, scrollX: 0, scrollY: 0 };
+  history.pushState(state, '', url);
+}
+
 /* ----------------------------------------------------------------------- *
  * Ambient teaser canvas
  * ----------------------------------------------------------------------- */
@@ -705,7 +724,7 @@ export function initDemo() {
       const overlay = document.getElementById('raftlock-overlay');
       if (overlay) {
         if (window.location.hash !== '#raftlock') {
-          history.pushState(null, '', '#raftlock');
+          pushStateKeepingAstro('#raftlock');
         }
         overlay.classList.add('is-open');
         document.body.classList.add('raftlock-open');
@@ -735,7 +754,7 @@ export function initDemo() {
       const overlay = document.getElementById('raftlock-overlay');
       if (overlay) {
         if (window.location.hash === '#raftlock') {
-          history.pushState(null, '', window.location.pathname + window.location.search);
+          pushStateKeepingAstro(window.location.pathname + window.location.search);
         }
         overlay.classList.remove('is-open');
         document.body.classList.remove('raftlock-open');

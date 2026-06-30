@@ -70,6 +70,13 @@
 .prose > * + * {
   margin-top: 1.1em;
 }
+/* Headings are the TOC's jump targets, so they must land below the floating
+   header pill instead of tucking under it — same offset as the home section
+   anchors (02-header.css). Without this a "On this page" click hid the heading
+   behind the header. */
+.prose :is(h2, h3, h4) {
+  scroll-margin-top: 96px;
+}
 .prose h2 {
   font-family: var(--font-serif);
   font-weight: 500;
@@ -127,6 +134,21 @@
 }
 
 /* ---- post layout ---- */
+/* Vertical rhythm for the article shell (was inline on <main>). */
+.post-shell {
+  flex: 1 1 0%;
+  padding-top: var(--space-lg);
+  padding-bottom: var(--space-xl);
+}
+/* The reading column is centred at a comfortable measure on its own; on wide
+   screens a sticky "On this page" rail joins it in the right margin (see the
+   1200px breakpoint at the foot of this file). */
+.post-layout {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .post-header {
   display: flex;
   align-items: center;
@@ -136,8 +158,12 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: var(--space-4);
+  flex-wrap: wrap;
 }
 .post-date {
+  color: var(--faint);
+}
+.post-readtime {
   color: var(--faint);
 }
 .post-dot {
@@ -287,5 +313,266 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
+}
+
+/* ============================================================================
+   Series + table-of-contents — wiring a post into its series and giving it a
+   in-page map. All driven from one source of truth (lib/posts.ts) so the feed,
+   the rails here, and the prev/next links never disagree.
+   ========================================================================== */
+
+/* ---- series tag (top of article): "RaftLock · Part 2 of 6" ---- */
+.series-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--space-4);
+  padding: 5px 13px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 99px;
+  transition: background 0.25s var(--ease-spring), border-color 0.25s var(--ease-spring), transform 0.25s var(--ease-spring);
+}
+.series-tag:hover {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: translateY(-1px);
+}
+.series-tag-ico {
+  width: 13px;
+  height: 13px;
+}
+.series-tag-name {
+  font-weight: 600;
+}
+.series-tag-pos {
+  color: var(--sub);
+}
+.series-tag-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+/* ---- inline TOC (narrow screens): a collapsible "On this page" ---- */
+.post-toc-inline {
+  margin: var(--space-5) 0 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--frame) 45%, transparent);
+}
+.post-toc-inline summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+.post-toc-inline summary::-webkit-details-marker { display: none; }
+.post-toc-inline summary svg { width: 15px; height: 15px; color: var(--faint-text); }
+.post-toc-inline summary span { flex: 1; }
+.post-toc-inline .toc-caret { transition: transform 0.25s var(--ease-spring); }
+.post-toc-inline[open] .toc-caret { transform: rotate(180deg); }
+.post-toc-inline .post-toc-list {
+  padding: 0 14px 12px 14px;
+  border-left: none;
+}
+/* Hidden once the sticky rail takes over on wide screens. */
+@media (min-width: 1200px) {
+  .post-toc-inline { display: none; }
+}
+
+/* ---- shared TOC list styling (inline + sticky rail) ---- */
+.post-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--line);
+}
+.toc-item a {
+  display: block;
+  padding: 5px 0 5px 16px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  color: var(--faint-text);
+  font-size: 13px;
+  line-height: 1.45;
+  text-wrap: pretty;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.toc-d3 a {
+  padding-left: 30px;
+  font-size: 12.5px;
+}
+.toc-item a:hover {
+  color: var(--ink);
+}
+.toc-item a[aria-current='true'] {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---- sticky "On this page" rail (wide screens) ---- */
+.post-aside {
+  display: none; /* shown at the 1200px breakpoint below */
+}
+.post-toc {
+  position: sticky;
+  top: 96px;
+}
+.post-toc-title {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.post-toc-series {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--space-5);
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--frame) 45%, transparent);
+  transition: border-color 0.25s var(--ease-spring), background 0.25s var(--ease-spring);
+}
+.post-toc-series:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+.post-toc-series-pos {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.post-toc-series-name {
+  font-size: 12.5px;
+  color: var(--sub);
+}
+
+/* ---- series prev/next navigation (foot of article) ---- */
+.series-nav {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line);
+}
+.series-nav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: var(--space-4);
+}
+.series-nav-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.series-nav-eyebrow svg { width: 14px; height: 14px; }
+.series-nav-all {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--sub);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.series-nav-all:hover { color: var(--accent); }
+.series-nav-all span { transition: transform 0.2s var(--ease-spring); display: inline-block; }
+.series-nav-all:hover span { transform: translateX(3px); }
+.series-nav-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.series-nav-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px 17px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--glass-sheen), var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
+  transition: border-color 0.3s var(--ease-spring), transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-spring);
+}
+.series-nav-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
+  transform: translateY(-2px);
+  box-shadow: var(--glass-edge), 0 10px 26px -14px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.series-nav-next {
+  text-align: right;
+  align-items: flex-end;
+}
+.series-nav-card.is-empty {
+  border: none;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  pointer-events: none;
+}
+.series-nav-dir {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.series-nav-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+@media (max-width: 560px) {
+  .series-nav-pair { grid-template-columns: 1fr; }
+  .series-nav-next { text-align: left; align-items: flex-start; }
+  .series-nav-card.is-empty { display: none; }
+}
+
+/* ---- two-column reading layout: article + sticky rail (wide screens) ---- */
+@media (min-width: 1200px) {
+  .post-layout.has-toc {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 720px) 220px;
+    column-gap: 56px;
+    justify-content: center;
+    align-items: start;
+  }
+  .post-layout.has-toc .post-article {
+    min-width: 0;
+  }
+  .post-layout.has-toc .post-aside {
+    display: block;
+  }
 }
 

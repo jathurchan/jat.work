@@ -1,49 +1,145 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { topicColor, topicLabel, formatDate } from '../lib/site';
+import { topicIcons } from '../lib/icons';
+import { getPosts, buildSeries, seriesContextFor, readingTime, partLabel } from '../lib/posts';
 
 interface Props {
   entry: CollectionEntry<'blog'>;
+  headings: MarkdownHeading[];
 }
-const { entry } = Astro.props;
+const { entry, headings } = Astro.props;
 const { title, pubDate, blurb, tags } = entry.data;
 const topic = tags?.[0];
+const accent = topic ? topicColor[topic] : 'var(--accent)';
+
+// Series + reading context, shared with the home feed (see lib/posts.ts).
+const posts = await getPosts();
+const allSeries = buildSeries(posts);
+const series = seriesContextFor(entry.slug, allSeries);
+const minutes = readingTime(entry.body);
+
+// Table of contents: top-level section headings (and their sub-headings). Astro
+// auto-generates the matching `id` on each heading, so `#${slug}` jumps work.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const hasToc = toc.length >= 2;
 ---
 
 <Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article">
-  <div class="page" id="top">
+  <div class="page" id="top" style={`--accent: ${accent};`}>
     <Header backButton />
-    <main class="shell" style="flex: 1 1 0%; padding-top: var(--space-lg); padding-bottom: var(--space-xl);">
-      <article class="post-article" style="max-width: 720px; margin: 0 auto;">
+    <main class="shell post-shell">
+      <div class={`post-layout${hasToc ? ' has-toc' : ''}`}>
+        <article class="post-article">
 
-
-        <div class="post-header rise">
-          <span class="post-date">{formatDate(pubDate)}</span>
-          {topic && (
-            <>
-              <span class="post-dot"></span>
-              <span style={`color: ${topicColor[topic]}; font-weight: 600;`}>{topicLabel[topic]}</span>
-            </>
+          {series && (
+            <a class="series-tag rise" href="/#writing" style={`--accent: ${topicColor[series.series.topic] ?? accent};`}>
+              {topicIcons[series.series.topic] && (
+                <svg class="series-tag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[series.series.topic]} />
+              )}
+              <span class="series-tag-name">{series.series.name}</span>
+              <span class="series-tag-dot" aria-hidden="true"></span>
+              <span class="series-tag-pos">Part {series.number} of {series.total}</span>
+            </a>
           )}
-        </div>
 
-        <h1 class="post-title rise">
-          {title}
-        </h1>
+          <div class="post-header rise">
+            <span class="post-date">{formatDate(pubDate)}</span>
+            {topic && (
+              <>
+                <span class="post-dot"></span>
+                <span style={`color: ${topicColor[topic]}; font-weight: 600;`}>{topicLabel[topic]}</span>
+              </>
+            )}
+            <span class="post-dot"></span>
+            <span class="post-readtime">{minutes} min read</span>
+          </div>
 
-        <p class="post-blurb rise">
-          {blurb}
-        </p>
+          <h1 class="post-title rise">
+            {title}
+          </h1>
 
-        <hr class="post-divider" />
+          <p class="post-blurb rise">
+            {blurb}
+          </p>
 
-        <div class="prose rise" style="animation-delay: 0.08s;">
-          <slot />
-        </div>
-      </article>
+          {hasToc && (
+            <details class="post-toc-inline rise">
+              <summary>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span>On this page</span>
+                <svg class="toc-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <ol class="post-toc-list">
+                {toc.map((h) => (
+                  <li class={`toc-item toc-d${h.depth}`}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
+
+          <hr class="post-divider" />
+
+          <div class="prose rise" style="animation-delay: 0.08s;">
+            <slot />
+          </div>
+
+          {series && (series.prev || series.next) && (
+            <nav class="series-nav" aria-label="Series navigation" style={`--accent: ${topicColor[series.series.topic] ?? accent};`}>
+              <div class="series-nav-head">
+                <span class="series-nav-eyebrow">
+                  {topicIcons[series.series.topic] && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[series.series.topic]} />
+                  )}
+                  {series.series.name} series
+                </span>
+                <a class="series-nav-all" href="/#writing">All parts <span aria-hidden="true">→</span></a>
+              </div>
+              <div class="series-nav-pair">
+                {series.prev ? (
+                  <a class="series-nav-card series-nav-prev" href={`/blog/${series.prev.slug}`}>
+                    <span class="series-nav-dir"><span aria-hidden="true">←</span> Part {series.number - 1}</span>
+                    <span class="series-nav-title">{partLabel(series.prev.data.title)}</span>
+                  </a>
+                ) : <span class="series-nav-card is-empty" aria-hidden="true"></span>}
+                {series.next ? (
+                  <a class="series-nav-card series-nav-next" href={`/blog/${series.next.slug}`}>
+                    <span class="series-nav-dir">Part {series.number + 1} <span aria-hidden="true">→</span></span>
+                    <span class="series-nav-title">{partLabel(series.next.data.title)}</span>
+                  </a>
+                ) : <span class="series-nav-card is-empty" aria-hidden="true"></span>}
+              </div>
+            </nav>
+          )}
+        </article>
+
+        {hasToc && (
+          <aside class="post-aside" aria-label="On this page">
+            <nav class="post-toc" data-toc>
+              <p class="post-toc-title">On this page</p>
+              <ol class="post-toc-list">
+                {toc.map((h) => (
+                  <li class={`toc-item toc-d${h.depth}`}>
+                    <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+              {series && (
+                <a class="post-toc-series" href="/#writing">
+                  <span class="post-toc-series-pos">Part {series.number} / {series.total}</span>
+                  <span class="post-toc-series-name">{series.series.name} series</span>
+                </a>
+              )}
+            </nav>
+          </aside>
+        )}
+      </div>
     </main>
     <Footer />
   </div>
@@ -51,4 +147,5 @@ const topic = tags?.[0];
 
 <script>
   import '../scripts/reading';
+  import '../scripts/toc';
 </script>

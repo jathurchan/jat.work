@@ -47,3 +47,7 @@ function initReadingProgress() {
 }
 
 document.addEventListener('astro:page-load', initReadingProgress);
+
+// Mark this file as a module so its top-level `cleanup` is module-scoped rather
+// than a global (which would collide with toc.ts's same-named guard).
+export {};
