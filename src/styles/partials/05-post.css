@@ -61,10 +61,46 @@
   transform: translateX(-3px);
 }
 
+/* ---- ambient backdrop (post pages) ----
+   Two soft radial washes of the post's topic colour (--accent is set on .page
+   by Post.astro), fixed behind the article. Static — no canvas, no blur cost —
+   just enough atmosphere that a post doesn't feel like a different site from
+   the home page. The grain layer (01-base.css) sits over it. */
+.post-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      54rem 32rem at 86% -12%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      42rem 28rem at -10% 30%,
+      color-mix(in srgb, var(--accent) 5%, transparent),
+      transparent 70%
+    );
+}
+:root[data-theme='dark'] .post-ambient {
+  background:
+    radial-gradient(
+      54rem 32rem at 86% -12%,
+      color-mix(in srgb, var(--accent) 13%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      42rem 28rem at -10% 30%,
+      color-mix(in srgb, var(--accent) 6%, transparent),
+      transparent 70%
+    );
+}
+
 /* ---- long-form post prose ---- */
 .prose {
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 17px;
+  line-height: 1.75;
   color: var(--sub);
 }
 .prose > * + * {
@@ -77,10 +113,16 @@
 .prose :is(h2, h3, h4) {
   scroll-margin-top: 96px;
 }
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: var(--space-8) auto;
+  width: 64px;
+}
 .prose h2 {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 25px;
+  font-size: 27px;
   line-height: 1.18;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -172,6 +214,13 @@
   border-radius: 50%;
   background: var(--faint);
   opacity: 0.5;
+}
+/* Dot + label travel as one unit when the meta row wraps. */
+.post-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
 }
 .post-title {
   font-family: var(--font-serif);
@@ -322,11 +371,34 @@
    ========================================================================== */
 
 /* ---- series tag (top of article): "RaftLock · Part 2 of 6" ---- */
+.series-topline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: var(--space-4);
+}
+.series-start {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--faint-text);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.series-start:hover {
+  color: var(--accent);
+}
+.series-start span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-spring);
+}
+.series-start:hover span {
+  transform: translateX(3px);
+}
 .series-tag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: var(--space-4);
   padding: 5px 13px;
   font-family: var(--font-mono);
   font-size: 11px;

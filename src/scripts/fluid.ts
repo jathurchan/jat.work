@@ -179,11 +179,13 @@ class FluidSimulation {
 
   private createOrbs() {
     const isMobile = this.isMobile;
-    const numOrbs = isMobile ? 7 : 12;
+    // Fewer, larger orbs: broad overlapping colour fields read as one soft
+    // gradient wash (premium), where many small orbs read as a lava lamp.
+    const numOrbs = isMobile ? 6 : 9;
     this.orbs = [];
 
     for (let i = 0; i < numOrbs; i++) {
-      const r = Math.random() * 200 + (isMobile ? 140 : 200);
+      const r = Math.random() * 240 + (isMobile ? 180 : 260);
       this.orbs.push({
         x: Math.random() * this.vw,
         y: Math.random() * this.vh,
@@ -252,8 +254,10 @@ class FluidSimulation {
         const r = parseInt(c.slice(1, 3), 16);
         const g = parseInt(c.slice(3, 5), 16);
         const b = parseInt(c.slice(5, 7), 16);
-        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.5)`);
-        gradient.addColorStop(0.55, `rgba(${r}, ${g}, ${b}, 0.16)`);
+        // Slightly deeper core with a longer falloff — richer colour without
+        // raising the overall field opacity (that goes muddy fast).
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.55)`);
+        gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.2)`);
         gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
       } else {
         gradient.addColorStop(0, c);

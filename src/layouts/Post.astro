@@ -29,34 +29,52 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const hasToc = toc.length >= 2;
 ---
 
-<Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article">
+<Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article" ogImage={`/og/${entry.slug}.png`}>
   <div class="page" id="top" style={`--accent: ${accent};`}>
+    {/* Quiet ambient backdrop so posts share the home page's atmosphere instead
+        of cutting to flat paper: a static glow tinted with the post's topic
+        colour, plus the same film grain (both defined in the global CSS). */}
+    <div class="post-ambient" aria-hidden="true"></div>
+    <div class="page-grain" aria-hidden="true"></div>
     <Header backButton />
-    <main class="shell post-shell">
+    <main class="shell post-shell" id="main" tabindex="-1">
       <div class={`post-layout${hasToc ? ' has-toc' : ''}`}>
         <article class="post-article">
 
           {series && (
-            <a class="series-tag rise" href="/#writing" style={`--accent: ${topicColor[series.series.topic] ?? accent};`}>
-              {topicIcons[series.series.topic] && (
-                <svg class="series-tag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[series.series.topic]} />
+            <div class="series-topline rise">
+              <a class="series-tag" href="/#writing" style={`--accent: ${topicColor[series.series.topic] ?? accent};`}>
+                {topicIcons[series.series.topic] && (
+                  <svg class="series-tag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[series.series.topic]} />
+                )}
+                <span class="series-tag-name">{series.series.name}</span>
+                <span class="series-tag-dot" aria-hidden="true"></span>
+                <span class="series-tag-pos">Part {series.number} of {series.total}</span>
+              </a>
+              {/* Orientation for readers landing mid-series from search: a
+                  quiet path back to the beginning. */}
+              {series.number > 1 && (
+                <a class="series-start" href={`/blog/${series.series.parts[0].slug}`}>
+                  New here? Start at part 1 <span aria-hidden="true">→</span>
+                </a>
               )}
-              <span class="series-tag-name">{series.series.name}</span>
-              <span class="series-tag-dot" aria-hidden="true"></span>
-              <span class="series-tag-pos">Part {series.number} of {series.total}</span>
-            </a>
+            </div>
           )}
 
+          {/* Each dot is grouped with the item it introduces, so when the row
+              wraps on narrow screens a separator never dangles at a line end. */}
           <div class="post-header rise">
             <span class="post-date">{formatDate(pubDate)}</span>
             {topic && (
-              <>
+              <span class="post-meta-item">
                 <span class="post-dot"></span>
                 <span style={`color: ${topicColor[topic]}; font-weight: 600;`}>{topicLabel[topic]}</span>
-              </>
+              </span>
             )}
-            <span class="post-dot"></span>
-            <span class="post-readtime">{minutes} min read</span>
+            <span class="post-meta-item">
+              <span class="post-dot"></span>
+              <span class="post-readtime">{minutes} min read</span>
+            </span>
           </div>
 
           <h1 class="post-title rise">

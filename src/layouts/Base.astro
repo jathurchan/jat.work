@@ -9,9 +9,17 @@ interface Props {
   description?: string;
   /** Open Graph object type. Posts pass "article"; everything else is a site. */
   ogType?: 'website' | 'article';
+  /** Site-relative path to a page-specific OG image (posts pass their generated
+      /og/<slug>.png); defaults to the generated site-wide card. */
+  ogImage?: string;
 }
 
-const { title = meta.title, description = meta.description, ogType = 'website' } = Astro.props;
+const {
+  title = meta.title,
+  description = meta.description,
+  ogType = 'website',
+  ogImage = '/og/site.png',
+} = Astro.props;
 
 // Canonical URL for this page: absolute, normalised to the path only (no query
 // or hash) so every page advertises a single self-referential canonical and a
@@ -77,17 +85,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/og-image.jpg', Astro.site)} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL('/og-image.jpg', Astro.site)} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&display=swap"
     />
     <ViewTransitions />
     {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
@@ -96,6 +104,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <Analytics />
   </head>
   <body>
+    {/* Keyboard users skip the header chrome; visually hidden until focused. */}
+    <a class="skip-link" href="#main">Skip to content</a>
     <slot />
   </body>
 </html>

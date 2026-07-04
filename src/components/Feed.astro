@@ -1,6 +1,6 @@
 ---
 import { filters, lab, topicColor, topicLabel, formatDate } from '../lib/site';
-import { sectionIcons, topicIcons } from '../lib/icons';
+import { topicIcons } from '../lib/icons';
 import { getPosts, buildSeries, partLabel } from '../lib/posts';
 
 // The blog comes from src/content/blog/*.{md,mdx}, newest first.
@@ -39,10 +39,7 @@ const showToolbar = showFilters || showSearch;
 {/* ---------- Writing Section ---------- */}
 <section id="writing" class="lab-section">
   <div class="section-lead section-rise">
-    <span class="featured-eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['writing'] ?? ''} />
-      {lab.eyebrow}
-    </span>
+    <span class="featured-eyebrow">{lab.eyebrow}</span>
     <h2 class="featured-lead-text">{lab.lead}</h2>
   </div>
 
@@ -82,8 +79,8 @@ const showToolbar = showFilters || showSearch;
           <path d="M4 20h4L19 9l-4-4L4 16v4Z"></path>
           <path d="M14 6l4 4"></path>
         </svg>
-        <h3 class="lab-empty-title">The first words are coming</h3>
-        <p class="lab-empty-text">I'm currently writing about cloud computing, distributed systems, and AI — what I build, break, and learn. Check back soon.</p>
+        <h3 class="lab-empty-title">Nothing published yet</h3>
+        <p class="lab-empty-text">I'm writing about cloud computing, distributed systems, and AI. Check back soon.</p>
       </div>
     ) : (
       <>
@@ -99,23 +96,27 @@ const showToolbar = showFilters || showSearch;
               style={`--card-color: ${color};`}
             >
               <div class="lab-card-body">
-                <div class="lab-card-top">
-                  <span class="lab-kinds">
-                    <span class="lab-kind" style={`--chip-color: ${color};`}>
-                      {topicIcons[g.def.topic] && (
-                        <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[g.def.topic]} />
-                      )}
-                      {topicLabel[g.def.topic] ?? 'Series'}
+                {/* Info column: on wide screens this sits left of the parts
+                    list as one centred block (see .lab-series-info CSS). */}
+                <div class="lab-series-info">
+                  <div class="lab-card-top">
+                    <span class="lab-kinds">
+                      <span class="lab-kind" style={`--chip-color: ${color};`}>
+                        {topicIcons[g.def.topic] && (
+                          <svg class="lab-kind-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={topicIcons[g.def.topic]} />
+                        )}
+                        {topicLabel[g.def.topic] ?? 'Series'}
+                      </span>
                     </span>
-                  </span>
-                  <span class="lab-series-badge">{g.parts.length}-part series</span>
-                  {isLatest && <span class="lab-latest">Latest</span>}
-                </div>
+                    <span class="lab-series-badge">{g.parts.length}-part series</span>
+                    {isLatest && <span class="lab-latest">Latest</span>}
+                  </div>
 
-                <h3 class="lab-card-title">
-                  <a class="lab-series-name" href={`/blog/${g.parts[0].slug}`}>{g.def.name}</a>
-                </h3>
-                <p class="lab-card-blurb">{g.def.blurb}</p>
+                  <h3 class="lab-card-title">
+                    <a class="lab-series-name" href={`/blog/${g.parts[0].slug}`}>{g.def.name}</a>
+                  </h3>
+                  <p class="lab-card-blurb">{g.def.blurb}</p>
+                </div>
 
                 <ol class="lab-series-parts">
                   {g.parts.map((p, i) => (
@@ -129,10 +130,6 @@ const showToolbar = showFilters || showSearch;
                     </li>
                   ))}
                 </ol>
-              </div>
-
-              <div class="lab-feature-aside" aria-hidden="true">
-                <svg class="lab-feature-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" set:html={topicIcons[g.def.topic] ?? ''} />
               </div>
             </article>
           );

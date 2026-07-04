@@ -1,0 +1,79 @@
+---
+// Branded 404 — without this, Vercel serves its own unstyled default page.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Page not found — Jathurchan Selvakumar">
+  <div class="page" id="top">
+    {/* Same quiet ambient backdrop as the post pages (accent-blue glow + grain). */}
+    <div class="post-ambient" aria-hidden="true"></div>
+    <div class="page-grain" aria-hidden="true"></div>
+    <Header />
+    <main class="shell notfound" id="main" tabindex="-1">
+      <p class="notfound-code rise">404</p>
+      <h1 class="notfound-title rise">This page doesn't exist.</h1>
+      <p class="notfound-text rise">
+        The address may be wrong, or the page has moved.
+      </p>
+      <div class="notfound-actions rise">
+        <a class="premium-glass-btn" href="/">Back to the home page</a>
+        <a class="notfound-writing" href="/#writing">or browse the writing →</a>
+      </div>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .notfound {
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    min-height: 46svh;
+  }
+  .notfound-code {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--faint-text);
+  }
+  .notfound-title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .notfound-text {
+    margin: 0;
+    font-size: 16px;
+    color: var(--sub);
+  }
+  .notfound-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .notfound-writing {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--sub);
+    transition: color 0.2s ease;
+  }
+  .notfound-writing:hover {
+    color: var(--accent);
+  }
+</style>

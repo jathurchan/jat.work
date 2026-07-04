@@ -56,7 +56,6 @@ export interface SiteConfig {
   profile: {
     fullName: string;
     email: string;
-    resume?: string;
     links: { github: string; linkedin: string };
   };
   meta: { title: string; description: string };

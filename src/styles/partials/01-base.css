@@ -53,7 +53,9 @@
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-serif: 'Playfair Display', serif;
+  /* Fraunces (variable, optical sizing): display forms at large sizes, calmer
+     text forms small. Replaced Playfair Display — the stock "fancy" serif. */
+  --font-serif: 'Fraunces', Georgia, serif;
   /* Display face for the hero only — geometric, friendly, a touch more personal
      than Inter while staying in the same modern-grotesque family. */
   --font-hero: 'Outfit', 'Inter', system-ui, sans-serif;
@@ -175,6 +177,49 @@ button {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+}
+
+/* ---- skip link ----
+   Off-screen until keyboard-focused, then a small pill above the header. */
+.skip-link {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 100;
+  padding: 10px 18px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 999px;
+  transform: translateY(-200%);
+  transition: transform 0.2s var(--ease-spring);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- film grain ----
+   A static, tiling SVG-noise texture fixed over the whole viewport. Its real
+   job is to break up the smooth gradients behind it (the blurred aurora on the
+   home page, the accent glow on posts) so they don't band on wide displays —
+   the faint tooth it adds to the paper is a bonus. It never repaints (no blur,
+   no animation), so it costs one composited layer and nothing per frame. The
+   noise is black; dark mode inverts it to white so it reads on charcoal. */
+.page-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-theme='dark'] .page-grain {
+  filter: invert(1);
+  opacity: 0.4;
 }
 
 /* ---- custom scrollbar & selection ---- */

@@ -1,6 +1,5 @@
 ---
 import { skills } from '../lib/site';
-import { sectionIcons } from '../lib/icons';
 
 const pillarIcons: Record<string, string> = {
   cloud:
@@ -15,10 +14,7 @@ const pillarIcons: Record<string, string> = {
 <section class="shell hero-inner" id="toolkit" aria-label="Toolkit">
   <div class="hero-foot section-rise" style="width: 100%;">
     <div class="hero-skills-lead">
-      <span class="featured-eyebrow">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['toolkit'] ?? ''} />
-        {skills.eyebrow}
-      </span>
+      <span class="featured-eyebrow">{skills.eyebrow}</span>
       <p class="hero-skills-text">{skills.lead}</p>
     </div>
     <ul class="toolkit-grid" aria-label="Toolkit">

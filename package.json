@@ -17,7 +17,8 @@
     "@astrojs/sitemap": "3.2.1",
     "@rollup/plugin-yaml": "^4.1.2",
     "@vercel/analytics": "^2.0.1",
-    "astro": "^4.16.18"
+    "astro": "^4.16.18",
+    "astro-og-canvas": "^0.7.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

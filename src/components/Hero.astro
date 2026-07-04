@@ -23,10 +23,10 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
       {/* Punctuation hugs the preceding word (comma sits inside Google's span;
           each pillar carries its trailing separator) so a line wrap never starts
           a line with a stray comma. */}
-      <h2 class="hero-statement" aria-label={intro.statementLead + ", obsessed with " + intro.pillars.map(p => p.label).join(", ")}>
+      <h2 class="hero-statement" aria-label={intro.statementLead + ", working on " + intro.pillars.map(p => p.label).join(", ")}>
         <span class="stagger-reveal" style="--stagger: 1" aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
           <> <span class="stagger-reveal" style="--stagger: 2" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
-        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> <span class="stagger-reveal" style="--stagger: 3">{company ? 'obsessed with' : ', obsessed with'}</span> {intro.pillars.map((p, i) => {
+        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> <span class="stagger-reveal" style="--stagger: 3">{company ? 'working on' : ', working on'}</span> {intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;
           const isSecondLast = i === intro.pillars.length - 2;
           // Punctuation that must stay glued to this pillar (never lead a line),

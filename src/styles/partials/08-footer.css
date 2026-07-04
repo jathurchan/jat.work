@@ -2,16 +2,13 @@
 .site-footer {
   position: relative;
   margin-top: var(--space-xl);
-  /* No solid panel + hard border: that hid the page-wide ambient backdrop and
-     made the footer "cut" abruptly from the feed. A soft top-down frame tint
-     instead, so the aurora + grid stay continuous through the footer. */
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    color-mix(in srgb, var(--frame) 55%, transparent) 22%
-  );
+  /* No panel tint at all: on wide screens the old top-down frame gradient
+     started as a visible full-width band. The footer sits directly on the
+     ambient backdrop and is grounded by the horizon glow below instead. */
   overflow: hidden;
-  min-height: clamp(520px, 64vh, 720px);
+  /* Shorter on tall viewports — with the watermark gone, 64vh left the CTA
+     floating in a void on large screens. */
+  min-height: clamp(440px, 52vh, 620px);
   display: flex;
   flex-direction: column;
 }
@@ -30,7 +27,8 @@
   opacity: 0.55;
   z-index: 1;
 }
-/* Ambient horizon glow grounding the end of the site */
+/* Ambient horizon glow grounding the end of the site — scales with the
+   viewport so it still reads on large screens. */
 .site-footer::after {
   content: '';
   position: absolute;
@@ -38,8 +36,13 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  height: 400px;
-  background: radial-gradient(circle at bottom center, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 70%);
+  height: clamp(320px, 46vh, 520px);
+  background: radial-gradient(
+    120% 100% at 50% 100%,
+    color-mix(in srgb, var(--accent) 18%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 7%, transparent) 45%,
+    transparent 78%
+  );
   pointer-events: none;
   z-index: 0;
 }
@@ -166,25 +169,6 @@
   background: color-mix(in srgb, var(--accent) 20%, transparent);
   transform: translate3d(0, -4px, 0);
   box-shadow: 0 12px 24px -8px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-.footer-massive-text {
-  position: absolute;
-  bottom: -0.15em;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 22vw;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--line) 60%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--line) 40%, transparent) 0%, transparent 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 1;
 }
 .footer-base {
   display: flex;

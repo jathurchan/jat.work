@@ -49,7 +49,7 @@ intro:
 # than a category of their own.
 skills:
   eyebrow: Toolkit
-  lead: The languages, frameworks, and tools I build with day to day — grouped by the three areas I work in.
+  lead: What I reach for day to day, grouped by the three areas I work in.
   categories:
     - key: cloud
       name: Cloud & Infrastructure
@@ -67,7 +67,7 @@ skills:
 # Section lead-in for the writing. Posts live as Markdown/MDX in src/content/blog/.
 lab:
   eyebrow: Writing
-  lead: Deep dives and hard-won lessons from the systems I build, break, and operate.
+  lead: Notes from building real systems — what worked, what broke, and why.
 
 # Post series — grouped, multi-part writing. A series renders as ONE rich card in
 # the feed (its parts listed in reading order) instead of N near-identical cards.
@@ -78,8 +78,8 @@ series:
     name: RaftLock
     topic: systems
     blurb: >-
-      A crash-tolerant distributed lock built on Raft from first principles —
-      one post per layer, from the consensus core out to the client.
+      A crash-tolerant distributed lock built on Raft, explained one layer at
+      a time — from the consensus core out to the client.
     parts:
       - raftlock-a-distributed-lock-that-survives-crashes
       - raftlock-the-consensus-engine
@@ -91,7 +91,7 @@ series:
 # Section lead-in for the Career view.
 careerHead:
   eyebrow: Work Experience
-  lead: "Every move was deliberate. Follow the line — from a student research paper to safeguarding planet-scale systems at Google."
+  lead: "The path so far, in order — from a student research paper to SRE at Google."
 
 # Featured project card + live demo
 featured:
@@ -101,12 +101,12 @@ featured:
   # Short lead-in shown above the interactive demo to frame it.
   eyebrow: Featured Project
   lead: >-
-    Where I go deepest on <span class="thread-systems">distributed systems</span>
-    — and the one thing here you can break yourself.
+    My longest-running <span class="thread-systems">distributed systems</span>
+    project — and the one part of this site you can break yourself.
   tagline: >-
-    Raft consensus from first principles — <strong>five clean layers</strong>,
-    custom storage engine, simulation-tested. Kill two nodes and watch the
-    cluster recover, live.
+    Raft consensus written from the paper up — <strong>five layers</strong>,
+    a purpose-built storage engine, a simulation test harness. Kill two
+    nodes and watch the cluster recover.
   # demo chips
   chips:
     - Survives 2 of 5 crashes
@@ -265,7 +265,7 @@ career:
       target="_blank" rel="noopener noreferrer">Designing Data-Intensive
       Applications</a> cover to cover and turned theory into code.
     story: >-
-      Built a crash-tolerant distributed lock on Raft consensus from first principles — turning an obsession into working evidence.
+      Built a crash-tolerant distributed lock on Raft in Go — every layer written from scratch, verified with simulated crashes, partitions, and restarts.
     heroMetric: { value: "82%", label: "test coverage" }
     product:
       label: Open the live demo
@@ -282,7 +282,7 @@ career:
     symbol: observability
     variant: destination
     now: true
-    transitionIn: "Google SRE — the people who keep the internet running. I joined to protect infrastructure at planetary scale."
+    transitionIn: "I joined Google as an SRE in Dublin — keeping the infrastructure behind Google's products reliable, at a scale I'd only read about before."
     # The destination card swaps a tech-chip list for a live "terminal" — an
     # open-ended hook that the story is still being written (see Experience.astro).
     terminal: true

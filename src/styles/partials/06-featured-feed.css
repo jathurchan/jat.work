@@ -38,39 +38,6 @@
   margin: 0 2px;
   flex: 0 0 auto;
 }
-.resume-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--sub);
-  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  background: color-mix(in srgb, var(--faint) 20%, transparent);
-  border-radius: 999px;
-  padding: 6px 14px;
-  white-space: nowrap;
-  transition: all 0.3s var(--ease-spring);
-}
-.resume-btn svg {
-  width: 15px;
-  height: 15px;
-  flex: 0 0 auto;
-}
-.resume-btn .tray {
-  transition: transform 0.3s var(--ease-spring);
-}
-.resume-btn:hover {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  box-shadow: 0 0 16px -2px color-mix(in srgb, var(--accent) 25%, transparent);
-  transform: translateY(-1px);
-}
-.resume-btn:hover .tray {
-  transform: translateY(2px);
-}
 @media (max-width: 768px) {
   .header-actions {
     display: none;
@@ -87,6 +54,16 @@
     border-right: none;
     border-bottom: 1px solid var(--line);
     padding: clamp(20px, 5vw, 32px);
+    /* Stacked full-width on phones: centre the whole panel (badge, title,
+       chips, button) so it reads as one column, matching the centred lead. */
+    align-items: center;
+    text-align: center;
+  }
+  .hw-glass-chips {
+    justify-content: center;
+  }
+  .hw-tagline {
+    max-width: none;
   }
   .cluster-canvas-wrapper {
     grid-column: 1;
@@ -110,10 +87,10 @@
   .hw-title {
     font-size: 28px;
   }
-  .nav-label, .resume-btn span, .header-cta span {
+  .nav-label, .header-cta span {
     display: none;
   }
-  .nav-social, .resume-btn, .header-cta {
+  .nav-social, .header-cta {
     padding: 10px;
     justify-content: center;
   }
@@ -507,43 +484,29 @@
   max-width: 52ch;
   margin-top: 14px;
 }
-.lab-feature-aside {
-  position: relative;
-  flex: 0 0 38%;
-  display: grid;
-  place-items: center;
-  border-left: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
-  background:
-    radial-gradient(80% 80% at 50% 40%, color-mix(in srgb, var(--card-color, var(--accent)) 25%, transparent), transparent 70%);
-  overflow: hidden;
-}
-.lab-feature-aside::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--card-color, var(--accent)) 12%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--card-color, var(--accent)) 12%, transparent) 1px, transparent 1px);
-  background-size: 26px 26px;
-  mask-image: radial-gradient(70% 70% at 50% 50%, #000, transparent 75%);
-  -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000, transparent 75%);
-  opacity: 0.5;
-}
-.lab-feature-glyph {
-  position: relative;
-  z-index: 1;
-  width: clamp(64px, 9vw, 104px);
-  height: clamp(64px, 9vw, 104px);
-  color: var(--card-color, var(--accent));
-  opacity: 0.92;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.lab-card--feature:hover .lab-feature-glyph {
-  transform: scale(1.15) rotate(-6deg);
-  filter: drop-shadow(0 0 24px color-mix(in srgb, var(--card-color, var(--accent)) 50%, transparent));
-}
-@media (max-width: 999.98px) {
-  .lab-feature-aside { display: none; }
+/* On wide screens the series card splits into two real columns — series info
+   left, the numbered parts list right of a hairline. (This replaces a purely
+   decorative oversized-glyph panel: the space now carries content.) */
+@media (min-width: 1000px) {
+  .lab-card--series .lab-card-body {
+    --series-gutter: clamp(32px, 3.5vw, 56px);
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+  }
+  .lab-card--series .lab-series-info {
+    padding-right: var(--series-gutter);
+  }
+  .lab-card--series .lab-series-parts {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    max-width: none;
+    padding-left: var(--series-gutter);
+    border-left: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  }
 }
 
 /* ---- empty state ---- */

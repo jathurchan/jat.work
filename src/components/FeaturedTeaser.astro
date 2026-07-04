@@ -1,16 +1,12 @@
 ---
 import { featured } from '../lib/site';
-import { sectionIcons } from '../lib/icons';
 ---
 
 <section class="shell hero-inner" id="featured" aria-label="Featured project">
   <div class="hero-cinematic-visuals section-rise" style="width: 100%;">
     <!-- lead-in that frames the interactive demo -->
     <div class="hero-featured-lead">
-      <span class="featured-eyebrow">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['featured'] ?? ''} />
-        {featured.eyebrow}
-      </span>
+      <span class="featured-eyebrow">{featured.eyebrow}</span>
       <p class="featured-lead-text" set:html={featured.lead}></p>
     </div>
 
@@ -37,7 +33,6 @@ import { sectionIcons } from '../lib/icons';
 
       <div class="cluster-canvas-wrapper">
         <div class="hud-grid"></div>
-        <div class="hud-scanline"></div>
         <div class="hud-corner top-left">[SYS: ONLINE]</div>
         <div class="hud-corner top-right">[NODES: 5]</div>
         <div class="hud-corner bottom-right">[ALG: RAFT]</div>

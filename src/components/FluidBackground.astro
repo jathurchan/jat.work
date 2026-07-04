@@ -1,17 +1,19 @@
 ---
 ---
-{/* Two viewport-fixed layers that sit behind the entire document, so the
+{/* Viewport-fixed layers that sit behind the entire document, so the
     backdrop is continuous from hero to footer (never cutting to flat paper) and
     the frosted-glass surfaces above always have real colour to blur.
-      • .fluid-bg   heavily-blurred drifting colour orbs (the "aurora")
-      • .page-bg-grid  a crisp blueprint grid — kept OUT of the blurred layer so
-                       its 1px lines survive. */}
+      • .fluid-bg    heavily-blurred drifting colour orbs (the "aurora")
+      • .page-grain  static film grain (global recipe in 01-base.css) that
+                     breaks up gradient banding in the blurred orbs.
+    No pattern layer (grid/dots): the backdrop is a pure colour field with
+    grain — texture comes from light, not from a printed motif. */}
 <div class="fluid-bg" aria-hidden="true">
   <canvas id="fluid-canvas"></canvas>
 </div>
-<div class="page-bg-grid" aria-hidden="true"></div>
 <!-- GPU-friendly vignette overlay replaces expensive CSS masks -->
 <div class="page-vignette" aria-hidden="true"></div>
+<div class="page-grain" aria-hidden="true"></div>
 
 <style>
   .fluid-bg {
@@ -24,7 +26,7 @@
        hues alive through the heavy blur. Over near-white paper the colour reads
        fainter than over charcoal, so light mode runs a touch more opaque/saturated
        to keep the two modes balanced. */
-    filter: blur(64px) saturate(132%);
+    filter: blur(72px) saturate(136%);
     opacity: 0.68;
     /* Note: deliberately NOT force-promoted with translateZ. A fixed, blurred
        (already compositor-promoted) layer that gets an explicit GPU layer is the
@@ -60,41 +62,20 @@
     height: 100%;
   }
 
-  .page-bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    background-size: 46px 46px;
-    background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
-    opacity: 0.55;
-  }
-  
   .page-vignette {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     /* This solid-color gradient overlay fakes the mask effect without using
-       the catastrophic GPU cost of CSS mask-image on fixed/blurred layers. */
+       the catastrophic GPU cost of CSS mask-image on fixed/blurred layers.
+       Tuned so the field only *softens* toward the edges instead of washing
+       fully to paper — the old 95% edge left the footer (which lives in the
+       bottom of the viewport on large screens) sitting on flat white. */
     background: radial-gradient(
-      135% 130% at 50% 24%, 
-      transparent 30%, 
-      color-mix(in srgb, var(--paper) 95%, transparent) 90%
+      140% 150% at 50% 30%,
+      transparent 38%,
+      color-mix(in srgb, var(--paper) 82%, transparent) 94%
     );
-  }
-
-  :global(:root[data-theme="dark"]) .page-bg-grid {
-    background-image:
-      linear-gradient(to right, color-mix(in srgb, #ffffff 6%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, #ffffff 6%, transparent) 1px, transparent 1px);
-    opacity: 0.4;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    /* The canvas paints a single static frame in JS; nothing else to calm. */
-    .page-bg-grid { opacity: 0.4; }
   }
 </style>

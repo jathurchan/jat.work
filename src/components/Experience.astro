@@ -1,6 +1,5 @@
 ---
 import { career, careerHead, careerStart } from '../lib/site';
-import { sectionIcons } from '../lib/icons';
 
 // Chronological, start → now: scrolling DOWN walks the path forward in time.
 const path = career;
@@ -44,10 +43,7 @@ const symbols: Record<string, string> = {
 
 <section id="experience" class="route-section">
   <div class="section-lead section-rise">
-    <span class="featured-eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={sectionIcons['experience'] ?? ''} />
-      {careerHead.eyebrow}
-    </span>
+    <span class="featured-eyebrow">{careerHead.eyebrow}</span>
     <h2 class="featured-lead-text">{careerHead.lead}</h2>
   </div>
 
@@ -106,9 +102,11 @@ const symbols: Record<string, string> = {
               {/* the card */}
               <article class="route-card">
                 <header class="route-card-head">
-                  <span class="route-chapter">
-                    {variant === 'branch' ? 'BRANCH' : `CH · ${c.chapter}`}
-                  </span>
+                  {/* Stations carry a plain chapter index; the branch is already
+                      labelled by its tag, so it doesn't get a second badge. */}
+                  {variant !== 'branch' && (
+                    <span class="route-chapter">{c.chapter}</span>
+                  )}
                   {c.tag && <span class="route-tag">{c.tag}</span>}
                   <div class="route-period">
                     {c.now && <span class="route-now">live</span>}
@@ -139,12 +137,6 @@ const symbols: Record<string, string> = {
                      in place of a finished tech-chip stack. Decorative, so it's
                      hidden from assistive tech. */
                   <div class="route-terminal" aria-hidden="true">
-                    <div class="route-terminal-bar">
-                      <span class="route-terminal-dot route-terminal-dot--r"></span>
-                      <span class="route-terminal-dot route-terminal-dot--y"></span>
-                      <span class="route-terminal-dot route-terminal-dot--g"></span>
-                      <span class="route-terminal-title">jat@google</span>
-                    </div>
                     <div class="route-terminal-body">
                       <p class="route-terminal-line"><span class="route-term-prompt">$</span> status</p>
                       <p class="route-terminal-line"><span class="route-term-ok">▸</span> all systems go</p>

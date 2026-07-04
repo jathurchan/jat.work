@@ -40,16 +40,11 @@ const ARRIVE_MS = 1250; // how long the destination glow lingers (ms)
 // the landed section is clearly readable and never mistaken for the prior tick.
 const LAND_SETTLE_MS = 470;
 
-// Colourful idle glyph — a sparkle drawn with a four-hue gradient (the same
-// Google palette the site runs on). With the conic dot gone, the symbol is what
-// carries the colour at rest.
+// Idle glyph: a shuffle mark in the resting accent — it names the mechanic
+// (random jump) instead of decorating. (Was a rainbow-gradient sparkle.)
 const SPARKLE =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="url(#jw-spark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-  '<defs><linearGradient id="jw-spark" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
-  '<stop offset="0" stop-color="var(--g-blue)"/><stop offset="0.4" stop-color="var(--g-green)"/>' +
-  '<stop offset="0.72" stop-color="var(--g-yellow)"/><stop offset="1" stop-color="var(--g-red)"/>' +
-  '</linearGradient></defs>' +
-  '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z"/></svg>';
+  '<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+  '<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>';
 const iconSvg = (id: string) =>
   sectionIcons[id]
     ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${sectionIcons[id]}</svg>`
