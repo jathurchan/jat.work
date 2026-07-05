@@ -10,10 +10,11 @@
 //   nav        header section nav + scroll-spy
 //   route      career route line progress
 //   hero       name collapse + toolkit reveal
+import './header'; // self-binding header scroll state (shared with post pages)
 import { runTeardowns, bindGlobal } from './lifecycle';
 import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
-import { initSectionNav, initHeaderScroll } from './nav';
+import { initSectionNav } from './nav';
 import { initRouteProgress } from './route';
 import { initName, initToolkitPulse, initHeroParallax } from './hero';
 import { initSurprise } from './surprise';
@@ -29,7 +30,6 @@ window.scrollTo(0, 0);
 
 function boot() {
   initFluid();
-  initHeaderScroll();
   initName();
   initHeroParallax();
   initSurprise();

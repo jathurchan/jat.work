@@ -310,9 +310,14 @@
               inset 0 1px 2px color-mix(in srgb, #ffffff 60%, transparent),
               0 0 32px 4px color-mix(in srgb, var(--brand) 80%, transparent);
 }
+/* The active (scroll-driven) state brightens the ring but doesn't spin it — a
+   perpetual rotation on whichever card you're reading is decoration on a loop.
+   The spin is a direct response to the pointer only. */
 .route-stop:hover .route-node-disc::after,
 .route-stop.is-active .route-node-disc::after {
   opacity: 1;
+}
+.route-stop:hover .route-node-disc::after {
   animation: route-spin-glow 3s linear infinite;
 }
 
@@ -357,8 +362,8 @@
 
 /* ---- card --------------------------------------------------- */
 @keyframes route-card-in {
-  0% { opacity: 0; transform: translateX(30px) translateY(10px) rotateZ(3deg); }
-  100% { opacity: 1; transform: translateX(0) translateY(0) rotateZ(0); }
+  0% { opacity: 0; transform: translateX(24px) translateY(8px); }
+  100% { opacity: 1; transform: translateX(0) translateY(0); }
 }
 .route-card {
   position: relative;
@@ -376,7 +381,7 @@
     linear-gradient(145deg, var(--glass-fill) 0%, color-mix(in srgb, var(--brand) 7%, var(--glass-fill)) 100%);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 8px 24px -12px color-mix(in srgb, #000000 12%, transparent);
+  box-shadow: var(--glass-edge), var(--shadow-card);
   transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
   animation: route-card-in linear both;
   animation-timeline: view();
@@ -386,7 +391,7 @@
   .route-card {
     animation: none;
     opacity: 0;
-    transform: translateX(30px) translateY(10px) rotateZ(3deg);
+    transform: translateX(24px) translateY(8px);
   }
   .route-card.is-inview-fallback {
     animation: route-card-in 0.6s var(--ease-spring) forwards;
@@ -773,26 +778,17 @@
 }
 .route-stop--destination .route-node-sheen { opacity: 0.5; }
 
+/* The "now" card carries all four brand hues in its border — static. The node's
+   ping already says "live"; a border that spins forever says "template". */
 .route-stop--destination .route-card {
   padding: 32px 30px;
   border: 1px solid transparent;
   background:
     linear-gradient(color-mix(in srgb, var(--brand) 5%, var(--paper)), color-mix(in srgb, var(--brand) 5%, var(--paper))) padding-box,
-    conic-gradient(from var(--aurora, 0deg), var(--g-blue), var(--g-green), var(--g-yellow), var(--g-red), var(--g-blue)) border-box;
-  animation: route-card-in linear both, route-aurora 10s linear infinite;
-  animation-timeline: view(), auto;
-  animation-range: entry 2% cover 26%, normal;
-}
-@property --aurora {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-@keyframes route-aurora {
-  to { --aurora: 360deg; }
+    linear-gradient(135deg, var(--g-blue), var(--g-green) 38%, var(--g-yellow) 62%, var(--g-red)) border-box;
 }
 .route-stop--destination .route-card:hover {
-  box-shadow: 0 26px 60px -28px color-mix(in srgb, var(--brand) 70%, transparent);
+  box-shadow: 0 20px 48px -24px color-mix(in srgb, var(--brand) 55%, transparent);
 }
 
 /* ---- responsive --------------------------------------------- */

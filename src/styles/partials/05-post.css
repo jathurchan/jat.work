@@ -3,62 +3,33 @@
    (0 → 1) is driven by src/scripts/reading.ts and reaches 1 the moment the end
    of the post meets the bottom of the viewport — so it never sits half-empty
    while only the footer is still below the fold. (A CSS view-timeline can't do
-   this: `contain` collapses once the article is taller than the viewport.) */
+   this: `contain` collapses once the article is taller than the viewport.)
+   It sits standalone beside the wordmark and inherits the post's topic colour
+   (--accent is set per-post on .page). */
+.header-reading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
 .read-ring {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   transform: rotate(-90deg); /* Start from top */
-  margin-left: 2px;
 }
 .ring-track {
   fill: none;
   stroke: color-mix(in srgb, var(--line) 80%, transparent);
-  stroke-width: 3;
+  stroke-width: 2.5;
 }
 .ring-fill {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 3;
+  stroke-width: 2.5;
   stroke-dasharray: 63; /* 2 * pi * r(10) ≈ 62.8 */
   stroke-dashoffset: calc(63 - 63 * var(--read-progress, 0));
   stroke-linecap: round;
   transition: stroke-dashoffset 0.12s linear;
-}
-
-.header-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px 6px 12px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--sub);
-  text-decoration: none;
-  /* Same frosted glass as the site's other pill chrome. Note: at the top of the
-     page 02-header.css strips this to transparent (header controls are "naked"
-     until the floating pill activates on scroll); this glass shows once scrolled. */
-  background: var(--glass-sheen), var(--glass-fill);
-  border: 1px solid var(--glass-border);
-  border-radius: 99px;
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge);
-  transition: all 0.3s var(--ease-spring);
-}
-.header-back-btn svg {
-  width: 14px;
-  height: 14px;
-  transition: transform 0.3s var(--ease-spring);
-}
-.header-back-btn:hover {
-  color: var(--ink);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--glass-border));
-  box-shadow: var(--glass-edge), 0 6px 16px -6px color-mix(in srgb, var(--accent) 30%, transparent);
-  transform: translateY(-1px);
-}
-.header-back-btn:hover svg {
-  transform: translateX(-3px);
 }
 
 /* ---- ambient backdrop (post pages) ----

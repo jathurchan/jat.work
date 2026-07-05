@@ -107,28 +107,20 @@
 
 /* --- Compact header actions on phones ---------------------------------------
    The floating pill is too tight below 480px to hold text labels plus a
-   multi-item action row without wrapping — on post pages the wide "Back"
-   button was squeezing .nav-row until the theme toggle dropped to a second
-   line. Collapse every action (Back, "Let's talk", theme) to a consistent
-   34px round icon button and pin the row so it never wraps. Defined here
-   (after 05-post.css) so these win over the base .header-back-btn rules. */
+   multi-item action row without wrapping. Collapse the contact CTA to a 34px
+   round icon button and pin the row so it never wraps. (The reading ring stays
+   — at 18px it always fits beside the wordmark.) */
 @media (max-width: 480px) {
   .nav-row {
     flex-wrap: nowrap;
     gap: 6px;
   }
-  .header-cta,
-  .header-back-btn {
+  .header-cta {
     width: 34px;
     height: 34px;
     padding: 0;
     justify-content: center;
     flex: 0 0 auto;
-  }
-  /* Keep only the glyphs: the back arrow and the chat bubble. */
-  .header-back-btn .back-text,
-  .header-back-btn .read-ring {
-    display: none;
   }
   /* A dashed idle radar reads as a loading spinner once its label is hidden,
      so on phones show a solid "you are here" target — a clean ring with a
@@ -196,7 +188,6 @@
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
   font-weight: 500;
-  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 .lab-toolbar-end {
   display: flex;
@@ -264,14 +255,16 @@
   gap: 18px;
 }
 
+/* Entrance is a straight rise — no 3D tilt. The content arriving is the event;
+   perspective swings draw attention to the animation instead. */
 @keyframes reveal-card {
   0% {
     opacity: 0;
-    transform: translateY(60px) scale(0.9) rotateY(-6deg) rotateX(4deg);
+    transform: translateY(32px) scale(0.97);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1) rotateY(0) rotateX(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -289,14 +282,13 @@
     var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-edge), 0 12px 32px -16px color-mix(in srgb, #000000 12%, transparent);
+  box-shadow: var(--glass-edge), var(--shadow-card);
   transition: transform 0.4s var(--ease-spring),
               border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
   animation: reveal-card linear both;
   animation-timeline: view();
   animation-range: entry 5% cover 30%;
   transform-origin: center bottom;
-  perspective: 1000px;
 }
 
 /* Staggering the grid layout so rows don't enter exactly simultaneously */
@@ -308,7 +300,7 @@
   .lab-card {
     animation: none;
     opacity: 0;
-    transform: translateY(60px) scale(0.9) rotateY(-6deg) rotateX(4deg);
+    transform: translateY(32px) scale(0.97);
   }
   .lab-card.is-inview-fallback {
     animation: reveal-card 0.6s var(--ease-spring) forwards;
@@ -325,14 +317,14 @@
   transition: opacity 0.3s ease, width 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 .lab-card:hover {
-  transform: translate3d(0, -6px, 0);
+  transform: translate3d(0, -4px, 0);
   border-color: color-mix(in srgb, var(--card-color, var(--accent)) 45%, var(--line));
-  box-shadow: var(--glass-edge), 0 24px 48px -18px color-mix(in srgb, var(--card-color, var(--accent)) 30%, transparent);
+  box-shadow: var(--glass-edge), 0 16px 40px -16px color-mix(in srgb, var(--card-color, var(--accent)) 32%, transparent);
 }
-.lab-card:hover::before { 
-  opacity: 1; 
-  width: 5px; 
-  box-shadow: 0 0 16px 2px color-mix(in srgb, var(--card-color, var(--accent)) 50%, transparent);
+.lab-card:hover::before {
+  opacity: 1;
+  width: 5px;
+  box-shadow: 0 0 12px 1px color-mix(in srgb, var(--card-color, var(--accent)) 35%, transparent);
 }
 
 .lab-card-body {

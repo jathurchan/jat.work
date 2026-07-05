@@ -6,14 +6,14 @@ import Wordmark from './Wordmark.astro';
 interface Props {
   /** Show the in-page section nav. Only the home page has these anchors. */
   sections?: boolean;
-  /** Show a back button. Used on article pages. */
-  backButton?: boolean;
+  /** Show the reading-progress ring. Used on article pages. */
+  reading?: boolean;
 }
-const { sections = false, backButton = false } = Astro.props;
+const { sections = false, reading = false } = Astro.props;
 ---
 
 
-<header class={`site-header reveal-down ${backButton ? 'fast' : ''}`}>
+<header class={`site-header reveal-down ${reading ? 'fast' : ''}`}>
   <div class="site-header-inner shell">
     {/* Left: brand + (home-only) section nav, grouped together. */}
     <div class="header-left">
@@ -49,19 +49,17 @@ const { sections = false, backButton = false } = Astro.props;
         </nav>
       )}
 
-      {backButton && (
-        <a
-          href="/#writing"
-          class="header-back-btn"
-          aria-label="Go back"
-        >
-          <svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          <span class="back-text">Back</span>
-          <svg class="read-ring" viewBox="0 0 24 24" aria-hidden="true">
+      {/* Reading progress, standalone. The old "Back" button around it was
+          redundant chrome — the wordmark already leads home and the browser
+          owns "back" — and it cost the ring its spot on phones. Decorative to
+          assistive tech (the article itself is the source of truth). */}
+      {reading && (
+        <span class="header-reading" title="Reading progress" aria-hidden="true">
+          <svg class="read-ring" viewBox="0 0 24 24">
             <circle class="ring-track" cx="12" cy="12" r="10"></circle>
             <circle class="ring-fill" cx="12" cy="12" r="10"></circle>
           </svg>
-        </a>
+        </span>
       )}
     </div>
 
@@ -125,36 +123,4 @@ const { sections = false, backButton = false } = Astro.props;
     document.head.prepend(tc);
   });
 
-  // Back button (post pages). Delegated on document so it survives View
-  // Transitions swaps (the button element is replaced on navigation).
-  //
-  // The anchor's href="/#writing" is the no-JS / deep-link fallback: someone who
-  // opened the post directly (or from an external link) is taken to the writing
-  // feed on the home page, where the post lives.
-  // When the visitor reached the post from elsewhere on the site, we instead
-  // step back through history so the home page is restored at the exact scroll
-  // position and section they left — Astro's router handles that on popstate.
-  // We detect "came from the site" via history.state.index, which Astro stamps
-  // as 0 on a fresh load and increments on each in-app navigation.
-  //
-  // Registered in the CAPTURE phase so it runs before Astro's own (bubble-phase)
-  // link interceptor: when we choose to go back, preventDefault() both stops the
-  // browser's default "/" navigation and signals Astro to skip the link, leaving
-  // history.back() as the single source of truth. For the deep-link case we do
-  // nothing and let Astro client-navigate to "/" as usual.
-  document.addEventListener(
-    'click',
-    (e) => {
-      const back = (e.target as HTMLElement).closest('.header-back-btn');
-      if (!back) return;
-      const state = history.state as { index?: number } | null;
-      const index = state && typeof state.index === 'number' ? state.index : 0;
-      if (index > 0) {
-        e.preventDefault();
-        history.back();
-      }
-      // else: let the href="/" navigation proceed.
-    },
-    true,
-  );
 </script>

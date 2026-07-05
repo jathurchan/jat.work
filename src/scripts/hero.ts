@@ -4,6 +4,8 @@ import { trackTeardown, bindGlobal } from './lifecycle';
 /* ----------------------------------------------------------------------- *
  * Hero name: "Jathurchan" collapses to "Jat." — trailing letters shrink to
  * zero width (right to left) and the period glides left to follow them.
+ * Once settled, the short name becomes a signature hover: pointing at it
+ * unfolds the full name again, leaving folds it back.
  * ----------------------------------------------------------------------- */
 export function initName() {
   const wrap = document.getElementById('hero-name');
@@ -27,9 +29,15 @@ export function initName() {
     d.style.width = `${d.getBoundingClientRect().width}px`;
   });
 
-  // Collapse right to left after the name has risen in; overlapping steps keep
-  // the dot moving continuously.
-  const start = 1100;
+  let timers: number[] = [];
+  const clearTimers = () => {
+    timers.forEach((t) => window.clearTimeout(t));
+    timers = [];
+  };
+
+  // Collapse right to left as the name's rise lands (the reveal spring has
+  // visually settled by ~950ms), so the whole intro reads as one gesture.
+  const start = 950;
   const step = 95;
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
@@ -37,10 +45,47 @@ export function initName() {
         .slice()
         .reverse()
         .forEach((d, i) => {
-          window.setTimeout(() => d.classList.add('drop-gone'), start + i * step);
+          timers.push(window.setTimeout(() => d.classList.add('drop-gone'), start + i * step));
         });
     }),
   );
+
+  // The hover signature. Unfold reads left to right (the letters return in
+  // reading order); fold mirrors the original collapse. Not decoration — it
+  // answers "Jat who?". Fine pointers only; touch keeps the short name.
+  const unfoldStep = 40;
+  const unfold = () => {
+    clearTimers();
+    drops.forEach((d, i) =>
+      timers.push(window.setTimeout(() => d.classList.remove('drop-gone'), i * unfoldStep)),
+    );
+  };
+  const fold = () => {
+    clearTimers();
+    drops
+      .slice()
+      .reverse()
+      .forEach((d, i) =>
+        timers.push(window.setTimeout(() => d.classList.add('drop-gone'), i * unfoldStep)),
+      );
+  };
+
+  let hoverArm = 0;
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    // Arm only after the intro collapse has fully played out.
+    const settled = start + drops.length * step + 500;
+    hoverArm = window.setTimeout(() => {
+      wrap.addEventListener('mouseenter', unfold);
+      wrap.addEventListener('mouseleave', fold);
+    }, settled);
+  }
+
+  trackTeardown(() => {
+    clearTimers();
+    if (hoverArm) window.clearTimeout(hoverArm);
+    wrap.removeEventListener('mouseenter', unfold);
+    wrap.removeEventListener('mouseleave', fold);
+  });
 }
 
 export function initToolkitPulse() {

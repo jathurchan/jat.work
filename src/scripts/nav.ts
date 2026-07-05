@@ -1,40 +1,8 @@
 // Header section nav: disclosure menu + scroll-spy.
 import { bindGlobal } from './lifecycle';
 
-/* ----------------------------------------------------------------------- *
- * Header scroll state: toggles the glassmorphic background on scroll.
- * ----------------------------------------------------------------------- */
-export function initHeaderScroll() {
-  const header = document.querySelector('.site-header');
-  if (!header) return;
-
-  let ticking = false;
-  // Hysteresis: switch ON above 24px, OFF below 8px. A single threshold let the
-  // class flip-flop when scrollY hovered right at the line (the condensing pill
-  // changes layout height, which can nudge scrollY back across it) — that was
-  // the jitter. The dead-band between 8 and 24 stops the oscillation.
-  let scrolled = window.scrollY > 24;
-  const update = () => {
-    const y = window.scrollY;
-    if (!scrolled && y > 24) {
-      scrolled = true;
-      header.classList.add('is-scrolled');
-    } else if (scrolled && y < 8) {
-      scrolled = false;
-      header.classList.remove('is-scrolled');
-    }
-    ticking = false;
-  };
-
-  update();
-
-  bindGlobal(window, 'scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(update);
-      ticking = true;
-    }
-  }, { passive: true });
-}
+/* Header scroll state lives in header.ts — self-contained so post pages (which
+   don't load this home entry) get the same condensing pill. */
 
 /* ----------------------------------------------------------------------- *
  * Section nav scroll-spy: marks the section crossing the viewport's middle

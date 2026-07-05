@@ -36,7 +36,7 @@ const hasToc = toc.length >= 2;
         colour, plus the same film grain (both defined in the global CSS). */}
     <div class="post-ambient" aria-hidden="true"></div>
     <div class="page-grain" aria-hidden="true"></div>
-    <Header backButton />
+    <Header reading />
     <main class="shell post-shell" id="main" tabindex="-1">
       <div class={`post-layout${hasToc ? ' has-toc' : ''}`}>
         <article class="post-article">
@@ -164,6 +164,7 @@ const hasToc = toc.length >= 2;
 </Base>
 
 <script>
+  import '../scripts/header';
   import '../scripts/reading';
   import '../scripts/toc';
 </script>

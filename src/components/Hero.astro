@@ -18,15 +18,15 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
         <span class="hero-fullname" id="hero-name" aria-hidden="true">{keepLetters.map((c) => <span class="nm-keep">{c}</span>)}{dropLetters.map((c) => <span class="nm-drop">{c}</span>)}<span class="nm-dot">.</span></span>
       </h1>
 
-      {/* One statement: role + focus, merged. "Google" has a sleek gradient,
-          and focus areas are modern interactive chips. Staggered reveal for polish. */}
+      {/* One statement: role + focus, merged. It rises as a single thought —
+          one sentence shouldn't arrive word by word. */}
       {/* Punctuation hugs the preceding word (comma sits inside Google's span;
           each pillar carries its trailing separator) so a line wrap never starts
           a line with a stray comma. */}
-      <h2 class="hero-statement" aria-label={intro.statementLead + ", working on " + intro.pillars.map(p => p.label).join(", ")}>
-        <span class="stagger-reveal" style="--stagger: 1" aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
-          <> <span class="stagger-reveal" style="--stagger: 2" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
-        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> <span class="stagger-reveal" style="--stagger: 3">{company ? 'working on' : ', working on'}</span> {intro.pillars.map((p, i) => {
+      <h2 class="hero-statement reveal reveal-delay-2" aria-label={intro.statementLead + ", working on " + intro.pillars.map(p => p.label).join(", ")}>
+        <span aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
+          <> <span class="pillar-wrap" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
+        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> {company ? 'working on' : ', working on'} {intro.pillars.map((p, i) => {
           const isLast = i === intro.pillars.length - 1;
           const isSecondLast = i === intro.pillars.length - 2;
           // Punctuation that must stay glued to this pillar (never lead a line),
@@ -34,7 +34,7 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
           // after the group is where a line is allowed to break.
           const hug = isLast ? '.' : isSecondLast ? '' : ',';
           const after = isLast ? '' : isSecondLast ? ' and ' : ' ';
-          return (<><span class="pillar-wrap"><span class="pillar stagger-reveal" style={`--c:${p.color}; --stagger: ${4 + i}`}>{p.label}</span>{hug}</span>{after}</>);
+          return (<><span class="pillar-wrap"><span class="pillar" style={`--c:${p.color}`}>{p.label}</span>{hug}</span>{after}</>);
         })}</span>
       </h2>
 
@@ -63,13 +63,10 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
           </span>
         </button>
 
-        {/* Writing is the heart of the site — kept reachable, but quiet. */}
-        <a class="hero-quietlink" href="#writing" data-magnetic>
-          <span>or just read my writing</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 5v14M6 13l6 6 6-6" />
-          </svg>
-        </a>
+        {/* Writing is the heart of the site — kept reachable, but quiet. A plain
+            underlined text link: no second arrow stacked under the pill's, no
+            magnetic drift. Quiet things stay quiet. */}
+        <a class="hero-quietlink" href="#writing">or just read my writing</a>
       </div>
     </div>
   </div>

@@ -11,18 +11,22 @@
   /* Force a strict new stacking context */
   isolation: isolate;
 }
+/* Top-edge veil, not a fog bar: content dims as it approaches the viewport
+   edge and is gone before the header's bottom, so the ambient colour field
+   stays alive around the pill (a near-solid paper band was washing it out —
+   the pill's own glass is what handles legibility under it). GPU-friendly
+   gradient dissolve; no mask-image. */
 .site-header::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  /* GPU-friendly gradient dissolve (replaces expensive mask-image) */
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--paper) 95%, transparent) 0%,
-    color-mix(in srgb, var(--paper) 95%, transparent) 60%,
-    transparent 100%
+    color-mix(in srgb, var(--paper) 88%, transparent) 0%,
+    color-mix(in srgb, var(--paper) 46%, transparent) 45%,
+    transparent 80%
   );
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -66,42 +70,40 @@
   border-radius: inherit;
   z-index: -1;
   pointer-events: none;
-  /* Explicit flat 3D transform forces Safari to render this layer 
+  /* Explicit flat 3D transform forces Safari to render this layer
      independently of any tilted elements underneath it. */
   transform: translate3d(0, 0, 0);
-  background: color-mix(in srgb, var(--frame) 40%, transparent);
-  box-shadow: 
-    inset 0 1px 1px color-mix(in srgb, #ffffff 20%, transparent), 
-    0 8px 24px -8px color-mix(in srgb, #000000 10%, transparent);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+  /* The site's shared glass material. The sheen is a constant background-image
+     (gradients don't transition); the state change lives in background-color,
+     which does. Blur is constant across states — ramping backdrop-filter
+     re-rasterises the layer mid-scroll, and the token already steps down to
+     12px on phones (01-base.css). */
+  background-image: var(--glass-sheen);
+  background-color: color-mix(in srgb, var(--frame) 35%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 25%, transparent),
+    0 6px 20px -12px color-mix(in srgb, #000000 12%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 
+/* Scrolled: the pill condenses and firms up — deeper fill, crisp top edge,
+   hairline border, a touch more drop. Chrome sits close to the surface; it
+   doesn't float like a card. */
 .site-header.is-scrolled .site-header-inner {
   padding: 8px 20px;
-  border-color: color-mix(in srgb, var(--line) 30%, transparent);
+  border-color: var(--glass-border);
 }
 
 .site-header.is-scrolled .site-header-inner::before {
-  background: color-mix(in srgb, var(--frame) 60%, transparent);
-  box-shadow: 
-    inset 0 1px 1px color-mix(in srgb, #ffffff 50%, transparent), 
-    inset 0 0 0 1px color-mix(in srgb, #ffffff 20%, transparent),
-    0 16px 40px -12px color-mix(in srgb, #000000 25%, transparent);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-}
-
-.site-header-inner:hover {
-  border-color: color-mix(in srgb, var(--line) 50%, transparent);
-}
-
-.site-header.is-scrolled .site-header-inner:hover {
-  border-color: color-mix(in srgb, var(--line) 100%, transparent);
-}
-.site-header.is-scrolled .site-header-inner:hover::before {
-  box-shadow: inset 0 1px 1px color-mix(in srgb, #ffffff 60%, transparent), 0 16px 40px -8px color-mix(in srgb, #000000 20%, transparent);
+  /* Deeper than the shared --glass-fill (60%): cards blur a colour field, but
+     the header blurs passing prose — it needs enough body that article text
+     never reads through the chrome. */
+  background-color: color-mix(in srgb, var(--frame) 76%, transparent);
+  box-shadow:
+    var(--glass-edge),
+    0 12px 32px -16px color-mix(in srgb, #000000 18%, transparent);
 }
 
 
@@ -258,14 +260,14 @@
   height: 14px;
   flex: 0 0 auto;
   color: color-mix(in srgb, var(--faint) 60%, transparent);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
 }
 .section-menu-item:hover {
   color: var(--ink);
   background: color-mix(in srgb, var(--ink) 4%, transparent);
 }
 .section-menu-item:hover svg {
-  transform: scale(1.15) rotate(-4deg);
+  transform: scale(1.1);
   color: color-mix(in srgb, var(--ink) 80%, transparent);
 }
 .section-menu-item[aria-current='true'] {
@@ -276,11 +278,7 @@
 }
 .section-menu-item[aria-current='true'] svg {
   color: var(--accent);
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 40%, transparent));
-  transform: scale(1.15);
-}
-.section-menu-item[aria-current='true']:hover svg {
-  transform: scale(1.15) rotate(-4deg);
+  transform: scale(1.1);
 }
 .section-menu-item:focus-visible {
   outline: 2px solid var(--accent);
@@ -342,7 +340,7 @@
 }
 
 .header-cta:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px);
   background: var(--ink);
   box-shadow: 
     0 12px 24px -8px color-mix(in srgb, #000000 35%, transparent),
@@ -385,17 +383,8 @@
   }
 }
 
-/* The header pill is fixed at the top, so its backdrop-filter is active through
-   every scroll. Its scrolled state ramps to blur(40px) — costly on mobile GPUs.
-   Cap it on phones; at this size the difference is imperceptible but the per-frame
-   cost drops sharply, helping the page glide. */
-@media (max-width: 768px) {
-  .site-header-inner::before,
-  .site-header.is-scrolled .site-header-inner::before {
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-  }
-}
+/* No phone-specific blur cap needed here: the pill runs on var(--glass-blur),
+   which 01-base.css already steps down to blur(12px) on small screens. */
 
 /* land section anchors below the floating header */
 #featured,

@@ -102,15 +102,15 @@
   color: var(--sub);
   cursor: pointer;
   padding: 0;
-  transition: all 0.3s var(--ease-spring);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease,
+    transform 0.3s var(--ease-spring);
   flex: 0 0 auto;
 }
 .theme-btn:hover {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
   background: color-mix(in srgb, var(--accent) 8%, transparent);
-  box-shadow: 0 0 16px -2px color-mix(in srgb, var(--accent) 25%, transparent);
-  transform: translateY(-1px) scale(1.02);
+  transform: translateY(-1px);
 }
 .theme-btn svg {
   width: 17px;

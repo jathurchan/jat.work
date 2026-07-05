@@ -29,6 +29,11 @@
   --glass-blur: blur(20px) saturate(180%);
   --glass-edge: inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent);
 
+  /* One resting elevation for every card-sized surface (toolkit tiles, lab
+     cards, route cards). Hover shadows stay per-surface (they're tinted by the
+     card's own accent) but share one geometry: 0 16px 40px -16px. */
+  --shadow-card: 0 8px 24px -12px color-mix(in srgb, #000000 14%, transparent);
+
 
   /* Static spacing scale */
   --space-1: 4px;
