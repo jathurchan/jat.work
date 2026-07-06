@@ -29,7 +29,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<!-- data-theme is server-rendered so theme-gated styles hold without JS; the
+     theme script below overrides it before first paint when dark is saved. -->
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -91,12 +93,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&display=swap"
-    />
+    {/* Fonts are self-hosted (see styles/partials/00-fonts.css) so no third-party
+        origin gates first paint. Preload the five latin faces that appear above
+        the fold on the homepage (Fraunces italic carries the hero statement) so
+        they download in parallel with the stylesheet instead of after it, closing
+        the fallback-font flash window on a cold cache. latin-ext stays lazy. */}
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin />
     <ViewTransitions />
     {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
         once deployed to Vercel with Web Analytics enabled in the dashboard;

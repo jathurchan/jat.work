@@ -6,6 +6,7 @@
    that owns that area; only reorder these imports if you intend to change the
    cascade.
 
+     00-fonts         self-hosted @font-face declarations (keep first)
      01-base          tokens, theme, resets, page shell, scrollbar
      02-header        floating header pill + section-nav disclosure
      03-hero          full-width hero, statement, achievement deck, animations
@@ -16,6 +17,7 @@
      08-footer        site footer + parallax
      09-demo          RaftLock demo dialog, theme toggle, hero visuals
    --------------------------------------------------------------------------- */
+@import './partials/00-fonts.css';
 @import './partials/01-base.css';
 @import './partials/02-header.css';
 @import './partials/03-hero.css';
