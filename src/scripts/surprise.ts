@@ -114,9 +114,10 @@ export function initSurprise() {
     flip();
   };
 
-  // Landing payoff: the line of light on the header chrome + the bloom on the
-  // landed section (03-hero.css). One tracked timer so back-to-back travels
-  // replay cleanly instead of the first removal cutting the second short.
+  // Landing payoff: the header pill glows in the landed colour + a bloom pools
+  // on the landed section (03-hero.css). One tracked timer so back-to-back
+  // travels replay cleanly instead of the first removal cutting the second
+  // short. The pill glow is transition-driven, so add/remove is all it needs.
   let landingTimer = 0;
   const clearLanding = () => {
     if (landingTimer) { clearTimeout(landingTimer); landingTimer = 0; }
