@@ -35,7 +35,9 @@ const IDLE_LABEL = 'Explore';
 const SPIN_TICKS = 7; // slots that flick past before it settles
 const MIN_TICK = 42; // fastest tick (ms) at the start of the spin
 const MAX_TICK = 205; // slowest tick (ms) as the wheel comes to rest
-const ARRIVE_MS = 1250; // how long the destination glow lingers (ms)
+// Matches the surpriseArrive animation (03-hero.css): the landing line stays
+// lit through the smooth scroll and dissolves after arrival.
+const ARRIVE_MS = 2200;
 // Touch only: how long the wheel rests on its final pick before flying there, so
 // the landed section is clearly readable and never mistaken for the prior tick.
 const LAND_SETTLE_MS = 470;
@@ -112,16 +114,38 @@ export function initSurprise() {
     flip();
   };
 
+  // Landing payoff: the line of light on the header chrome + the bloom on the
+  // landed section (03-hero.css). One tracked timer so back-to-back travels
+  // replay cleanly instead of the first removal cutting the second short.
+  let landingTimer = 0;
+  const clearLanding = () => {
+    if (landingTimer) { clearTimeout(landingTimer); landingTimer = 0; }
+  };
   const travel = (dest: Destination) => {
     const el = document.getElementById(dest.id);
     if (!el) return;
     el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     if (reduce) return;
+    const hdr = document.querySelector<HTMLElement>('.site-header');
+    clearLanding();
+    // Drop + force reflow so a re-landing restarts the CSS animation.
+    el.classList.remove('is-surprise-target');
+    hdr?.classList.remove('is-arrival');
+    void el.offsetWidth;
     el.style.setProperty('--surprise-c', dest.color);
     el.classList.add('is-surprise-target');
-    window.setTimeout(() => {
+    if (hdr) {
+      hdr.style.setProperty('--surprise-c', dest.color);
+      hdr.classList.add('is-arrival');
+    }
+    landingTimer = window.setTimeout(() => {
+      landingTimer = 0;
       el.classList.remove('is-surprise-target');
       el.style.removeProperty('--surprise-c');
+      if (hdr) {
+        hdr.classList.remove('is-arrival');
+        hdr.style.removeProperty('--surprise-c');
+      }
     }, ARRIVE_MS);
   };
 
@@ -254,5 +278,6 @@ export function initSurprise() {
     clearSpin();
     clearArrive();
     clearIdleReset();
+    clearLanding();
   });
 }

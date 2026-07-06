@@ -34,12 +34,6 @@
 .site-header.is-scrolled::before {
   opacity: 1;
 }
-.site-header.reveal-down:not(.fast) {
-  animation-delay: 0.4s; /* Much faster entrance so users aren't waiting for nav */
-}
-.site-header.reveal-down.fast {
-  animation-delay: 0.1s; /* Immediate load for post pages */
-}
 .site-header-inner {
   pointer-events: auto;
   width: 100%;

@@ -13,7 +13,9 @@ const { sections = false, reading = false } = Astro.props;
 ---
 
 
-<header class={`site-header reveal-down ${reading ? 'fast' : ''}`}>
+{/* No entrance animation on the header: chrome is simply present — the hero
+    content is the entrance. (It also means the nav is usable immediately.) */}
+<header class="site-header">
   <div class="site-header-inner shell">
     {/* Left: brand + (home-only) section nav, grouped together. */}
     <div class="header-left">

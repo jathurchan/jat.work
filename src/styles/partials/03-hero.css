@@ -32,23 +32,16 @@
   opacity: 0;
   animation: fadeSlideUp 1s var(--ease-spring) forwards;
 }
-.reveal-down {
-  opacity: 0;
-  animation: fadeSlideDown 1s var(--ease-spring) forwards;
-}
 .reveal-delay-1 { animation-delay: 0.1s; }
 .reveal-delay-2 { animation-delay: 0.2s; }
 .reveal-delay-3 { animation-delay: 0.3s; }
 .reveal-delay-4 { animation-delay: 0.4s; }
-.reveal-delay-5 { animation-delay: 0.5s; }
-.reveal-delay-6 { animation-delay: 0.6s; }
 
 /* Honour reduced-motion: these load-timer entrances start at opacity:0, so just
    showing their final state (no slide/fade) keeps content visible without motion.
    Defined here, after the animations, so it wins the cascade. */
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .reveal-down {
+  .reveal {
     animation: none;
     opacity: 1;
   }
@@ -74,10 +67,6 @@
 
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeSlideDown {
-  from { opacity: 0; transform: translateY(-18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -395,14 +384,14 @@
   border-color: color-mix(in srgb, var(--c) 55%, var(--line));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff 60%, transparent),
-    0 14px 38px -12px color-mix(in srgb, var(--c) 60%, transparent),
+    0 16px 40px -14px color-mix(in srgb, var(--c) 50%, transparent),
     0 0 0 3px color-mix(in srgb, var(--c) 14%, transparent);
 }
 .surprise.is-locked {
   border-color: color-mix(in srgb, var(--c) 48%, var(--line));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
-    0 14px 34px -12px color-mix(in srgb, var(--c) 52%, transparent);
+    0 16px 40px -14px color-mix(in srgb, var(--c) 46%, transparent);
 }
 /* Dark glass: dial the white sheen right down so it reads as smoked glass, not
    a grey slab. */
@@ -510,34 +499,56 @@
 }
 
 /* ══ Roulette landing payoff ══
-   When the wheel flies you to a section, that section briefly blooms with a
-   glow in the landed colour (--surprise-c, set by surprise.ts) — a clear
-   "you've arrived here" flourish. Sits behind the section's content. */
+   Two pieces, each anchored to the thing it belongs to, both in the landed
+   colour (--surprise-c, set by surprise.ts on both elements):
+   • the line of light hangs from the header chrome (.is-arrival) so it is
+     flush under the pill by construction — anchoring it to the section left
+     it at the mercy of wherever the smooth scroll settled;
+   • a soft bloom pools over the landed section (.is-surprise-target).
+   Both rise fast, stay lit through the glide (a beacon you fly toward) and
+   dissolve after arrival — the same horizon-line motif that closes the page
+   (08-footer.css). Opacity only. */
+.site-header.is-arrival::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  margin-inline: auto;
+  width: min(72%, 680px);
+  height: 2px;
+  border-radius: 99px;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--surprise-c, var(--accent)),
+    transparent);
+  box-shadow: 0 0 18px 3px color-mix(in srgb, var(--surprise-c, var(--accent)) 30%, transparent);
+  animation: surpriseArrive 2.2s var(--ease-out) forwards;
+}
 .is-surprise-target {
   position: relative;
 }
 .is-surprise-target::after {
   content: '';
   position: absolute;
-  inset: -3% -6%;
+  inset: -12px -4% 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(58% 62% at 50% 0%,
-      color-mix(in srgb, var(--surprise-c, var(--accent)) 34%, transparent),
-      transparent 70%),
-    linear-gradient(to bottom,
-      color-mix(in srgb, var(--surprise-c, var(--accent)) 22%, transparent),
-      transparent 18%);
-  animation: surpriseArrive 1.25s var(--ease-out) forwards;
+  background: radial-gradient(52% 56% at 50% 0%,
+    color-mix(in srgb, var(--surprise-c, var(--accent)) 16%, transparent),
+    transparent 72%);
+  animation: surpriseArrive 2.2s var(--ease-out) forwards;
 }
 @keyframes surpriseArrive {
-  0%   { opacity: 0; transform: translateY(-16px) scale(0.985); }
-  24%  { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(0) scale(1.03); }
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  62%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .is-surprise-target::after { animation: none; }
+  .site-header.is-arrival::after,
+  .is-surprise-target::after { animation: none; opacity: 0; }
 }
 
 

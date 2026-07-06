@@ -265,60 +265,46 @@
   height: 100%;
   border-radius: 50%;
   background: color-mix(in srgb, var(--frame) 40%, transparent);
+  /* Directional soft shadow, not an omni-directional neon halo. */
   box-shadow: 0 0 0 4px var(--paper),
               inset 0 1px 2px color-mix(in srgb, #ffffff 50%, transparent),
-              0 0 24px -2px color-mix(in srgb, var(--brand) 60%, transparent);
+              0 6px 16px -6px color-mix(in srgb, var(--brand) 45%, transparent);
   transition: transform 0.6s var(--ease-spring), box-shadow 0.6s ease;
   animation: route-node-in var(--ease-spring) both;
   animation-timeline: view();
   animation-range: entry 6% cover 28%;
 }
 
-/* A static brand-tinted ring. It only spins on hover — at rest it shouldn't
-   burn a perpetual animation on every node for no informational gain. */
+/* A clean hairline ring in the chapter's colour — a drawn edge, not an energy
+   arc. (Replaced a two-arc conic gradient that spun on hover: a spinning ring
+   is template decoration; a still ring is wayfinding.) */
 .route-node-disc::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  padding: 2px;
-  background: conic-gradient(
-    from 0deg,
-    color-mix(in srgb, var(--brand) 0%, transparent) 0%,
-    color-mix(in srgb, var(--brand) 100%, transparent) 25%,
-    color-mix(in srgb, var(--brand) 0%, transparent) 50%,
-    color-mix(in srgb, var(--brand) 100%, transparent) 75%,
-    color-mix(in srgb, var(--brand) 0%, transparent) 100%
-  );
+  padding: 1.5px;
+  background: color-mix(in srgb, var(--brand) 45%, transparent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.7;
-  transition: opacity 0.6s ease;
+  transition: background 0.4s ease;
   z-index: 2;
   pointer-events: none;
 }
 
-@keyframes route-spin-glow {
-  to { transform: rotate(360deg); }
-}
-
+/* Hover/active: the disc lifts a touch and the ring inks in — colour and
+   light do the work, nothing rotates. */
 .route-stop:hover .route-node-disc,
 .route-stop.is-active .route-node-disc {
-  transform: scale(1.15);
+  transform: scale(1.1);
   box-shadow: 0 0 0 4px var(--paper),
               inset 0 1px 2px color-mix(in srgb, #ffffff 60%, transparent),
-              0 0 32px 4px color-mix(in srgb, var(--brand) 80%, transparent);
+              0 10px 24px -8px color-mix(in srgb, var(--brand) 55%, transparent);
 }
-/* The active (scroll-driven) state brightens the ring but doesn't spin it — a
-   perpetual rotation on whichever card you're reading is decoration on a loop.
-   The spin is a direct response to the pointer only. */
 .route-stop:hover .route-node-disc::after,
 .route-stop.is-active .route-node-disc::after {
-  opacity: 1;
-}
-.route-stop:hover .route-node-disc::after {
-  animation: route-spin-glow 3s linear infinite;
+  background: color-mix(in srgb, var(--brand) 80%, transparent);
 }
 
 /* glassy tinted fill behind the glyph */
@@ -349,8 +335,8 @@
 .route-node-sym {
   position: relative;
   z-index: 2;
-  width: 52%;
-  height: 52%;
+  width: 54%;
+  height: 54%;
   color: var(--brand);
   filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--brand) 30%, transparent));
   transition: transform 0.6s var(--ease-spring);
@@ -774,7 +760,7 @@
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 0 0 4px var(--paper),
               inset 0 1px 2px color-mix(in srgb, #ffffff 45%, transparent),
-              0 0 30px -2px color-mix(in srgb, var(--brand) 80%, transparent);
+              0 8px 22px -6px color-mix(in srgb, var(--brand) 55%, transparent);
 }
 .route-stop--destination .route-node-sheen { opacity: 0.5; }
 
