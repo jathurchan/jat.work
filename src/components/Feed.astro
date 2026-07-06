@@ -13,11 +13,11 @@ const entries = await getPosts();
 // grouping the post pages use, so the feed and the in-post rails never drift.
 const seriesGroups = buildSeries(entries).map((s) => ({ def: s, parts: s.parts }));
 
-const inSeries = new Set(seriesGroups.flatMap((g) => g.parts.map((p) => p.slug)));
-const standalone = entries.filter((e) => !inSeries.has(e.slug));
+const inSeries = new Set(seriesGroups.flatMap((g) => g.parts.map((p) => p.id)));
+const standalone = entries.filter((e) => !inSeries.has(e.id));
 
 // "Latest" badge follows the single newest article across the whole feed.
-const latestSlug = entries[0]?.slug;
+const latestSlug = entries[0]?.id;
 
 // How many cards show before "Load more posts" reveals the next batch.
 const PAGE_SIZE = 6;
@@ -28,7 +28,7 @@ const PAGE_SIZE = 6;
 //   • search appears once there are more posts than fit on one page
 // (Today the feed is a single distributed-systems series, so both stay hidden.)
 const presentFilters = filters.filter(
-  (f) => f.id !== 'all' && entries.some((e) => (e.data.tags ?? []).includes(f.id)),
+  (f) => f.id !== 'all' && entries.some((e) => ((e.data.tags ?? []) as string[]).includes(f.id)),
 );
 const showFilters = presentFilters.length >= 2;
 const visibleFilters = showFilters ? [filters.find((f) => f.id === 'all')!, ...presentFilters] : [];
@@ -87,7 +87,7 @@ const showToolbar = showFilters || showSearch;
         {/* ── Series cards: one per series, parts listed in reading order ── */}
         {seriesGroups.map((g) => {
           const color = topicColor[g.def.topic] || 'var(--ink)';
-          const isLatest = g.parts.some((p) => p.slug === latestSlug);
+          const isLatest = g.parts.some((p) => p.id === latestSlug);
           return (
             <article
               class="lab-card lab-card--feature lab-card--series"
@@ -113,7 +113,7 @@ const showToolbar = showFilters || showSearch;
                   </div>
 
                   <h3 class="lab-card-title">
-                    <a class="lab-series-name" href={`/blog/${g.parts[0].slug}`}>{g.def.name}</a>
+                    <a class="lab-series-name" href={`/blog/${g.parts[0].id}`}>{g.def.name}</a>
                   </h3>
                   <p class="lab-card-blurb">{g.def.blurb}</p>
                 </div>
@@ -121,7 +121,7 @@ const showToolbar = showFilters || showSearch;
                 <ol class="lab-series-parts">
                   {g.parts.map((p, i) => (
                     <li>
-                      <a class="lab-series-part" href={`/blog/${p.slug}`}>
+                      <a class="lab-series-part" href={`/blog/${p.id}`}>
                         <span class="lab-series-num">{String(i + 1).padStart(2, '0')}</span>
                         <span class="lab-series-ptitle">{partLabel(p.data.title)}</span>
                         <span class="lab-series-pdate">{formatDate(p.data.pubDate)}</span>
@@ -140,11 +140,11 @@ const showToolbar = showFilters || showSearch;
           const tags = e.data.tags?.length ? e.data.tags : ['all'];
           const primaryTag = tags[0];
           const cardColor = topicColor[primaryTag] || 'var(--ink)';
-          const isLatest = e.slug === latestSlug;
+          const isLatest = e.id === latestSlug;
 
           return (
             <a
-              href={`/blog/${e.slug}`}
+              href={`/blog/${e.id}`}
               class="lab-card"
               data-tags={JSON.stringify(e.data.tags ?? [])}
               data-count="1"

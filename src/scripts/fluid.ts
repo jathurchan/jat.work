@@ -22,7 +22,9 @@ interface Orb {
  * ------------------------------------------------------------------------- */
 class FluidSimulation {
   private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
+  // Definite-assignment: the constructor early-returns when the canvas is
+  // missing, and no method runs without one.
+  private ctx!: CanvasRenderingContext2D;
   private orbs: Orb[] = [];
   private mouse = { x: -9999, y: -9999, active: false };
   private animationFrame = 0;

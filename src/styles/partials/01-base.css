@@ -56,14 +56,17 @@
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Each stack falls back to a metric-matched local face (see 00-fonts.css)
+     so text set before the webfont arrives occupies the same space and the
+     swap doesn't reflow the page. */
+  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
   /* Fraunces (variable, optical sizing): display forms at large sizes, calmer
      text forms small. Replaced Playfair Display — the stock "fancy" serif. */
-  --font-serif: 'Fraunces', Georgia, serif;
+  --font-serif: 'Fraunces', 'Fraunces Fallback', Georgia, serif;
   /* Display face for the hero only — geometric, friendly, a touch more personal
      than Inter while staying in the same modern-grotesque family. */
-  --font-hero: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-hero: 'Outfit', 'Outfit Fallback', 'Inter', system-ui, sans-serif;
   }
 
 :root[data-theme="dark"] {

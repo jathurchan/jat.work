@@ -19,7 +19,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.blurb,
-      link: `/blog/${post.slug}/`,
+      link: `/blog/${post.id}/`,
       categories: (post.data.tags ?? []).map((t) => topicLabel[t] ?? t),
     })),
     customData: '<language>en-us</language>',

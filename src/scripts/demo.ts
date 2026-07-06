@@ -100,8 +100,11 @@ export function initTeaser() {
  * Interactive RaftLock demo
  * ----------------------------------------------------------------------- */
 export function initDemo() {
-  const canvas = document.getElementById('jw-democanvas') as HTMLCanvasElement | null;
-  if (!canvas) return;
+  const canvasEl = document.getElementById('jw-democanvas') as HTMLCanvasElement | null;
+  if (!canvasEl) return;
+  // The null check doesn't flow into the hoisted function declarations below
+  // (nodeAt, syncNodeOverlay), so hand them an already-non-null binding.
+  const canvas = canvasEl;
 
   const termEl = document.getElementById('jw-term')!;
   const healthEl = document.getElementById('jw-health')!;

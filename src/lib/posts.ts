@@ -26,9 +26,9 @@ export interface SeriesInfo {
 /** Resolve the series defined in site.yaml against the live post set. A series
  *  with no published parts is dropped, so half-written series never show. */
 export function buildSeries(posts: Post[]): SeriesInfo[] {
-  // Keyed by string: series `parts` are plain slugs from site.yaml, not the
-  // literal-union slug type the collection infers.
-  const bySlug = new Map<string, Post>(posts.map((e) => [e.slug, e]));
+  // Entry ids are the slugified filenames (Content Layer glob loader), so the
+  // plain slugs in site.yaml's series `parts` key straight into them.
+  const bySlug = new Map<string, Post>(posts.map((e) => [e.id, e]));
   return (seriesDefs ?? [])
     .map((s) => ({
       id: s.id,
@@ -57,7 +57,7 @@ export interface SeriesContext {
  *  a standalone post. */
 export function seriesContextFor(slug: string, allSeries: SeriesInfo[]): SeriesContext | null {
   for (const series of allSeries) {
-    const index = series.parts.findIndex((p) => p.slug === slug);
+    const index = series.parts.findIndex((p) => p.id === slug);
     if (index === -1) continue;
     return {
       series,

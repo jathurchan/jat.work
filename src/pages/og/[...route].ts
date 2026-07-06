@@ -26,11 +26,12 @@ const topicRGB: Record<string, [number, number, number]> = {
   site: [2, 132, 199], // site accent
 };
 
-export const { getStaticPaths, GET } = OGImageRoute({
-  param: 'route',
+// astro-og-canvas ≥0.13: OGImageRoute is async and infers the route param from
+// this file's name; the default slug turns each page key into `<key>.png`.
+export const { getStaticPaths, GET } = await OGImageRoute({
   pages: {
     site: sitePage,
-    ...Object.fromEntries(posts.map((p) => [p.slug, p.data])),
+    ...Object.fromEntries(posts.map((p) => [p.id, p.data])),
   },
   getImageOptions: (_path, page) => ({
     title: page.title,

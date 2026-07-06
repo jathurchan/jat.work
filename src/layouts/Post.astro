@@ -20,8 +20,8 @@ const accent = topic ? topicColor[topic] : 'var(--accent)';
 // Series + reading context, shared with the home feed (see lib/posts.ts).
 const posts = await getPosts();
 const allSeries = buildSeries(posts);
-const series = seriesContextFor(entry.slug, allSeries);
-const minutes = readingTime(entry.body);
+const series = seriesContextFor(entry.id, allSeries);
+const minutes = readingTime(entry.body ?? '');
 
 // Table of contents: top-level section headings (and their sub-headings). Astro
 // auto-generates the matching `id` on each heading, so `#${slug}` jumps work.
@@ -29,7 +29,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const hasToc = toc.length >= 2;
 ---
 
-<Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article" ogImage={`/og/${entry.slug}.png`}>
+<Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article" ogImage={`/og/${entry.id}.png`}>
   <div class="page" id="top" style={`--accent: ${accent};`}>
     {/* Quiet ambient backdrop so posts share the home page's atmosphere instead
         of cutting to flat paper: a static glow tinted with the post's topic
@@ -54,7 +54,7 @@ const hasToc = toc.length >= 2;
               {/* Orientation for readers landing mid-series from search: a
                   quiet path back to the beginning. */}
               {series.number > 1 && (
-                <a class="series-start" href={`/blog/${series.series.parts[0].slug}`}>
+                <a class="series-start" href={`/blog/${series.series.parts[0].id}`}>
                   New here? Start at part 1 <span aria-hidden="true">→</span>
                 </a>
               )}
@@ -121,13 +121,13 @@ const hasToc = toc.length >= 2;
               </div>
               <div class="series-nav-pair">
                 {series.prev ? (
-                  <a class="series-nav-card series-nav-prev" href={`/blog/${series.prev.slug}`}>
+                  <a class="series-nav-card series-nav-prev" href={`/blog/${series.prev.id}`}>
                     <span class="series-nav-dir"><span aria-hidden="true">←</span> Part {series.number - 1}</span>
                     <span class="series-nav-title">{partLabel(series.prev.data.title)}</span>
                   </a>
                 ) : <span class="series-nav-card is-empty" aria-hidden="true"></span>}
                 {series.next ? (
-                  <a class="series-nav-card series-nav-next" href={`/blog/${series.next.slug}`}>
+                  <a class="series-nav-card series-nav-next" href={`/blog/${series.next.id}`}>
                     <span class="series-nav-dir">Part {series.number + 1} <span aria-hidden="true">→</span></span>
                     <span class="series-nav-title">{partLabel(series.next.data.title)}</span>
                   </a>

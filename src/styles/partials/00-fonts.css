@@ -114,3 +114,56 @@
   src: url(/fonts/fraunces-italic-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
+
+/* ---------------------------------------------------------------------------
+   Metric-matched fallbacks. While a webfont above is still in flight, text
+   renders in a local face scaled to the webfont's metrics (size-adjust +
+   ascent/descent/line-gap overrides), so the swap doesn't reflow the page.
+   The numbers are computed from the actual font tables — the frequency-
+   weighted average advance width of "aaabcdeeeefghiijklmnnoopqrrssttuvwxyz"
+   plus spaces, same method as next/font — not copied from a lookup table.
+   Recompute if a /fonts file changes. 01-base.css slots these into the
+   font stacks right after each webfont.
+   --------------------------------------------------------------------------- */
+
+/* Inter Fallback — Arial adjusted to Inter metrics */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.89%;
+  ascent-override: 89.79%;
+  descent-override: 22.36%;
+  line-gap-override: 0%;
+}
+/* Outfit Fallback — Arial adjusted to Outfit metrics */
+@font-face {
+  font-family: 'Outfit Fallback';
+  src: local('Arial');
+  size-adjust: 99.17%;
+  ascent-override: 100.84%;
+  descent-override: 26.22%;
+  line-gap-override: 0%;
+}
+/* JetBrains Mono Fallback — Courier New adjusted to JetBrains Mono metrics */
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Courier New');
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
+/* Fraunces Fallback — Georgia adjusted to Fraunces metrics. Unlike the others,
+   Fraunces is an optical-sizing (opsz) font whose glyphs narrow as the size
+   grows, so the font-table numbers (size-adjust 117.13%) only match the opsz-9
+   default instance. These values are calibrated in-browser to rendered widths
+   at 27px — the middle of the 17–48px band the site sets in serif — keeping
+   drift within ±2.5% across that whole band. */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  src: local('Georgia');
+  size-adjust: 104.4%;
+  ascent-override: 93.68%;
+  descent-override: 24.42%;
+  line-gap-override: 0%;
+}

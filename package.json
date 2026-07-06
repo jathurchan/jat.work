@@ -12,13 +12,13 @@
     "new:post": "node scripts/new-post.mjs"
   },
   "dependencies": {
-    "@astrojs/mdx": "^3.1.9",
+    "@astrojs/mdx": "^4.3.14",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "3.2.1",
+    "@astrojs/sitemap": "^3.7.3",
     "@rollup/plugin-yaml": "^4.1.2",
     "@vercel/analytics": "^2.0.1",
-    "astro": "^4.16.18",
-    "astro-og-canvas": "^0.7.2"
+    "astro": "^5.18.2",
+    "astro-og-canvas": "^0.13.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

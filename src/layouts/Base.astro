@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { meta } from '../lib/site';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import Analytics from '@vercel/analytics/astro';
 
 interface Props {
@@ -103,7 +103,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <ViewTransitions />
+    <ClientRouter />
     {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
         once deployed to Vercel with Web Analytics enabled in the dashboard;
         runs in dev mode locally (logs, sends nothing). */}

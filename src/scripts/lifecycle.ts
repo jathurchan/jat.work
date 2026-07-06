@@ -1,6 +1,6 @@
 // Re-init lifecycle for Astro View Transitions.
 //
-// With <ViewTransitions />, navigation swaps the DOM without re-running the
+// With <ClientRouter />, navigation swaps the DOM without re-running the
 // entry module, so canvases/filters/observers would come back dead after
 // returning from a post. Every listener/observer/loop that lives on a
 // *persistent* target (window, document) — or that must be disconnected — is
@@ -8,8 +8,26 @@
 // duplicates.
 let teardowns: Array<() => void> = [];
 
-export function bindGlobal<T extends EventTarget>(
-  target: T,
+export function bindGlobal<K extends keyof WindowEventMap>(
+  target: Window,
+  type: K,
+  handler: (e: WindowEventMap[K]) => void,
+  opts?: boolean | AddEventListenerOptions,
+): void;
+export function bindGlobal<K extends keyof DocumentEventMap>(
+  target: Document,
+  type: K,
+  handler: (e: DocumentEventMap[K]) => void,
+  opts?: boolean | AddEventListenerOptions,
+): void;
+export function bindGlobal(
+  target: EventTarget,
+  type: string,
+  handler: EventListenerOrEventListenerObject,
+  opts?: boolean | AddEventListenerOptions,
+): void;
+export function bindGlobal(
+  target: EventTarget,
   type: string,
   handler: EventListenerOrEventListenerObject,
   opts?: boolean | AddEventListenerOptions,
