@@ -56,8 +56,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
         // fall back to their dark defaults and wash out grey on the light page.
         function applyTheme() {
           var storedTheme = typeof localStorage !== 'undefined' && localStorage.getItem('theme');
-          // Default to light — dark is an explicit user choice, not the OS default.
-          var theme = storedTheme || 'light';
+          // Default to system preference — use dark if the OS prefers it, otherwise light.
+          var theme = storedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
           document.documentElement.setAttribute('data-theme', theme);
           // Safari only reliably re-reads theme-color when the meta node itself is
           // replaced — updating content in-place is often ignored until reload.
@@ -94,15 +94,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
 
     {/* Fonts are self-hosted (see styles/partials/00-fonts.css) so no third-party
-        origin gates first paint. Preload the five latin faces that appear above
-        the fold on the homepage (Fraunces italic carries the hero statement) so
-        they download in parallel with the stylesheet instead of after it, closing
-        the fallback-font flash window on a cold cache. latin-ext stays lazy. */}
+        origin gates first paint. Preload the four latin faces that appear above
+        the fold on the homepage so they download in parallel with the stylesheet
+        instead of after it, closing the fallback-font flash window on a cold
+        cache. Fraunces italic left the hero with the old invitation line (the
+        manifest is sans + mono), so it loads lazily with the post/footer styles
+        that still use it. latin-ext stays lazy too. */}
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin />
     <ClientRouter />
     {/* Vercel Web Analytics — cookieless, no consent banner. Collects data only
         once deployed to Vercel with Web Analytics enabled in the dashboard;

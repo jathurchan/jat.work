@@ -1,13 +1,22 @@
 ---
-import { intro } from '../lib/site';
+import { intro, profile } from '../lib/site';
+import { getPosts } from '../lib/posts';
 
 const keepLetters = intro.nameShort.split('');
 const dropLetters = intro.name.slice(intro.nameShort.length).split('');
 
-// The role line reads "<lead> at Google" — split off the prefix so we can colour
-// the company. When there's no recognised company we render the lead verbatim.
+// The role row reads "<prefix> at Google" — split off the prefix so we can
+// colour the company. When there's no recognised company it renders verbatim.
 const company = intro.company ?? null;
-const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.statementLead;
+const rolePrefix = company ? intro.role.split(company)[0] : intro.role;
+
+// The `latest` row is live by construction: its value is the newest post,
+// resolved at build time — the hero updates itself every time a post ships.
+const latest = (await getPosts())[0] ?? null;
+
+// Rows the green traffic light reveals (hero.ts) — the details that don't
+// belong in the first impression but reward whoever pokes the window chrome.
+const details = intro.details ?? null;
 ---
 
 <section class="hero" aria-label="Introduction">
@@ -18,29 +27,102 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
         <span class="hero-fullname" id="hero-name" aria-hidden="true">{keepLetters.map((c) => <span class="nm-keep">{c}</span>)}{dropLetters.map((c) => <span class="nm-drop">{c}</span>)}<span class="nm-dot">.</span></span>
       </h1>
 
-      {/* One statement: role + focus, merged. It rises as a single thought —
-          one sentence shouldn't arrive word by word. */}
-      {/* Punctuation hugs the preceding word (comma sits inside Google's span;
-          each pillar carries its trailing separator) so a line wrap never starts
-          a line with a stray comma. */}
-      <h2 class="hero-statement reveal reveal-delay-2" aria-label={intro.statementLead + ", working on " + intro.pillars.map(p => p.label).join(", ")}>
-        <span aria-hidden="true">{rolePrefix.trim()}</span>{company ? (
-          <> <span class="pillar-wrap" aria-hidden="true"><span class="hero-company">{company}</span>,</span></>
-        ) : null}<span class="hero-stmt-focus" aria-hidden="true"> {company ? 'working on' : ', working on'} {intro.pillars.map((p, i) => {
-          const isLast = i === intro.pillars.length - 1;
-          const isSecondLast = i === intro.pillars.length - 2;
-          // Punctuation that must stay glued to this pillar (never lead a line),
-          // kept in a nowrap group with the inline-block pillar; the separator
-          // after the group is where a line is allowed to break.
-          const hug = isLast ? '.' : isSecondLast ? '' : ',';
-          const after = isLast ? '' : isSecondLast ? ' and ' : ' ';
-          return (<><span class="pillar-wrap"><span class="pillar" style={`--c:${p.color}`}>{p.label}</span>{hug}</span>{after}</>);
-        })}</span>
-      </h2>
+      {/* The manifest: the old two-sentence bio, re-set as data — an
+          intro.json editor window on the site's shared frosted glass. A <dl>
+          so screen readers hear labelled pairs, not run-on prose; it rises as
+          ONE object with the page reveal. Colour budget: the hero keeps
+          exactly two colour moments — "Google" (identity) and the Explore
+          pill (action); the pillars sit monochrome at rest and only bloom on
+          hover. Separators stay glued to the preceding term (nowrap groups)
+          so a wrap never opens a line with a stray separator. */}
+      {/* The traffic lights are real controls (hero.ts): green expands the
+          file with the rows kept out of the first impression (education,
+          based_in, contact, links), yellow rolls the window up to its title
+          bar, red closes it into a "$ open intro.json" chip — and discards
+          the window state, so reopening always yields the compact file. The
+          JSON stays valid in every state — `latest` only grows a trailing
+          comma while the extra rows exist below it. */}
+      <div class="hero-manifest-wrapper reveal reveal-delay-2">
+        {/* Dot glyphs are inline SVGs (crisp at 8px, where font glyphs blur):
+            × / − stroked like macOS's, and the green light carries the real
+            zoom arrowheads on macOS's diagonal (↖↘ apart to expand, toward
+            each other once expanded). All three lights are functional — a
+            disabled control that invites clicks and ignores them would be
+            worse for accessibility than either fewer or working ones. */}
+        <div class="manifest-header">
+          <div class="manifest-controls" role="group" aria-label="intro.json window controls">
+            <button type="button" class="mac-dot mac-close" aria-label="Close intro.json">
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path class="dot-stroke" d="M3 3l6 6M9 3l-6 6" /></svg>
+            </button>
+            <button type="button" class="mac-dot mac-min" aria-label="Fold intro.json to its title bar" aria-expanded="true" aria-controls="hero-manifest-body">
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path class="dot-stroke" d="M3 6h6" /></svg>
+            </button>
+            {details && (
+              <button type="button" class="mac-dot mac-max" aria-label="Expand intro.json — show education, location, contact and links" aria-expanded="false" aria-controls="hero-manifest-body">
+                <svg class="ico-expand" viewBox="0 0 12 12" aria-hidden="true"><path class="dot-fill" d="M2 2h5L2 7z" /><path class="dot-fill" d="M10 10H5l5-5z" /></svg>
+                <svg class="ico-contract" viewBox="0 0 12 12" aria-hidden="true"><path class="dot-fill" d="M5 5V1L1 5z" /><path class="dot-fill" d="M7 7v4l4-4z" /></svg>
+              </button>
+            )}
+          </div>
+          <span class="manifest-filename" aria-hidden="true">intro.json <span class="manifest-fold">{'{ … }'}</span></span>
+          <div class="manifest-header-spacer"></div>
+        </div>
 
-      <p class="hero-invitation reveal reveal-delay-3">{intro.invitation}</p>
+        <dl class="hero-manifest" id="hero-manifest-body">
+          <div class="json-row type-reveal type-delay-1" aria-hidden="true">
+            <div class="json-brace">{'{'}</div>
+          </div>
 
-      <div class="hero-actions reveal reveal-delay-4">
+          {/* The zero-height ghost reserves the widest hidden key's width, so
+              expanding adds rows without re-aligning the value column mid-morph. */}
+          <dt class="type-reveal type-delay-2"><span class="json-key">"role"</span>:{details && <span class="key-ghost" aria-hidden="true">"education":</span>}</dt>
+          <dd class="manifest-role type-reveal type-delay-2"><span class="json-string">"{rolePrefix.trim()}{company ? (
+            <> <span class="hero-company">{company}</span></>
+          ) : null}"</span>,</dd>
+
+          <dt class="type-reveal type-delay-3"><span class="json-key">"focus"</span>:</dt>
+          <dd class="type-reveal type-delay-3">[{intro.pillars.map((p, i) => {
+            const isLast = i === intro.pillars.length - 1;
+            return (<><span class="pillar-wrap"><span class="json-string">"</span><span class="pillar" style={`--c:${p.color}`}>{p.label}</span><span class="json-string">"</span>{!isLast && <span class="manifest-sep" aria-hidden="true">, </span>}</span>{isLast ? '' : ' '}</>);
+          })}]{latest ? ',' : <span class="manifest-comma" aria-hidden="true">,</span>}</dd>
+
+          {latest && (
+            <>
+              <dt class="type-reveal type-delay-4"><span class="json-key">"latest"</span>:</dt>
+              <dd class="manifest-latest type-reveal type-delay-4">
+                <span class="json-string">"<a class="manifest-link" href={`/blog/${latest.id}`}>{latest.data.title}</a>"</span><span class="manifest-comma" aria-hidden="true">,</span>
+              </dd>
+            </>
+          )}
+
+          {details && (
+            <>
+              <dt class="extra extra-1"><span class="json-key">"education"</span>:</dt>
+              <dd class="extra extra-1"><span class="json-string">"{details.education}"</span>,</dd>
+
+              <dt class="extra extra-2"><span class="json-key">"based_in"</span>:</dt>
+              <dd class="extra extra-2"><span class="json-string">"{details.basedIn}"</span>,</dd>
+
+              <dt class="extra extra-3"><span class="json-key">"contact"</span>:</dt>
+              <dd class="extra extra-3"><span class="json-string">"<a class="manifest-link" href={`mailto:${profile.email}`}>{profile.email}</a>"</span>,</dd>
+
+              <dt class="extra extra-4"><span class="json-key">"links"</span>:</dt>
+              <dd class="extra extra-4">[<span class="json-string">"<a class="manifest-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">github</a>"</span>, <span class="json-string">"<a class="manifest-link" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>"</span>]</dd>
+            </>
+          )}
+
+          <div class="json-row type-reveal type-delay-5" aria-hidden="true">
+            <div class="json-brace">{'}'}</div>
+          </div>
+        </dl>
+
+        {/* Closed state: the window collapses into this one-line terminal chip. */}
+        <button type="button" class="manifest-reopen">
+          <span class="reopen-prompt" aria-hidden="true">$</span> open intro.json
+        </button>
+      </div>
+
+      <div class="hero-actions reveal reveal-delay-3">
         {/* The single hook: an "I'm feeling lucky" roulette. Click spins a real
             decelerating wheel that slot-machines through the site's sections,
             lands on a random one (theming the button in that section's colour),
@@ -67,6 +149,12 @@ const rolePrefix = company ? intro.statementLead.split(company)[0] : intro.state
             underlined text link: no second arrow stacked under the pill's, no
             magnetic drift. Quiet things stay quiet. */}
         <a class="hero-quietlink" href="#writing">or just read my writing</a>
+      </div>
+
+      <div class="hero-scroll-prompt reveal reveal-delay-4" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
     </div>
   </div>

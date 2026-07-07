@@ -90,11 +90,39 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(18px, 3vh, 30px);
-  padding: clamp(56px, 9vh, 104px) 0 clamp(40px, 6vh, 72px);
+  gap: clamp(20px, 3.2vh, 34px);
+  /* Top padding clears the floating header. Bottom stays near zero: sections
+     are separated purely by the .content flex gap, and the hero used to stack
+     ~40–72px of its own padding on top of it — the one boundary on the page
+     that didn't match the rhythm (the scroll chevron's margin-top already
+     gives the hero its internal closing beat). */
+  padding: clamp(56px, 9vh, 104px) 0 clamp(4px, 1vh, 10px);
   width: 100%;
   max-width: 820px;
   margin: 0 auto;
+}
+
+/* The hero recedes as the page scrolls in: it drifts down at ~30% of scroll
+   speed and fades out over the first ~420px. Scroll-driven CSS, so it runs on
+   the compositor thread — this replaced a JS scroll handler that wrote
+   transform/opacity per frame (moving a subtree that contains a
+   backdrop-filter card re-samples the blur every frame). Progressive
+   enhancement, same pattern as .section-rise: unsupported browsers simply get
+   a static hero, which is also the cheaper path. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-cinematic-header {
+      animation: hero-recede linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0px 420px;
+    }
+  }
+}
+@keyframes hero-recede {
+  to {
+    opacity: 0;
+    transform: translateY(126px);
+  }
 }
 
 /* ── Name ── */
@@ -108,13 +136,15 @@
 }
 /* Sentence case, modest tracking — it's the first half of "Hi, I'm Jat.", not
    a section eyebrow. (The uppercase wide-tracked treatment belongs to section
-   labels; on a greeting it reads as template chrome.) */
+   labels; on a greeting it reads as template chrome.) Neutral, not accent:
+   the hero's colour budget is "Google" + the Explore pill; the name's dot
+   stays the only brand pixel up top. */
 .hero-greeting {
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: clamp(13px, 1.6vw, 15px);
   letter-spacing: 0.05em;
-  color: var(--accent);
+  color: var(--sub);
   margin-bottom: clamp(8px, 1.4vh, 14px);
 }
 .hero-fullname {
@@ -126,12 +156,14 @@
   white-space: nowrap;
   color: var(--ink);
   text-wrap: balance;
-  /* Static depth, not motion: a tight contact shadow plus one soft ambient
-     layer. Kept light — display type this size should stay crisp; a heavier
-     stack reads as a glow around the letterforms. */
+  /* Static depth: one tight contact shadow plus one soft ambient layer.
+     (This used to track the cursor via --mouse-x/--mouse-y from a mousemove
+     handler — but animating text-shadow repaints the largest glyphs on the
+     page on every pointer move, which was the hero's single biggest source
+     of jank. Painted once, a fixed shadow reads the same.) */
   text-shadow:
     0 2px 3px color-mix(in srgb, var(--ink) 8%, transparent),
-    0 14px 32px color-mix(in srgb, var(--ink) 8%, transparent);
+    0 10px 32px color-mix(in srgb, var(--ink) 8%, transparent);
   display: inline-block;
 }
 /* Dark glass: a black drop-shadow stack reads as depth against the charcoal page
@@ -139,7 +171,7 @@
 :root[data-theme="dark"] .hero-fullname {
   text-shadow:
     0 2px 5px rgba(0, 0, 0, 0.4),
-    0 16px 36px rgba(0, 0, 0, 0.45);
+    0 12px 36px rgba(0, 0, 0, 0.45);
 }
 
 /* Name collapse: trailing letters shrink to width 0 and the dot glides left.
@@ -166,28 +198,452 @@
   color: var(--accent);
 }
 
-/* ── Statement ── role + focus in one sentence ──
-   "Software Engineer & SRE at Google, obsessed with <a>, <b> and <c>." */
-.hero-statement {
+/* ── Manifest ── the two bio sentences, re-set as data (see Hero.astro): an
+   intro.json editor window whose traffic lights actually work. Key/value rows
+   in the greeting's quiet mono voice, monochrome except "Google" (the hero's
+   colour budget is two moments: Google and the Explore pill; anything more
+   out-shouted the CTA and read as template maximalism). `latest` is live (the
+   newest post, linked). Set on the site's shared frosted glass — the same
+   material as the toolkit tiles and header, so the hero speaks the same
+   language as the rest of the page. The card is what lets left-aligned rows
+   sit inside a centred hero: an object carries its own internal alignment. */
+.hero-manifest-wrapper {
+  position: relative;
   margin: 0;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(19px, 3.2vw, 30px);
-  line-height: 1.4;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  text-wrap: balance;
-  max-width: 740px;
-  /* No text-shadow: the hero scrim (.hero::before) already guarantees contrast;
-     a glow under text this size just softens the letterforms. */
+  max-width: 100%;
+  border-radius: 14px;
+  background: var(--glass-sheen), color-mix(in srgb, var(--frame) 15%, transparent);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-edge), var(--shadow-card);
+  overflow: hidden;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
 }
-/* The "obsessed with …" half is lighter, so the role reads first and the
-   colour-coded focus terms pop against it. */
-.hero-stmt-focus {
+/* Quiet at rest, alive under the cursor: hover deepens the elevation to the
+   shared hover geometry while the syntax colours below bloom. No lift — an
+   object you read (and now click) holds still. */
+.hero-manifest-wrapper:hover {
+  box-shadow: var(--glass-edge), 0 16px 40px -16px color-mix(in srgb, #000000 22%, transparent);
+}
+/* On hover-capable devices the card also *recedes* at rest — thinner fill,
+   fainter border, calmer shadow, softened ink — so the name and the Explore
+   pill lead the hero; pointing at it (or tabbing into it) restores the full
+   material. Scoped to (hover)+(fine): touch visitors have no hover to earn it
+   back, so they keep the full-presence card. Only background-color moves (the
+   sheen image and the blur stay constant — transitioning backdrop-filter is a
+   jank machine). */
+@media (hover: hover) and (pointer: fine) {
+  .hero-manifest-wrapper {
+    background-color: transparent;
+    border-color: color-mix(in srgb, var(--glass-border) 40%, transparent);
+    box-shadow: var(--glass-edge), 0 4px 16px -12px color-mix(in srgb, #000000 12%, transparent);
+    transition: background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .hero-manifest-wrapper:hover,
+  .hero-manifest-wrapper:focus-within {
+    background-color: color-mix(in srgb, var(--frame) 60%, transparent);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-edge), 0 16px 40px -16px color-mix(in srgb, #000000 22%, transparent);
+  }
+  /* Wrapper-prefixed so these outrank the base dt/dd/filename colour rules
+     that appear later in the file. */
+  .hero-manifest-wrapper .hero-manifest dt {
+    color: color-mix(in srgb, var(--faint-text) 74%, transparent);
+  }
+  .hero-manifest-wrapper .hero-manifest dd {
+    color: color-mix(in srgb, var(--ink) 74%, transparent);
+  }
+  .hero-manifest-wrapper .manifest-filename {
+    color: color-mix(in srgb, var(--sub) 75%, transparent);
+  }
+  .hero-manifest-wrapper:hover .hero-manifest dt,
+  .hero-manifest-wrapper:focus-within .hero-manifest dt {
+    color: var(--faint-text);
+  }
+  .hero-manifest-wrapper:hover .hero-manifest dd,
+  .hero-manifest-wrapper:focus-within .hero-manifest dd {
+    color: var(--ink);
+  }
+  .hero-manifest-wrapper:hover .manifest-filename,
+  .hero-manifest-wrapper:focus-within .manifest-filename {
+    color: var(--sub);
+  }
+}
+/* Applied by hero.ts while a traffic-light state change is morphing the
+   window between its natural sizes (FLIP: it pins the old width/height, then
+   transitions to the new ones). */
+.hero-manifest-wrapper.is-resizing {
+  transition: width 0.45s var(--ease-spring), height 0.45s var(--ease-spring),
+    box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.manifest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  user-select: none;
+}
+:root[data-theme="dark"] .manifest-header {
+  background: color-mix(in srgb, var(--ink) 2%, transparent);
+}
+
+.manifest-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Real buttons, macOS-faithful: crisp SVG glyphs (font characters blur at this
+   size) that surface on hover the way the system's do — and sit always-on for
+   touch, where there's no hover to discover them. The 13px dot carries a
+   ~25px hit target via ::after. */
+.mac-dot {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.mac-dot::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+}
+.mac-dot svg {
+  width: 8px;
+  height: 8px;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.mac-dot .dot-stroke {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+/* The zoom arrowheads are fills; the same-colour round-joined stroke fattens
+   them slightly and rounds their corners — macOS-soft, not razor-cut. */
+.mac-dot .dot-fill {
+  fill: rgba(0, 0, 0, 0.6);
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+/* Glyphs surface for the whole group at once: on card hover for the mouse,
+   and on focus-within for the keyboard — tabbing into any dot lights all
+   three, same as macOS treating the lights as one cluster. */
+.hero-manifest-wrapper:hover .mac-dot,
+.manifest-controls:focus-within .mac-dot,
+.mac-dot:focus-visible {
+  opacity: 1;
+}
+.hero-manifest-wrapper:hover .mac-dot svg,
+.manifest-controls:focus-within .mac-dot svg,
+.mac-dot:focus-visible svg {
+  opacity: 1;
+}
+.mac-dot:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.mac-close { background: #ff5f56; }
+.mac-min { background: #ffbd2e; }
+.mac-max { background: #27c93f; }
+/* The green light shows macOS's zoom arrowheads on the system's ↖↘ diagonal:
+   pointing apart to expand, toward each other once expanded — the glyph
+   describes what the next click does. */
+.mac-max .ico-contract { display: none; }
+.hero-manifest-wrapper.is-expanded .mac-max .ico-expand { display: none; }
+.hero-manifest-wrapper.is-expanded .mac-max .ico-contract { display: block; }
+@media (pointer: coarse) {
+  .mac-dot { opacity: 0.85; }
+  .mac-dot svg { opacity: 0.9; }
+}
+
+.manifest-filename {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--sub);
+  letter-spacing: 0.05em;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+/* Folded-region marker (editor code-folding, which is what minimize is here):
+   appears beside the filename while the file is rolled up. */
+.manifest-fold {
+  display: none;
+  color: var(--faint-text);
+  letter-spacing: 0.08em;
+}
+.hero-manifest-wrapper.is-min .manifest-fold {
+  display: inline;
+  animation: jsonType 0.25s ease-out both;
+}
+
+.manifest-header-spacer {
+  flex: 1;
+}
+
+/* ── Traffic-light states (classes set by hero.ts) ── */
+/* Minimized = folded: the window rolls up to its title bar, which gains the
+   { … } folded-region marker and becomes a click-to-unfold surface. */
+.hero-manifest-wrapper.is-min .hero-manifest {
+  display: none;
+}
+.hero-manifest-wrapper.is-min .manifest-header {
+  border-bottom-color: transparent;
+  cursor: pointer;
+}
+.hero-manifest-wrapper.is-min .manifest-header:hover {
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+/* Closed: everything goes; the reopen chip below takes the window's place. */
+.hero-manifest-wrapper.is-closed .manifest-header,
+.hero-manifest-wrapper.is-closed .hero-manifest {
+  display: none;
+}
+/* Once the load cascade has played (or the visitor interacts), freeze the row
+   reveals so hiding and re-showing the body can't replay the intro stagger. */
+.hero-manifest-wrapper.is-settled .type-reveal {
+  animation: none;
+  opacity: 1;
+}
+
+/* Rows the green light reveals — kept out of the first impression, typed in
+   like appended lines when the file expands. Delays sit inside the window's
+   height spring (0.45s) so the last row lands as the frame settles. */
+.hero-manifest dt.extra,
+.hero-manifest dd.extra {
+  display: none;
+}
+.hero-manifest-wrapper.is-expanded .hero-manifest dt.extra,
+.hero-manifest-wrapper.is-expanded .hero-manifest dd.extra {
+  display: block;
+  animation: jsonType 0.3s ease-out both;
+}
+.hero-manifest-wrapper.is-expanded .hero-manifest .extra-1 { animation-delay: 0.05s; }
+.hero-manifest-wrapper.is-expanded .hero-manifest .extra-2 { animation-delay: 0.11s; }
+.hero-manifest-wrapper.is-expanded .hero-manifest .extra-3 { animation-delay: 0.17s; }
+.hero-manifest-wrapper.is-expanded .hero-manifest .extra-4 { animation-delay: 0.23s; }
+
+/* Reopen replay (.is-replaying, hero.ts): reopening re-reads the file, so the
+   rows retype — but on a quick cascade. The load cascade's 0.7s+ delays wait
+   for the name collapse; a reopen has nothing to wait for. Placed after
+   .is-settled so it wins while the class is on. */
+.hero-manifest-wrapper.is-replaying .type-reveal {
+  animation: jsonType 0.3s ease-out both;
+}
+.hero-manifest-wrapper.is-replaying .type-delay-1 { animation-delay: 0.05s; }
+.hero-manifest-wrapper.is-replaying .type-delay-2 { animation-delay: 0.12s; }
+.hero-manifest-wrapper.is-replaying .type-delay-3 { animation-delay: 0.19s; }
+.hero-manifest-wrapper.is-replaying .type-delay-4 { animation-delay: 0.26s; }
+.hero-manifest-wrapper.is-replaying .type-delay-5 { animation-delay: 0.33s; }
+/* (No extra-row replay rules: closing discards the expanded state, so a
+   reopened file is always the compact three rows.) */
+
+/* Reserves the widest hidden key's width inside the first visible row (see
+   Hero.astro), so expanding never re-aligns the value column mid-morph. */
+.key-ghost {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+/* The JSON stays valid in both states: `latest` only shows its trailing comma
+   while the extra rows exist below it. visibility (not display) so the comma's
+   width is always reserved — toggling it must not re-measure the longest line
+   and nudge the centred card mid-morph. */
+.manifest-comma {
+  visibility: hidden;
+}
+.hero-manifest-wrapper.is-expanded .manifest-comma {
+  visibility: visible;
+}
+
+/* The closed state's stand-in: a one-line terminal chip inside the same glass
+   shell — the window "closes into" it and the command reopens the file. */
+.manifest-reopen {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
   font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--sub);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.hero-manifest-wrapper.is-closed .manifest-reopen {
+  display: inline-flex;
+  animation: jsonType 0.25s ease-out 0.12s both;
+}
+.manifest-reopen:hover {
+  color: var(--ink);
+}
+.manifest-reopen:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+  border-radius: 10px;
+}
+.reopen-prompt {
+  color: var(--faint-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-manifest-wrapper.is-expanded .hero-manifest dt.extra,
+  .hero-manifest-wrapper.is-expanded .hero-manifest dd.extra,
+  .hero-manifest-wrapper.is-min .manifest-fold,
+  .hero-manifest-wrapper.is-closed .manifest-reopen {
+    animation: none;
+  }
+}
+
+.hero-manifest {
+  display: grid;
+  grid-template-columns: max-content auto;
+  column-gap: clamp(14px, 2.2vw, 22px);
+  row-gap: clamp(11px, 1.7vh, 15px);
+  align-items: baseline;
+  text-align: left;
+  padding: clamp(16px, 2vh, 20px) clamp(22px, 3.6vw, 34px) clamp(20px, 3vh, 24px);
+}
+.hero-manifest dt {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(13px, 1.6vw, 14.5px);
+  letter-spacing: 0.02em;
+  color: var(--faint-text);
+  /* Keys sit left-aligned, one indent inside the braces — like the file the
+     card claims to be (right-aligned keys read as a spec sheet, not JSON). */
+  text-align: left;
+  padding-left: clamp(14px, 2vw, 20px);
+  transition: color 0.3s ease;
+}
+/* Brace rows span the full grid width and sit at the un-indented margin. */
+.json-row {
+  grid-column: 1 / -1;
+}
+.hero-manifest dd {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(13px, 1.6vw, 14.5px);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-wrap: pretty;
+  transition: color 0.3s ease;
+}
+/* The headline fact carries the most weight; the rows beneath step down.
+   (Row rules are scoped under .hero-manifest so they outweigh the shared
+   `.hero-manifest dd` base above.) */
+.hero-manifest dd.manifest-role {
+  font-weight: 600;
+}
+.manifest-sep {
+  color: var(--faint-text);
+  font-weight: 400;
+}
+
+/* `latest` — the live row: the newest post, linked, nothing else. (An earlier
+   pass had a pulsing "live" dot here; it went — the key already says fresh,
+   and a non-interactive card should hold still.) */
+.hero-manifest dd.manifest-latest {
+  font-size: clamp(13px, 1.6vw, 14.5px);
   color: var(--sub);
 }
-/* "Google" styled as a sleek, animated liquid gradient text. */
+
+.json-brace {
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 1.6vw, 14.5px);
+  font-weight: 500;
+  color: var(--faint-text);
+}
+
+/* Syntax Highlighting */
+.json-key, .json-string {
+  color: inherit;
+  transition: color 0.4s ease;
+}
+.hero-manifest-wrapper:hover .json-key {
+  color: var(--g-blue);
+}
+.hero-manifest-wrapper:hover .json-string {
+  color: var(--g-green);
+}
+:root[data-theme="dark"] .hero-manifest-wrapper:hover .json-key {
+  color: #79c0ff;
+}
+:root[data-theme="dark"] .hero-manifest-wrapper:hover .json-string {
+  color: #a5d6ff;
+}
+
+/* Type Reveal Animation */
+.type-reveal {
+  animation: jsonType 0.3s ease-out both;
+}
+@keyframes jsonType {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.type-delay-1 { animation-delay: 0.7s; }
+.type-delay-2 { animation-delay: 0.85s; }
+.type-delay-3 { animation-delay: 1.0s; }
+.type-delay-4 { animation-delay: 1.15s; }
+.type-delay-5 { animation-delay: 1.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .type-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+/* Links inside the manifest (`latest`, and the expanded `links` row) — the
+   same quiet editorial treatment as .hero-quietlink: faint resting underline
+   that inks in on hover, so the Explore pill keeps sole claim on "button".
+   Colour inherits from the surrounding string, so links dim with the resting
+   card and take the green string bloom with it — the underline carries the
+   link affordance. */
+.manifest-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--sub) 35%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+.manifest-link:hover {
+  text-decoration-color: var(--ink);
+}
+.manifest-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+/* "Google" set in a static liquid-gradient fill — the hero's first colour moment. */
 .hero-company {
   display: inline-block;
   font-family: inherit;
@@ -208,18 +664,19 @@
   -webkit-background-clip: text;
 }
 
-/* Keeps a focus-area term glued to its trailing punctuation, so a wrap never
-   drops a stray comma/period to the start of the next line. */
+/* Keeps a focus-area term glued to its trailing separator, so a wrap never
+   drops a stray "·" to the start of the next line. */
 .pillar-wrap {
   white-space: nowrap;
 }
-/* The pillars aren't links, so they don't jump — hovering just blooms a soft
-   tint behind the word and saturates its colour. */
+/* The pillars aren't links, so they don't jump. Monochrome at rest — colour
+   is a reward for curiosity: hovering blooms a soft tint behind the word and
+   inks it in its own colour (the toolkit below still teaches the full
+   colour mapping on scroll, so nothing is lost on touch). */
 .pillar {
   position: relative;
   white-space: nowrap;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--c) 90%, var(--ink));
+  color: inherit;
   transition: color 0.3s ease;
   display: inline-block;
   cursor: default;
@@ -243,26 +700,6 @@
   opacity: 1;
   transform: scale(1);
 }
-:root[data-theme="dark"] .pillar {
-  color: color-mix(in srgb, var(--c) 96%, var(--ink));
-}
-
-/* ── Invitation ──
-   The one sentence spoken in first person gets the site's serif voice — the
-   same Fraunces that closes the page ("Let's build something."). Sans carries
-   the facts; serif carries the person. */
-.hero-invitation {
-  margin: 0;
-  max-width: 560px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(16.5px, 1.9vw, 19px);
-  font-weight: 420;
-  line-height: 1.55;
-  letter-spacing: 0.002em;
-  color: var(--sub);
-  text-wrap: pretty;
-}
 
 /* ── Hero action row ── */
 .hero-actions {
@@ -270,7 +707,9 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  margin-top: clamp(10px, 2.4vh, 22px);
+  /* A touch above the shared flex gap, so the CTA reads as its own beat after
+     the identity card without drifting away from it. */
+  margin-top: clamp(4px, 1.2vh, 12px);
 }
 
 /* Base for magnetic.ts-driven elements */
@@ -304,35 +743,22 @@
   cursor: pointer;
   white-space: nowrap;
   -webkit-font-smoothing: antialiased;
-  /* Frosted glass: a translucent fill with a top-down sheen, heavy backdrop
-     blur + saturation, a bright top edge and soft drop — Apple-style glass. */
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #ffffff 16%, transparent),
-      color-mix(in srgb, #ffffff 3%, transparent)),
-    color-mix(in srgb, var(--frame) 58%, transparent);
-  border: 1px solid color-mix(in srgb, #ffffff 30%, var(--line));
-  backdrop-filter: blur(20px) saturate(185%);
-  -webkit-backdrop-filter: blur(20px) saturate(185%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
-    inset 0 -1px 3px color-mix(in srgb, #000000 5%, transparent),
-    0 10px 30px -12px color-mix(in srgb, #000000 24%, transparent),
-    /* a faint resting halo in the live accent so the pill always reads as the
-       primary action, even before hover */
-    0 8px 26px -14px color-mix(in srgb, var(--c) 45%, transparent);
+  
+  /* Sleek outline pill with faint fill */
+  background: color-mix(in srgb, var(--ink) 2%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 30%, var(--line));
+  box-shadow: 0 0 0 0 transparent;
   transition: transform 0.4s var(--ease-spring), box-shadow 0.45s var(--ease-out),
     border-color 0.4s ease, background 0.35s ease;
 }
-/* Lift without scale — scale() shears backdrop-filter glass on Safari (see the
-   stabiliser note in 01-base.css). */
 .surprise:hover {
   transform: translate3d(0, -4px, 0);
-  border-color: color-mix(in srgb, var(--c) 55%, var(--line));
+  border-color: var(--c);
+  background: color-mix(in srgb, var(--c) 5%, transparent);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 65%, transparent),
-    0 16px 40px -14px color-mix(in srgb, var(--c) 44%, transparent),
-    0 0 0 4px color-mix(in srgb, var(--c) 12%, transparent);
+    0 16px 40px -14px color-mix(in srgb, var(--c) 60%, transparent),
+    0 0 20px -2px color-mix(in srgb, var(--c) 40%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--c) 20%, transparent);
 }
 .surprise:active {
   transform: translate3d(0, 1px, 0);
@@ -381,31 +807,20 @@
 /* While the wheel spins, the live --c changes each tick; the transitioned glow
    + border morph through the four hues, so the spin itself reads as colourful. */
 .surprise.is-rolling {
-  border-color: color-mix(in srgb, var(--c) 55%, var(--line));
+  border-color: var(--c);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 60%, transparent),
     0 16px 40px -14px color-mix(in srgb, var(--c) 50%, transparent),
-    0 0 0 3px color-mix(in srgb, var(--c) 14%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--c) 20%, transparent);
 }
 .surprise.is-locked {
-  border-color: color-mix(in srgb, var(--c) 48%, var(--line));
+  border-color: var(--c);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 55%, transparent),
     0 16px 40px -14px color-mix(in srgb, var(--c) 46%, transparent);
 }
-/* Dark glass: dial the white sheen right down so it reads as smoked glass, not
-   a grey slab. */
+/* Dark mode sleek pill */
 :root[data-theme="dark"] .surprise {
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, #ffffff 10%, transparent),
-      color-mix(in srgb, #ffffff 1%, transparent)),
-    color-mix(in srgb, var(--frame) 52%, transparent);
-  border-color: color-mix(in srgb, #ffffff 14%, var(--line));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 16%, transparent),
-    0 12px 32px -14px rgba(0, 0, 0, 0.55),
-    0 8px 26px -14px color-mix(in srgb, var(--c) 50%, transparent);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 40%, var(--line));
 }
 
 /* Fixed-width reel so the slot-machine label never resizes the button. */
@@ -496,6 +911,27 @@
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 6px;
+}
+
+/* Scroll Prompt */
+.hero-scroll-prompt {
+  margin-top: clamp(30px, 5vh, 60px);
+  color: color-mix(in srgb, var(--sub) 50%, transparent);
+  animation: bounceScroll 2s infinite ease-in-out;
+  pointer-events: none;
+}
+.hero-scroll-prompt svg {
+  width: 24px;
+  height: 24px;
+}
+@keyframes bounceScroll {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-prompt {
+    animation: none;
+  }
 }
 
 /* ══ Roulette landing payoff ══

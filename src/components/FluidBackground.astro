@@ -41,6 +41,22 @@
     filter: blur(68px) saturate(135%);
   }
 
+  /* First-paint bloom: the colour field fades up from paper instead of
+     popping in fully formed when the canvas's first frame lands. Only a
+     `from` keyframe, so it resolves to each theme's own resting opacity.
+     Animating opacity on this already-promoted blurred layer is
+     compositor-cheap — the blur itself never changes. */
+  @media (prefers-reduced-motion: no-preference) {
+    .fluid-bg {
+      animation: fluid-bloom 1.6s ease-out both;
+    }
+  }
+  @keyframes fluid-bloom {
+    from {
+      opacity: 0;
+    }
+  }
+
   /* On phones the blur is re-rasterised every animation frame, and a large
      Gaussian kernel is the dominant GPU cost. The low-resolution canvas (0.6×,
      CSS-upscaled in fluid.ts) already softens the field, so a smaller radius

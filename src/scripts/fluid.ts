@@ -1,5 +1,9 @@
 import { bindGlobal, trackTeardown } from './lifecycle';
 
+// First boot of the session owns the hero's entrance cascade; later boots
+// (View Transitions re-inits) only wait a beat (see init()).
+let firstFluidBoot = true;
+
 interface Orb {
   x: number;
   y: number;
@@ -65,18 +69,16 @@ class FluidSimulation {
     this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.isCoarse = window.matchMedia('(pointer: coarse)').matches;
     this.isMobile = window.innerWidth < 768 || this.isCoarse;
-    // Touch devices render the backdrop at ~0.6× and let CSS scale it back up:
-    // the upscale softens it for free, and the smaller backing store keeps each
-    // frame cheap enough to paint continuously through a scroll without jank.
-    // Narrow non-touch windows stay at 1×; desktops use capped retina density.
-    this.dpr = this.isCoarse
-      ? 0.6
-      : this.isMobile
-        ? 1
-        : Math.min(window.devicePixelRatio || 1, 1.5);
-    // ~30fps on mobile: the orbs drift slowly, so halving the repaints (and thus
-    // the blur re-rasterisations) is imperceptible but roughly halves GPU cost.
-    this.frameInterval = this.isMobile ? 1000 / 30 : 0;
+    // The canvas sits under a huge CSS blur, so backing-store resolution is
+    // invisible: render at 1× everywhere (0.6× on touch, where the CSS upscale
+    // also softens) and let the blur eat the difference — retina density here
+    // was pure waste.
+    this.dpr = this.isCoarse ? 0.6 : 1;
+    // ~30fps everywhere: the orbs drift slowly, so halving the repaints — and
+    // with them the full-viewport blur re-rasterisations, plus every glass
+    // surface's backdrop-filter re-sample above an always-changing backdrop —
+    // is imperceptible but roughly halves the page's steady-state GPU cost.
+    this.frameInterval = 1000 / 30;
 
     const css = getComputedStyle(document.documentElement);
     const blue = css.getPropertyValue('--g-blue').trim() || '#4285F4';
@@ -118,7 +120,18 @@ class FluidSimulation {
       // Honour reduced-motion: paint one static frame and stop.
       this.renderFrame(1);
     } else {
-      this.start();
+      // Paint one static frame now so the colour field sits under the glass
+      // immediately, but hold the drift loop until the hero's load cascade
+      // (reveals, JSON type-in, name collapse — all done by ~1.7s) has
+      // played: a full-viewport canvas repainting under blur(72px) — and
+      // every backdrop-filter surface re-sampling it — competes with the
+      // entrance animations for the GPU and made the intro stutter. The orbs
+      // drift slowly; nobody can tell they start late.
+      this.renderFrame(1);
+      const delay = firstFluidBoot ? 1800 : 400;
+      firstFluidBoot = false;
+      const startTimer = window.setTimeout(() => this.start(), delay);
+      trackTeardown(() => window.clearTimeout(startTimer));
     }
   }
 

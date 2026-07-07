@@ -263,6 +263,7 @@ button {
 .premium-glass-btn,
 .route-card,
 .lab-card,
+.hero-manifest-wrapper,
 .cluster-glass-container {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;

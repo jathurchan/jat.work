@@ -16,7 +16,7 @@ import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
 import { initSectionNav } from './nav';
 import { initRouteProgress } from './route';
-import { initName, initToolkitPulse, initHeroParallax } from './hero';
+import { initName, initToolkitPulse, initManifest } from './hero';
 import { initSurprise } from './surprise';
 import { initMagnetic } from './magnetic';
 import { initSpotlight } from './spotlight';
@@ -31,7 +31,7 @@ window.scrollTo(0, 0);
 function boot() {
   initFluid();
   initName();
-  initHeroParallax();
+  initManifest();
   initSurprise();
   initMagnetic();
   initSpotlight();

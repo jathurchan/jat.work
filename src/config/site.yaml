@@ -20,27 +20,34 @@ meta:
     Raft-based distributed lock in Go.
 
 # The hero intro. The name animates from `name` down to `nameShort` on load
-# (trailing letters collapse into the period). `pillars` colour-code the three
-# focus areas in the statement and thread the same colours through `highlights`.
+# (trailing letters collapse into the period). Under it sits the manifest —
+# three key/value rows (role / focus / latest) that replaced the two bio
+# sentences: the same facts, set as data instead of prose (see Hero.astro).
 intro:
   greeting: Hi, I'm
   name: Jathurchan
   nameShort: Jat
   company: Google
-  statementLead: Software Engineer & SRE at Google
-  # The three colour-coded focus areas. `color` is a CSS token; `key` ties each
-  # pillar to its matching highlight card below.
+  # `role` row. Contains `company` verbatim so the hero can split it out and
+  # give it the liquid-gradient treatment.
+  role: Software Engineer & SRE at Google
+  # `focus` row. In the hero the pillars sit monochrome (colour only blooms on
+  # hover — the hero's colour budget belongs to "Google" and the Explore pill);
+  # `key`/`color` tie each pillar to its matching toolkit category below.
   pillars:
     - { key: cloud,   label: cloud computing,     color: var(--g-blue) }
     - { key: systems, label: distributed systems, color: var(--g-green) }
     - { key: ai,      label: AI,                  color: var(--g-red) }
+  # (The manifest's third row, `latest`, needs no config: its value is the
+  # newest post, resolved at build time in Hero.astro — the hero updates itself
+  # every time a post ships.)
+  # Extra manifest rows revealed by the green traffic light on the intro.json
+  # card — details worth having on hand, not worth the first impression.
+  details:
+    education: "Master's — ENSEA, France"
+    basedIn: "Dublin, Ireland"
+  # Paired with `role` for the OG-image blurb (og/[...route].ts).
   bio: I build reliable infrastructure and enjoy solving hard scaling problems.
-  # A warm, first-person hook under the statement. This is the personal heart of
-  # the hero — it names what the whole site is for: building, breaking, and
-  # writing about what I learn. The CTAs below do the inviting, so this stays a
-  # tight one-liner (no redundant "come explore").
-  invitation: >-
-    I build systems, break them on purpose, and write about what I learn.
 
 # The toolkit that closes the hero. Grouped by the same three focus areas the
 # statement opens with — each category reuses a pillar's `key` and `color`, so

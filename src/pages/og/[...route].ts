@@ -13,7 +13,7 @@ const posts = await getCollection('blog', ({ data }) => !data.draft);
 // The site card reuses the hero's own lines from site.yaml.
 const sitePage = {
   title: profile.fullName,
-  blurb: `${intro.statementLead}. ${intro.invitation}`,
+  blurb: `${intro.role}. ${intro.bio}`,
   tags: ['site'],
 };
 

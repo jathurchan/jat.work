@@ -1,5 +1,6 @@
-// Hero niceties: the name collapse and the toolkit scroll-reveal.
-import { trackTeardown, bindGlobal } from './lifecycle';
+// Hero niceties: the name collapse, the intro.json window controls, and the
+// toolkit scroll-reveal.
+import { trackTeardown } from './lifecycle';
 
 /* ----------------------------------------------------------------------- *
  * Hero name: "Jathurchan" collapses to "Jat." — trailing letters shrink to
@@ -109,29 +110,140 @@ export function initToolkitPulse() {
   trackTeardown(() => io.disconnect());
 }
 
-export function initHeroParallax() {
-  const heroInner = document.querySelector<HTMLElement>('.hero-cinematic-header');
-  if (!heroInner) return;
+/* ----------------------------------------------------------------------- *
+ * intro.json window controls. The traffic lights are real: green expands the
+ * file with the rows kept out of the first impression (education, based_in,
+ * contact, links), yellow rolls the window up to its title bar, red closes it
+ * into a "$ open intro.json" chip. Each state change FLIPs the wrapper's
+ * outer size so the window morphs between its natural sizes instead of
+ * snapping.
+ * (The former scroll parallax + cursor text-shadow lived here; both wrote
+ * style per frame against blurred/filtered layers and were the hero's main
+ * jank source. The recede is now a compositor-side CSS scroll animation.)
+ * ----------------------------------------------------------------------- */
+export function initManifest() {
+  const wrap = document.querySelector<HTMLElement>('.hero-manifest-wrapper');
+  if (!wrap) return;
+  const btnClose = wrap.querySelector<HTMLButtonElement>('.mac-close');
+  const btnMin = wrap.querySelector<HTMLButtonElement>('.mac-min');
+  const btnMax = wrap.querySelector<HTMLButtonElement>('.mac-max');
+  const reopen = wrap.querySelector<HTMLButtonElement>('.manifest-reopen');
+  const header = wrap.querySelector<HTMLElement>('.manifest-header');
+  const body = wrap.querySelector<HTMLElement>('.hero-manifest');
+  if (!btnClose || !btnMin || !reopen || !header || !body) return;
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (window.matchMedia('(pointer: coarse)').matches) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let ticking = false;
-  const onScroll = () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        // Parallax translate down at 30% speed of scroll, fade out by 400px
-        const yPos = y * 0.3;
-        const opacity = Math.max(0, 1 - y / 400);
-        heroInner.style.transform = `translate3d(0, ${yPos}px, 0)`;
-        heroInner.style.opacity = opacity.toString();
-        ticking = false;
-      });
-      ticking = true;
+  // Once the load cascade has played, freeze the row reveals so hiding and
+  // re-showing the body (minimize, close) can't replay the intro stagger.
+  const settleTimer = window.setTimeout(() => wrap.classList.add('is-settled'), 1700);
+
+  let resizeTimer = 0;
+  const morph = (change: () => void) => {
+    wrap.classList.add('is-settled');
+    if (reduce) {
+      change();
+      return;
     }
+    window.clearTimeout(resizeTimer);
+    // Fractional rects, not offsetWidth/Height: those round to integers, and
+    // pinning the wrapper even half a pixel under its natural width used to
+    // make the longest JSON row wrap for the duration of the morph.
+    const from = wrap.getBoundingClientRect();
+    change();
+    // Measure the natural target size with any in-flight pin cleared, then
+    // pin the old size, flush, and transition to the new one (.is-resizing
+    // carries the width/height transition).
+    wrap.classList.remove('is-resizing');
+    wrap.style.width = '';
+    wrap.style.height = '';
+    body.style.width = '';
+    const to = wrap.getBoundingClientRect();
+    if (Math.abs(from.width - to.width) < 0.5 && Math.abs(from.height - to.height) < 0.5) return;
+    // Belt to the fractional-pin braces: freeze the body at its natural final
+    // width for the ride, so no in-between wrapper width can ever reflow the
+    // rows — the moving frame clips fixed content, the way a real window
+    // restore reveals a laid-out document.
+    if (getComputedStyle(body).display !== 'none') {
+      body.style.width = `${body.getBoundingClientRect().width}px`;
+    }
+    wrap.style.width = `${from.width}px`;
+    wrap.style.height = `${from.height}px`;
+    void wrap.offsetHeight;
+    wrap.classList.add('is-resizing');
+    wrap.style.width = `${to.width}px`;
+    wrap.style.height = `${to.height}px`;
+    resizeTimer = window.setTimeout(() => {
+      wrap.classList.remove('is-resizing');
+      wrap.style.width = '';
+      wrap.style.height = '';
+      body.style.width = '';
+    }, 500);
   };
 
-  bindGlobal(window, 'scroll', onScroll, { passive: true });
-}
+  const sync = () => {
+    btnMin.setAttribute('aria-expanded', String(!wrap.classList.contains('is-min')));
+    btnMax?.setAttribute('aria-expanded', String(wrap.classList.contains('is-expanded')));
+  };
 
+  btnMax?.addEventListener('click', () => {
+    morph(() => {
+      // Zoom restores a rolled-up window before growing it.
+      if (wrap.classList.contains('is-min')) {
+        wrap.classList.remove('is-min');
+        wrap.classList.add('is-expanded');
+      } else {
+        wrap.classList.toggle('is-expanded');
+      }
+    });
+    sync();
+  });
+
+  btnMin.addEventListener('click', () => {
+    morph(() => wrap.classList.toggle('is-min'));
+    sync();
+  });
+
+  // The folded title bar is its own affordance: clicking anywhere on it (bar
+  // the dots, which keep their own jobs) unfolds the file.
+  header.addEventListener('click', (e) => {
+    if (!wrap.classList.contains('is-min')) return;
+    if ((e.target as HTMLElement).closest('.mac-dot')) return;
+    morph(() => wrap.classList.remove('is-min'));
+    sync();
+  });
+
+  btnClose.addEventListener('click', () => {
+    // Closing discards the window's state: a reopened file always starts back
+    // at the compact three rows, not wherever the lights left it.
+    morph(() => {
+      wrap.classList.add('is-closed');
+      wrap.classList.remove('is-replaying', 'is-expanded', 'is-min');
+    });
+    sync();
+    reopen.focus({ preventScroll: true });
+  });
+
+  let replayTimer = 0;
+  reopen.addEventListener('click', () => {
+    // Reopening re-reads the file: the rows retype in a quick cascade
+    // (.is-replaying — the load cascade's long delays wait for the name
+    // collapse; a reopen shouldn't).
+    morph(() => {
+      wrap.classList.remove('is-closed');
+      if (!reduce) wrap.classList.add('is-replaying');
+    });
+    sync();
+    if (!reduce) {
+      window.clearTimeout(replayTimer);
+      replayTimer = window.setTimeout(() => wrap.classList.remove('is-replaying'), 1000);
+    }
+    btnClose.focus({ preventScroll: true });
+  });
+
+  trackTeardown(() => {
+    window.clearTimeout(settleTimer);
+    window.clearTimeout(resizeTimer);
+    window.clearTimeout(replayTimer);
+  });
+}

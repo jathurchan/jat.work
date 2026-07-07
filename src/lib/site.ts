@@ -64,10 +64,13 @@ export interface SiteConfig {
     name: string;
     nameShort: string;
     company?: string;
-    statementLead: string;
+    /** Manifest `role` row; contains `company` so the hero can colour it. */
+    role: string;
     pillars: { key: string; label: string; color: string }[];
+    /** Extra manifest rows revealed by the green traffic light (Hero.astro). */
+    details?: { education: string; basedIn: string };
+    /** Paired with `role` for the OG-image blurb. */
     bio: string;
-    invitation: string;
   };
   skills: {
     eyebrow: string;
