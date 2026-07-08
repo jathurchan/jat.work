@@ -18,49 +18,63 @@ const sitePage = {
 };
 
 // Topic → brand colour (light palette from 01-base.css), as RGB for the canvas.
-const topicRGB: Record<string, [number, number, number]> = {
-  cloud: [2, 132, 199], // --g-blue
-  systems: [5, 150, 105], // --g-green
-  ai: [225, 29, 72], // --g-red
-  career: [217, 119, 6], // --g-yellow
-  site: [2, 132, 199], // site accent
+const theme: Record<string, [number, number, number]> = {
+  cloud: [96, 165, 250],   // Soft Azure
+  systems: [74, 222, 128], // Pastel Emerald
+  ai: [251, 113, 133],     // Pastel Ruby
+  career: [250, 204, 21],  // Soft Amber
+  site: [96, 165, 250],    // Soft Azure
 };
 
-// astro-og-canvas ≥0.13: OGImageRoute is async and infers the route param from
-// this file's name; the default slug turns each page key into `<key>.png`.
 export const { getStaticPaths, GET } = await OGImageRoute({
   pages: {
     site: sitePage,
     ...Object.fromEntries(posts.map((p) => [p.id, p.data])),
   },
-  getImageOptions: (_path, page) => ({
-    title: page.title,
-    description: page.blurb,
-    bgGradient: [[252, 252, 252]], // --paper
-    border: {
-      color: topicRGB[page.tags?.[0]] ?? [24, 24, 27],
-      width: 12,
-      side: 'block-end',
-    },
-    padding: 72,
-    font: {
-      title: {
-        color: [24, 24, 27], // --ink
-        size: 60,
-        weight: 'Bold',
-        lineHeight: 1.15,
-        families: ['Inter'],
+  getImageOptions: (_path, page) => {
+    const accent = theme[page.tags?.[0]] ?? theme.site;
+    const bgDark: [number, number, number] = [18, 18, 20]; // --paper in dark mode (approx #121214)
+    const bgTint: [number, number, number] = [
+      Math.round(accent[0] * 0.25),
+      Math.round(accent[1] * 0.25),
+      Math.round(accent[2] * 0.25),
+    ];
+
+    return {
+      title: page.title,
+      description: page.blurb,
+      logo: {
+        path: './public/favicon.svg',
+        size: [72],
       },
-      description: {
-        color: [82, 82, 91], // --sub
-        size: 28,
-        lineHeight: 1.5,
-        families: ['Inter'],
+      // Glow comes from the top down, grounding the card in darkness
+      bgGradient: [bgTint, bgDark],
+      border: {
+        color: accent,
+        width: 16,
+        side: 'inline-start',
       },
-    },
-    fonts: [
-      'https://api.fontsource.org/v1/fonts/inter/latin-400-normal.ttf',
-      'https://api.fontsource.org/v1/fonts/inter/latin-700-normal.ttf',
-    ],
-  }),
+      padding: 80,
+      font: {
+        title: {
+          color: [228, 228, 231], // --ink dark mode
+          size: 76,
+          weight: 'ExtraBold', // corresponds to 800
+          lineHeight: 1.15,
+          families: ['Outfit', 'Inter'],
+        },
+        description: {
+          color: [161, 161, 170], // --sub dark mode
+          size: 32,
+          lineHeight: 1.5,
+          families: ['JetBrains Mono', 'Inter'],
+        },
+      },
+      fonts: [
+        'https://api.fontsource.org/v1/fonts/inter/latin-400-normal.ttf',
+        'https://api.fontsource.org/v1/fonts/outfit/latin-800-normal.ttf',
+        'https://api.fontsource.org/v1/fonts/jetbrains-mono/latin-500-normal.ttf',
+      ],
+    };
+  },
 });
