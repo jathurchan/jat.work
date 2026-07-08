@@ -51,6 +51,11 @@
       animation: fluid-bloom 1.6s ease-out both;
     }
   }
+  /* Return visits: the backdrop is already familiar — no re-bloom, it's
+     simply there (is-vt-return set by app.ts on boots after the first). */
+  :global(:root.is-vt-return) .fluid-bg {
+    animation: none;
+  }
   @keyframes fluid-bloom {
     from {
       opacity: 0;

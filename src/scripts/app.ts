@@ -28,7 +28,17 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0);
 
+// This module survives View Transitions navigations, so any boot after the
+// first one is a *return* — the visitor has already seen the hero's intro
+// cascade. `is-vt-return` on <html> lets CSS (03-hero.css, FluidBackground)
+// and hero.ts land on the settled hero instantly instead of replaying the
+// 1.7s choreography like a toll booth. Set before the inits so they can read
+// it; re-set every navigation because the swap replaces <html>'s attributes.
+let coldBoot = true;
+
 function boot() {
+  document.documentElement.classList.toggle('is-vt-return', !coldBoot);
+  coldBoot = false;
   initFluid();
   initName();
   initManifest();

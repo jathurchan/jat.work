@@ -35,9 +35,14 @@ const IDLE_LABEL = 'Explore';
 const SPIN_TICKS = 7; // slots that flick past before it settles
 const MIN_TICK = 42; // fastest tick (ms) at the start of the spin
 const MAX_TICK = 205; // slowest tick (ms) as the wheel comes to rest
-// Matches the surpriseArrive animation (03-hero.css): the landing line stays
-// lit through the smooth scroll and dissolves after arrival.
+// Matches the surpriseArrive animation (03-hero.css): the landing bloom stays
+// lit through the flight and dissolves after arrival.
 const ARRIVE_MS = 2200;
+// One tuned flight, every browser. Native smooth scrollIntoView is speed-based
+// and uncancellable: over 3–4000px Safari could still be scrolling when the
+// ARRIVE_MS payoff had already dissolved, so you landed on nothing. A fixed
+// duration keeps arrival and payoff in sync.
+const GLIDE_MS = 760;
 // Touch only: how long the wheel rests on its final pick before flying there, so
 // the landed section is clearly readable and never mistaken for the prior tick.
 const LAND_SETTLE_MS = 470;
@@ -114,6 +119,60 @@ export function initSurprise() {
     flip();
   };
 
+  // The flight: a fixed-duration eased scroll driven by rAF (see GLIDE_MS).
+  // Honours each section's CSS scroll-margin-top, hands control straight back
+  // to the reader on the first wheel/touch/key, and reports arrival so focus
+  // can land with the viewport.
+  let glideRaf = 0;
+  let unbindGlide: (() => void) | null = null;
+  const stopGlide = () => {
+    if (glideRaf) { cancelAnimationFrame(glideRaf); glideRaf = 0; }
+    if (unbindGlide) { unbindGlide(); unbindGlide = null; }
+  };
+  const glideTo = (el: HTMLElement, onArrive?: () => void) => {
+    stopGlide();
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    const toY = Math.min(el.getBoundingClientRect().top + window.scrollY - margin, maxY);
+    const fromY = window.scrollY;
+    const dist = toY - fromY;
+    if (Math.abs(dist) < 2) { onArrive?.(); return; }
+    const cancel = () => stopGlide();
+    window.addEventListener('wheel', cancel, { passive: true, once: true });
+    window.addEventListener('touchstart', cancel, { passive: true, once: true });
+    window.addEventListener('keydown', cancel, { once: true });
+    unbindGlide = () => {
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchstart', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
+    // ease-in-out: departure → cruise → a readable arrival.
+    const ease = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - t0) / GLIDE_MS, 1);
+      // 'instant' matters: plain scrollTo would follow the page's CSS
+      // scroll-behavior:smooth and fight the rAF steps.
+      window.scrollTo({ top: fromY + dist * ease(p), behavior: 'instant' });
+      if (p < 1) {
+        glideRaf = requestAnimationFrame(tick);
+      } else {
+        // Layout can shift a hair mid-flight (below-the-fold sections booting
+        // as they stream past) — re-anchor so the landing is pixel-exact.
+        const finalY = Math.min(
+          el.getBoundingClientRect().top + window.scrollY - margin,
+          document.documentElement.scrollHeight - window.innerHeight,
+        );
+        if (Math.abs(finalY - window.scrollY) > 1) {
+          window.scrollTo({ top: finalY, behavior: 'instant' });
+        }
+        stopGlide();
+        onArrive?.();
+      }
+    };
+    glideRaf = requestAnimationFrame(tick);
+  };
+
   // Landing payoff: the header pill glows in the landed colour + a bloom pools
   // on the landed section (03-hero.css). One tracked timer so back-to-back
   // travels replay cleanly instead of the first removal cutting the second
@@ -125,8 +184,22 @@ export function initSurprise() {
   const travel = (dest: Destination) => {
     const el = document.getElementById(dest.id);
     if (!el) return;
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    if (reduce) return;
+    // A landing is a navigation: reflect it in the URL (replace, not push — no
+    // back-stack spam) and, on arrival, hand focus to the section so keyboard
+    // and screen-reader users land with the viewport instead of staying parked
+    // on the hero button. tabindex=-1 makes the section programmatically
+    // focusable without joining the tab order.
+    history.replaceState(null, '', `#${dest.id}`);
+    const arrive = () => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+      el.focus({ preventScroll: true });
+    };
+    if (reduce) {
+      el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      arrive();
+      return;
+    }
+    glideTo(el, arrive);
     const hdr = document.querySelector<HTMLElement>('.site-header');
     clearLanding();
     // Drop + force reflow so a re-landing restarts the CSS animation.
@@ -280,5 +353,6 @@ export function initSurprise() {
     clearArrive();
     clearIdleReset();
     clearLanding();
+    stopGlide();
   });
 }

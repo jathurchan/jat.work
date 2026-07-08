@@ -346,6 +346,40 @@
   transform: scale(1.08);
 }
 
+/* The glyphs draw themselves as their station scrolls into view — the same
+   gesture as the spine filling in: this whole section is a route being
+   traced, so its icons arrive as strokes, not as fading stamps. Every shape
+   is normalised to pathLength=1 (Experience.astro), so one dash rule covers
+   ellipses, rects, circles and paths alike; later shapes in a glyph finish
+   later, so a cylinder appears before the bolt inside it. Scroll-driven and
+   @supports-guarded like the node/card entrances — fallback browsers simply
+   get the finished glyph. */
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .route-node {
+      view-timeline: --route-node block;
+    }
+    .route-node-sym :is(path, ellipse, circle, rect) {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: route-sym-draw linear both;
+      animation-timeline: --route-node;
+      animation-range: entry 10% cover 30%;
+    }
+    .route-node-sym :is(path, ellipse, circle, rect):nth-child(2) {
+      animation-range: entry 14% cover 36%;
+    }
+    .route-node-sym :is(path, ellipse, circle, rect):nth-child(3) {
+      animation-range: entry 18% cover 42%;
+    }
+  }
+}
+@keyframes route-sym-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* ---- card --------------------------------------------------- */
 @keyframes route-card-in {
   0% { opacity: 0; transform: translateX(24px) translateY(8px); }

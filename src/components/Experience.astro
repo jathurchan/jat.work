@@ -6,28 +6,34 @@ const path = career;
 
 // Bespoke glyph per experience — drawn from the PRODUCT each role shipped, on
 // a glassy, brand-tinted disc instead of a corporate logo. 24×24, stroke-based
-// to match the icon language used across the site. Only glyphs actually
-// referenced by site.yaml live here.
+// to match the icon language used across the site; one idea per glyph with
+// room to breathe (two overlapping motifs went to mud at 30px). Every shape
+// carries pathLength="1" so the CSS can trace each stroke in on scroll entry
+// — the glyphs draw themselves the same way the route's spine does
+// (07-experience.css, route-sym-draw). Only glyphs actually referenced by
+// site.yaml live here.
 const symbols: Record<string, string> = {
   // Amazon DynamoDB — the database cylinder, energised by the service's bolt.
   dynamo:
-    '<ellipse cx="12" cy="5.6" rx="7.5" ry="2.9"/><path d="M4.5 5.6v12.8c0 1.6 3.36 2.9 7.5 2.9s7.5-1.3 7.5-2.9V5.6"/><path d="M13.3 9.6l-2.7 4.3h2.8l-2.7 4.3"/>',
-  // DynamoDB under watch — the same store, its health trace running through it
-  // (the monitoring internship: canaries on the metadata store).
+    '<ellipse pathLength="1" cx="12" cy="5.8" rx="7.2" ry="2.8"/><path pathLength="1" d="M4.8 5.8v12.4c0 1.55 3.22 2.8 7.2 2.8s7.2-1.25 7.2-2.8V5.8"/><path pathLength="1" d="M13.1 9.4l-2.9 4.4h3.6l-2.9 4.4"/>',
+  // DynamoDB under watch — the same store, one clean heartbeat running across
+  // it (the monitoring internship: canaries on the metadata store).
   'dynamo-watch':
-    '<ellipse cx="12" cy="5.6" rx="7.5" ry="2.9"/><path d="M4.5 5.6v12.8c0 1.6 3.36 2.9 7.5 2.9s7.5-1.3 7.5-2.9V5.6"/><path d="M7 13.8h1.9l1.2-2.7 1.9 4.7 1.3-2.7H17"/>',
-  // Withings HealthMate — a heart with the pulse traced through it.
+    '<ellipse pathLength="1" cx="12" cy="5.8" rx="7.2" ry="2.8"/><path pathLength="1" d="M4.8 5.8v12.4c0 1.55 3.22 2.8 7.2 2.8s7.2-1.25 7.2-2.8V5.8"/><path pathLength="1" d="M7.4 14h2.1l1.3-2.8 2.4 5.4 1.3-2.6h3.1"/>',
+  // Withings HealthMate — the heart, its pulse held INSIDE the outline (it
+  // used to run edge-to-edge across the border, which read as scribble).
   health:
-    '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
+    '<path pathLength="1" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7Z"/><path pathLength="1" d="M8.2 11.6h2l1.2-2.4 1.6 4.2 1.2-1.8h2.6"/>',
   // Seller Central — the marketplace cart, drawn whole: frame, basket, wheels.
   cart:
-    '<circle cx="8" cy="20.5" r="1.5"/><circle cx="18" cy="20.5" r="1.5"/><path d="M2.5 3.5h2.2l2.5 11.6a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.95-1.55L20.5 8H6"/>',
+    '<circle pathLength="1" cx="8" cy="20.5" r="1.5"/><circle pathLength="1" cx="18" cy="20.5" r="1.5"/><path pathLength="1" d="M2.5 3.5h2.2l2.5 11.6a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.95-1.55L20.5 8H6"/>',
   // RaftLock — a padlock.
   lock:
-    '<rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.4"/>',
-  // Google SRE — a dashboard of live signals.
+    '<rect pathLength="1" x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path pathLength="1" d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle pathLength="1" cx="12" cy="15" r="1.4"/>',
+  // Google SRE — a dashboard panel: rising signal, live point at its head.
+  // (The old version had legs — it read as a television, not a dashboard.)
   observability:
-    '<rect x="3" y="4.5" width="18" height="13" rx="2.2"/><path d="M7 13.5l2.5-3 2.5 2L17 8"/><path d="M8.5 21h7M12 17.5V21"/>',
+    '<rect pathLength="1" x="3.2" y="4.8" width="17.6" height="14.4" rx="2.4"/><path pathLength="1" d="M6.6 14.8l2.6-3 2.3 1.8 3.9-4.6"/><circle pathLength="1" cx="17" cy="7.7" r="1.1"/>',
 };
 ---
 

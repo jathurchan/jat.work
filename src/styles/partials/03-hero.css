@@ -47,6 +47,17 @@
   }
 }
 
+/* Return visits (is-vt-return on :root, set by app.ts on every boot after the
+   first): the reader has seen the show — land on the settled hero instantly,
+   no reveals, no JSON type-in (hero.ts skips the name collapse to match).
+   Kept early in this file so the reopen replay's .is-replaying rules — a user
+   action that should always play — still win their cascade tie below. */
+:root.is-vt-return .reveal,
+:root.is-vt-return .type-reveal {
+  animation: none;
+  opacity: 1;
+}
+
 /* Below-the-fold sections rise as they actually scroll into view. (These used to
    be `.reveal` load-timer animations that fired while still off-screen, so the
    entrance was already over by the time you reached them.) Progressive
@@ -218,7 +229,17 @@
   overflow: hidden;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+  /* margin transitions with the closed state (below) so the neighbours glide
+     in rather than snapping when the window collapses to the chip. */
+  transition: box-shadow 0.35s ease, border-color 0.35s ease,
+    margin 0.45s var(--ease-spring);
+}
+/* Closed, the window is a footnote, not a card: pull the name and the CTA in
+   around the chip, or the hero column reads as three islands adrift in the
+   full card-sized gaps. */
+.hero-manifest-wrapper.is-closed {
+  margin-top: calc(clamp(20px, 3.2vh, 34px) * -0.35);
+  margin-bottom: calc(clamp(20px, 3.2vh, 34px) * -0.35);
 }
 /* Quiet at rest, alive under the cursor: hover deepens the elevation to the
    shared hover geometry while the syntax colours below bloom. No lift — an

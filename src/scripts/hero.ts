@@ -36,20 +36,40 @@ export function initName() {
     timers = [];
   };
 
+  // Return visit (View Transitions — is-vt-return set by app.ts): the reader
+  // has seen the show. Land on the settled short name at once — transitions
+  // muted for the jump, restored a frame later so the hover signature still
+  // unfolds normally.
+  const isReturn = document.documentElement.classList.contains('is-vt-return');
+
   // Collapse right to left as the name's rise lands (the reveal spring has
   // visually settled by ~950ms), so the whole intro reads as one gesture.
   const start = 950;
   const step = 95;
-  requestAnimationFrame(() =>
-    requestAnimationFrame(() => {
-      drops
-        .slice()
-        .reverse()
-        .forEach((d, i) => {
-          timers.push(window.setTimeout(() => d.classList.add('drop-gone'), start + i * step));
+  if (isReturn) {
+    drops.forEach((d) => {
+      d.style.transition = 'none';
+      d.classList.add('drop-gone');
+    });
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        drops.forEach((d) => {
+          d.style.transition = '';
         });
-    }),
-  );
+      }),
+    );
+  } else {
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        drops
+          .slice()
+          .reverse()
+          .forEach((d, i) => {
+            timers.push(window.setTimeout(() => d.classList.add('drop-gone'), start + i * step));
+          });
+      }),
+    );
+  }
 
   // The hover signature. Unfold reads left to right (the letters return in
   // reading order); fold mirrors the original collapse. Not decoration — it
@@ -73,8 +93,9 @@ export function initName() {
 
   let hoverArm = 0;
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    // Arm only after the intro collapse has fully played out.
-    const settled = start + drops.length * step + 500;
+    // Arm only after the intro collapse has fully played out (immediately on
+    // a return visit — the name is already settled).
+    const settled = isReturn ? 0 : start + drops.length * step + 500;
     hoverArm = window.setTimeout(() => {
       wrap.addEventListener('mouseenter', unfold);
       wrap.addEventListener('mouseleave', fold);
@@ -136,7 +157,13 @@ export function initManifest() {
 
   // Once the load cascade has played, freeze the row reveals so hiding and
   // re-showing the body (minimize, close) can't replay the intro stagger.
-  const settleTimer = window.setTimeout(() => wrap.classList.add('is-settled'), 1700);
+  // Return visits (is-vt-return) skip the cascade entirely, so settle now.
+  let settleTimer = 0;
+  if (document.documentElement.classList.contains('is-vt-return')) {
+    wrap.classList.add('is-settled');
+  } else {
+    settleTimer = window.setTimeout(() => wrap.classList.add('is-settled'), 1700);
+  }
 
   let resizeTimer = 0;
   const morph = (change: () => void) => {
