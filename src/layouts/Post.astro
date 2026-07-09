@@ -77,7 +77,7 @@ const hasToc = toc.length >= 2;
             </span>
           </div>
 
-          <h1 class="post-title rise">
+          <h1 class="post-title rise" transition:name={`pt-${entry.id}`}>
             {title}
           </h1>
 
@@ -165,6 +165,7 @@ const hasToc = toc.length >= 2;
 
 <script>
   import '../scripts/header';
+  import '../scripts/landing';
   import '../scripts/reading';
   import '../scripts/toc';
 </script>

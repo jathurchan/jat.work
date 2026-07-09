@@ -334,6 +334,13 @@
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
 }
+/* On View Transitions arrivals the title is delivered by its shared-element
+   morph (transition:name pt-<slug>, paired with the feed card). risein starts
+   at opacity 0, so letting it run would hand the morph an invisible target —
+   the box would land on nothing and the title would then rise a second time. */
+:root.is-vt-return .post-title {
+  animation: none;
+}
 
 /* ============================================================================
    Series + table-of-contents — wiring a post into its series and giving it a

@@ -113,6 +113,14 @@
 html {
   scroll-behavior: smooth;
 }
+/* While a View Transition runs, the root's background is captured into the
+   page snapshots and stops propagating to the document canvas, so the
+   browser-default (white) canvas shows through the crossfade — a light blink
+   between two dark pages. Paint the transition backdrop in the page colour
+   instead; in light mode this is invisible (the canvas already matches). */
+::view-transition {
+  background-color: var(--paper);
+}
 /* Anchor jumps and "back to top" should not animate for visitors who asked for
    less motion — honour the preference. */
 @media (prefers-reduced-motion: reduce) {

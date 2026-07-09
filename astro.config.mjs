@@ -11,6 +11,10 @@ export default defineConfig({
   // so the source should be worth viewing. Gzip/brotli on the wire absorbs
   // almost all of the whitespace cost.
   compressHTML: false,
+  // Dev-only, but its floating dock sits over the page's own bottom-of-screen
+  // content when testing layouts on a phone — and this site is checked on
+  // real devices constantly. Nothing here uses its audits.
+  devToolbar: { enabled: false },
   integrations: [
     mdx(),
     // Drop only the exact /raftlock redirect stub — it's a meta-refresh to

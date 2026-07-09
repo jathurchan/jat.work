@@ -11,6 +11,7 @@
 //   route      career route line progress
 //   hero       name collapse + toolkit reveal
 import './header'; // self-binding header scroll state (shared with post pages)
+import './landing'; // instant cross-page landings (shared with post pages)
 import { runTeardowns, bindGlobal } from './lifecycle';
 import { initTeaser, initDemo } from './demo';
 import { initFilters } from './feed';
@@ -26,7 +27,12 @@ import { initFluid } from './fluid';
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
-window.scrollTo(0, 0);
+// Cold boot starts at the top — but only when no anchor is asked for. This
+// module can also be evaluated for the first time mid-navigation (a session
+// that began on a post page loads the home entry while returning to
+// /#writing); an unconditional reset would hijack that landing back to the
+// top — smoothly, past every reveal — and strand the visitor at the hero.
+if (!location.hash) window.scrollTo(0, 0);
 
 // This module survives View Transitions navigations, so any boot after the
 // first one is a *return* — the visitor has already seen the hero's intro

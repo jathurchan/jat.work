@@ -123,7 +123,13 @@ const showToolbar = showFilters || showSearch;
                     <li>
                       <a class="lab-series-part" href={`/blog/${p.id}`}>
                         <span class="lab-series-num">{String(i + 1).padStart(2, '0')}</span>
-                        <span class="lab-series-ptitle">{partLabel(p.data.title)}</span>
+                        {/* Shares its transition:name with the post page's <h1>, so
+                            opening a part morphs this row's title into the article
+                            header (and back on return) instead of cross-fading.
+                            The series-name link above stays unnamed on purpose:
+                            it also targets part 1, and duplicate names abort the
+                            whole transition. */}
+                        <span class="lab-series-ptitle" transition:name={`pt-${p.id}`}>{partLabel(p.data.title)}</span>
                         <span class="lab-series-pdate">{formatDate(p.data.pubDate)}</span>
                         <span class="lab-series-arrow" aria-hidden="true">→</span>
                       </a>
@@ -166,7 +172,7 @@ const showToolbar = showFilters || showSearch;
                   <span class="lab-arrow" aria-hidden="true">→</span>
                 </div>
 
-                <h3 class="lab-card-title">{e.data.title}</h3>
+                <h3 class="lab-card-title" transition:name={`pt-${e.id}`}>{e.data.title}</h3>
                 <p class="lab-card-blurb">{e.data.blurb}</p>
 
                 <div class="lab-card-foot">
