@@ -26,8 +26,12 @@ export function initName() {
   }
 
   // Pin each letter's natural width so the collapse animates from a real value.
-  drops.forEach((d) => {
-    d.style.width = `${d.getBoundingClientRect().width}px`;
+  // Read every width first, then write — interleaving read/write here forced a
+  // layout flush per letter (a small but real stall on the first paint of the
+  // hero, the one place load jank is most visible).
+  const dropWidths = drops.map((d) => d.getBoundingClientRect().width);
+  drops.forEach((d, i) => {
+    d.style.width = `${dropWidths[i]}px`;
   });
 
   let timers: number[] = [];

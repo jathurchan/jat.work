@@ -57,10 +57,23 @@ class FluidSimulation {
   // frame rate. A layer that is always painted is never dropped.
   private isMobile = false;
   private isCoarse = false;
-  private frameInterval = 0; // ms between frames; 0 = uncapped (desktop)
+  // Frame cadence (ms between renders). The drift is slow enough that a resting
+  // ~20fps is indistinguishable from 60 while cutting the full-viewport blur
+  // re-rasterisation — and every glass surface's backdrop-filter re-sample above
+  // this always-changing backdrop — to a third of the naive per-frame cost. A
+  // fine pointer pushing the orbs wants more temporal resolution, so pointer
+  // motion briefly lifts the loop to activeInterval, then it eases back to rest.
+  private idleInterval = 1000 / 20;
+  private activeInterval = 1000 / 30;
+  private pointerBoostUntil = 0;
   private lastFrameTime = 0;
   private isScrolling = false;
   private scrollTimer = 0;
+  // Desktop only: while scrolled past the hero the drift loop is parked. The
+  // last frame stays painted (never cleared), so the colour field is still under
+  // every glass surface below — it simply stops re-blurring while you read the
+  // sections that don't need a live aurora behind them.
+  private belowHero = false;
 
   constructor() {
     this.canvas = document.getElementById('fluid-canvas') as HTMLCanvasElement;
@@ -76,11 +89,8 @@ class FluidSimulation {
     // also softens) and let the blur eat the difference — retina density here
     // was pure waste.
     this.dpr = this.isCoarse ? 0.6 : 1;
-    // ~30fps everywhere: the orbs drift slowly, so halving the repaints — and
-    // with them the full-viewport blur re-rasterisations, plus every glass
-    // surface's backdrop-filter re-sample above an always-changing backdrop —
-    // is imperceptible but roughly halves the page's steady-state GPU cost.
-    this.frameInterval = 1000 / 30;
+    // (Frame cadence — resting ~20fps, pointer-boosted to ~30fps, and the
+    // desktop park while below the hero — is configured on the fields above.)
 
     const css = getComputedStyle(document.documentElement);
     const blue = css.getPropertyValue('--g-blue').trim() || '#4285F4';
@@ -118,6 +128,14 @@ class FluidSimulation {
 
     trackTeardown(() => this.stop());
 
+    // Seed the desktop park state from the initial scroll position: a boot that
+    // lands already below the hero (a reload while scrolled down, or an anchor
+    // deep-link) should stay parked until the reader scrolls back up, rather
+    // than run an unseen aurora until the first scroll event flips the flag.
+    if (!this.isCoarse && !this.reduceMotion && window.scrollY > window.innerHeight * 1.15) {
+      this.belowHero = true;
+    }
+
     if (this.reduceMotion) {
       // Honour reduced-motion: paint one static frame and stop.
       this.renderFrame(1);
@@ -132,7 +150,11 @@ class FluidSimulation {
       this.renderFrame(1);
       const delay = firstFluidBoot ? 1800 : 400;
       firstFluidBoot = false;
-      const startTimer = window.setTimeout(() => this.start(), delay);
+      // Skip the initial start when parked below the hero; a scroll back up
+      // (handleScroll) will start it at the right moment.
+      const startTimer = window.setTimeout(() => {
+        if (!this.belowHero) this.start();
+      }, delay);
       trackTeardown(() => window.clearTimeout(startTimer));
     }
   }
@@ -179,7 +201,8 @@ class FluidSimulation {
   private handleVisibility() {
     if (document.hidden) {
       this.stop();
-    } else if (!this.reduceMotion) {
+    } else if (!this.reduceMotion && !this.belowHero) {
+      // Don't wake a loop the scroll position has parked (desktop, below hero).
       this.start();
     }
   }
@@ -221,6 +244,9 @@ class FluidSimulation {
     this.mouse.x = e.clientX;
     this.mouse.y = e.clientY;
     this.mouse.active = true;
+    // Lift the loop to its faster cadence for a beat so the cursor-push reaction
+    // stays crisp; it settles back to the resting rate once the pointer rests.
+    this.pointerBoostUntil = performance.now() + 1200;
   }
 
   private handlePointerLeave() {
@@ -231,7 +257,24 @@ class FluidSimulation {
     const current = window.scrollY;
     this.scrollVelocity = current - this.lastScrollY;
     this.lastScrollY = current;
-    
+
+    // Desktop: park the drift loop once the hero has fully receded, and wake it
+    // just before the hero scrolls back into view. Hysteresis (1.15vh to park,
+    // 0.9vh to wake) keeps a scroll hovering near the boundary from toggling the
+    // loop every event. Touch is deliberately excluded: a fixed, blurred (and so
+    // compositor-promoted) layer that stops repainting is the exact thing iOS
+    // evicts mid-scroll, so there we keep painting continuously.
+    if (!this.isCoarse && !this.reduceMotion) {
+      const vh = window.innerHeight;
+      if (!this.belowHero && current > vh * 1.15) {
+        this.belowHero = true;
+        this.stop();
+      } else if (this.belowHero && current < vh * 0.9) {
+        this.belowHero = false;
+        if (!document.hidden) this.start();
+      }
+    }
+
     this.isScrolling = true;
     if (this.scrollTimer) window.clearTimeout(this.scrollTimer);
     this.scrollTimer = window.setTimeout(() => {
@@ -309,17 +352,15 @@ class FluidSimulation {
       return;
     }
 
-    if (this.frameInterval > 0) {
-      // Throttle to the target cadence. Scale `motion` by elapsed real time so
-      // the drift speed stays identical to an uncapped 60fps run; clamp it so a
-      // dropped frame can't make the orbs jump.
-      const elapsed = now - this.lastFrameTime;
-      if (elapsed < this.frameInterval) return;
-      this.lastFrameTime = now - (elapsed % this.frameInterval);
-      this.renderFrame(Math.min(elapsed / 16.67, 3));
-    } else {
-      this.renderFrame(1);
-    }
+    // Rest at the idle cadence; a recent pointer move lifts it to the active one
+    // so the cursor-push reaction stays crisp. Scale `motion` by elapsed real
+    // time so the drift speed is identical at either rate (and at an uncapped
+    // 60fps run); clamp it so a dropped frame can't make the orbs jump.
+    const interval = now < this.pointerBoostUntil ? this.activeInterval : this.idleInterval;
+    const elapsed = now - this.lastFrameTime;
+    if (elapsed < interval) return;
+    this.lastFrameTime = now - (elapsed % interval);
+    this.renderFrame(Math.min(elapsed / 16.67, 3));
   }
 }
 
