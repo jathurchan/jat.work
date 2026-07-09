@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------
 # Site configuration. Edit this file to change everything on the page except
-# the blog/feed entries, which live as Markdown/MDX in src/content/blog/.
+# the blog: posts live as Markdown/MDX in content/blog/ and series definitions
+# in content/series.yaml (repo root — publishing never touches src/).
 # ---------------------------------------------------------------------------
 
 # Identity used in the footer, résumé button, and social links.
@@ -71,29 +72,11 @@ skills:
       color: var(--g-red)
       items: ["Python", "LLMs", "RAG", "PyTorch", "Langfuse"]
 
-# Section lead-in for the writing. Posts live as Markdown/MDX in src/content/blog/.
+# Section lead-in for the writing. Posts live as Markdown/MDX in content/blog/;
+# series grouping lives beside them in content/series.yaml.
 lab:
   eyebrow: Writing
   lead: Notes from building real systems — what worked, what broke, and why.
-
-# Post series — grouped, multi-part writing. A series renders as ONE rich card in
-# the feed (its parts listed in reading order) instead of N near-identical cards.
-# `topic` ties it to a filter tag (colour + category); `parts` are blog slugs in
-# the order they should be read. Reorder/rename freely — the feed follows this.
-series:
-  - id: raftlock
-    name: RaftLock
-    topic: systems
-    blurb: >-
-      A crash-tolerant distributed lock built on Raft, explained one layer at
-      a time — from the consensus core out to the client.
-    parts:
-      - raftlock-a-distributed-lock-that-survives-crashes
-      - raftlock-the-consensus-engine
-      - raftlock-a-storage-engine-built-for-one-job
-      - raftlock-the-state-machine-behind-the-lock
-      - raftlock-the-integration-layer
-      - raftlock-a-smart-client-for-a-hard-problem
 
 # Section lead-in for the Career view.
 careerHead:

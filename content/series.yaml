@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Post series — grouped, multi-part writing. Lives here next to the posts it
+# references (content/blog/) so publishing a series never touches src/.
+#
+# A series renders as ONE rich card in the feed (its parts listed in reading
+# order) instead of N near-identical cards. `topic` ties it to a filter tag
+# (colour + category — see `filters` in src/config/site.yaml); `parts` are
+# blog slugs (content/blog/<slug>.md) in the order they should be read.
+# Reorder/rename freely — the feed, the in-post series rail, the prev/next
+# links, and the RSS feed all follow this file.
+# ---------------------------------------------------------------------------
+series:
+  - id: raftlock
+    name: RaftLock
+    topic: systems
+    blurb: >-
+      A crash-tolerant distributed lock built on Raft, explained one layer at
+      a time — from the consensus core out to the client.
+    parts:
+      - raftlock-a-distributed-lock-that-survives-crashes
+      - raftlock-the-consensus-engine
+      - raftlock-a-storage-engine-built-for-one-job
+      - raftlock-the-state-machine-behind-the-lock
+      - raftlock-the-integration-layer
+      - raftlock-a-smart-client-for-a-hard-problem

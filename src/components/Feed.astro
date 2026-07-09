@@ -3,7 +3,7 @@ import { filters, lab, topicColor, topicLabel, formatDate } from '../lib/site';
 import { topicIcons } from '../lib/icons';
 import { getPosts, buildSeries, partLabel } from '../lib/posts';
 
-// The blog comes from src/content/blog/*.{md,mdx}, newest first.
+// The blog comes from content/blog/*.{md,mdx} (repo root), newest first.
 const entries = await getPosts();
 
 // ── Group posts into series + standalone ────────────────────────────────────

@@ -80,8 +80,6 @@ export interface SiteConfig {
     categories: { key: string; name: string; color: string; items: string[] }[];
   };
   lab: { eyebrow: string; lead: string };
-  /** Grouped multi-part post series, rendered as one card in the feed. */
-  series?: { id: string; name: string; topic: string; blurb: string; parts: string[] }[];
   careerHead: { eyebrow: string; lead: string };
   careerStart: { kicker: string; line: string };
   nav: { sections: { id: string; label: string }[] };
@@ -100,7 +98,7 @@ export interface SiteConfig {
 
 export const config = raw as SiteConfig;
 
-export const { profile, meta, intro, skills, lab, series, careerHead, careerStart, nav, featured, filters, career } = config;
+export const { profile, meta, intro, skills, lab, careerHead, careerStart, nav, featured, filters, career } = config;
 
 // Topics are every filter except the catch-all "all" tab.
 const topics = filters.filter((f) => f.id !== 'all');

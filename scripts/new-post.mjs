@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Scaffold a new blog post in src/content/blog/.
+// Scaffold a new blog post in content/blog/ (repo root).
 //
 // Usage:
 //   npm run new:post -- "My post title"
@@ -7,7 +7,7 @@
 //   npm run new:post -- "Draft idea" --draft --slug my-custom-slug
 //
 // Flags:
-//   --tag    cloud | systems | ai   (default: cloud)
+//   --tag    cloud | systems | ai | career   (default: cloud)
 //   --slug   <slug>     override the auto-generated slug
 //   --draft             mark as draft (hidden from the feed)
 //   --force             overwrite if the file already exists
@@ -16,8 +16,8 @@ import { writeFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const BLOG_DIR = fileURLToPath(new URL('../src/content/blog/', import.meta.url));
-const TAGS = new Set(['cloud', 'systems', 'ai']);
+const BLOG_DIR = fileURLToPath(new URL('../content/blog/', import.meta.url));
+const TAGS = new Set(['cloud', 'systems', 'ai', 'career']);
 
 function parseArgs(argv) {
   const opts = { tag: 'cloud', draft: false, force: false };
@@ -46,7 +46,7 @@ function slugify(s) {
 
 function fail(msg) {
   console.error(`\x1b[31m✗ ${msg}\x1b[0m`);
-  console.error('  Usage: npm run new:post -- "My post title" [--tag cloud|systems|ai] [--slug s] [--draft]');
+  console.error('  Usage: npm run new:post -- "My post title" [--tag cloud|systems|ai|career] [--slug s] [--draft]');
   process.exit(1);
 }
 
@@ -60,10 +60,11 @@ if (!slug) fail('Could not derive a slug from the title — pass --slug.');
 const pubDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
 
-// Build frontmatter
+// Build frontmatter. The title is single-quoted (with '' escaping) — unquoted,
+// a title like "RaftLock: the client" is invalid YAML (colon starts a mapping).
 const fm = [
   '---',
-  `title: ${opts.title}`,
+  `title: '${opts.title.replace(/'/g, "''")}'`,
   `pubDate: ${pubDate}`,
   `tags: ['${opts.tag}']`,
   'blurb: One sentence shown under the title on the feed card.',

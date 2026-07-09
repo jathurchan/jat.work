@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/check-posts.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "new:post": "node scripts/new-post.mjs"
+    "new:post": "node scripts/new-post.mjs",
+    "check:posts": "node scripts/check-posts.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "js-yaml": "^5.2.1",
     "typescript": "^5.9.3"
   }
 }

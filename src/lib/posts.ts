@@ -1,10 +1,21 @@
 // Single source of truth for the blog: loading posts, grouping them into series,
 // and locating a post within its series. Both the home feed (Feed.astro) and the
 // post pages (Post.astro, rss.xml) read through here so the two never drift —
-// reorder a series in site.yaml and the feed, the in-post series rail, the
-// prev/next links, and the RSS feed all follow in lockstep.
+// reorder a series in content/series.yaml and the feed, the in-post series rail,
+// the prev/next links, and the RSS feed all follow in lockstep.
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { series as seriesDefs } from './site';
+import seriesRaw from '../../content/series.yaml';
+
+/** Shape of content/series.yaml — series definitions live next to the posts
+ *  they reference (content/blog/), not in src/, so publishing is content-only. */
+interface SeriesDef {
+  id: string;
+  name: string;
+  topic: string;
+  blurb: string;
+  parts: string[];
+}
+const seriesDefs = (seriesRaw as { series?: SeriesDef[] }).series ?? [];
 
 export type Post = CollectionEntry<'blog'>;
 
@@ -19,15 +30,16 @@ export interface SeriesInfo {
   name: string;
   topic: string;
   blurb: string;
-  /** Resolved entries, in the reading order declared in site.yaml. */
+  /** Resolved entries, in the reading order declared in content/series.yaml. */
   parts: Post[];
 }
 
-/** Resolve the series defined in site.yaml against the live post set. A series
- *  with no published parts is dropped, so half-written series never show. */
+/** Resolve the series defined in content/series.yaml against the live post set.
+ *  A series with no published parts is dropped, so half-written series never
+ *  show. */
 export function buildSeries(posts: Post[]): SeriesInfo[] {
   // Entry ids are the slugified filenames (Content Layer glob loader), so the
-  // plain slugs in site.yaml's series `parts` key straight into them.
+  // plain slugs in series.yaml's `parts` key straight into them.
   const bySlug = new Map<string, Post>(posts.map((e) => [e.id, e]));
   return (seriesDefs ?? [])
     .map((s) => ({
