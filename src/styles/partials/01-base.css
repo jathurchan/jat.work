@@ -135,6 +135,66 @@ html {
 :root[data-theme='dark']::view-transition {
   background-color: #121214;
 }
+
+/* ── Page transition (Astro View Transitions) ──
+   Astro's default is a flat, generic opacity cross-fade on the whole page. This
+   replaces it with the site's own motion so a navigation reads as intentional:
+   the leaving page dissolves a touch faster than the arriving one settles into
+   place from a hair's-breadth of depth (scale 0.988 → 1) on the shared decel
+   spring — the same easing every other entrance on the site uses. `!important`
+   because Astro injects its own animation onto these same pseudo-elements at a
+   priority author rules don't otherwise beat.
+
+   Named shared elements (the post title, `pt-<slug>`) are lifted into their own
+   transition groups, so they keep morphing card ↔ headline across this fade
+   rather than dissolving with the page — the fade is only the backdrop/chrome.
+
+   DIRECTION-AWARE: Astro stamps `data-astro-transition="forward"|"back"` on
+   <html> for the duration of the swap. Forward (a link deeper into a post) reads
+   as moving in — the arriving page grows from a hair of depth (0.988 → 1). Back
+   (the browser Back/Forward buttons) mirrors it as pulling out — the leaving page
+   recedes (1 → 0.988) while the returning page settles from just in front
+   (1.012 → 1). It's Material's shared-axis-Z dialled down to the site's restraint.
+   The `[data-astro-transition="back"]` rules carry an attribute selector, so they
+   outrank the base among the !important rules during a back swap; forward (and any
+   swap without the attribute) falls through to the base.
+
+   Base layer (also what reduced-motion gets): a plain, quick opacity cross-fade,
+   no movement. The depth + spring is layered on only under no-preference. */
+::view-transition-old(root) {
+  animation: vt-leave 240ms var(--ease-out) both !important;
+}
+::view-transition-new(root) {
+  animation: vt-enter 320ms var(--ease-out) both !important;
+}
+@keyframes vt-leave { to { opacity: 0; } }
+@keyframes vt-enter { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Forward (default): the arriving page approaches from depth. */
+  ::view-transition-new(root) {
+    animation: vt-enter-depth 460ms var(--ease-spring) both !important;
+  }
+  /* Back: the leaving page recedes, the returning one settles from the front. */
+  :root[data-astro-transition="back"]::view-transition-old(root) {
+    animation: vt-leave-back 300ms var(--ease-out) both !important;
+  }
+  :root[data-astro-transition="back"]::view-transition-new(root) {
+    animation: vt-enter-back 460ms var(--ease-spring) both !important;
+  }
+}
+@keyframes vt-enter-depth {
+  from { opacity: 0; transform: scale(0.988); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes vt-leave-back {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.988); }
+}
+@keyframes vt-enter-back {
+  from { opacity: 0; transform: scale(1.012); }
+  to   { opacity: 1; transform: scale(1); }
+}
 /* Anchor jumps and "back to top" should not animate for visitors who asked for
    less motion — honour the preference. */
 @media (prefers-reduced-motion: reduce) {
