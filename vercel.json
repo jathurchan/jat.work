@@ -9,6 +9,19 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
     }
   ],
   "redirects": [
@@ -16,6 +29,26 @@
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "(www\\.)?raftlock\\.org" }],
       "destination": "https://jat.work/#raftlock",
+      "permanent": false
+    },
+    {
+      "source": "/raftlock",
+      "destination": "/#raftlock",
+      "permanent": false
+    },
+    {
+      "source": "/writing",
+      "destination": "/#writing",
+      "permanent": false
+    },
+    {
+      "source": "/blog",
+      "destination": "/#writing",
+      "permanent": false
+    },
+    {
+      "source": "/contact",
+      "destination": "/#contact",
       "permanent": false
     }
   ]

@@ -1,23 +1,14 @@
-// Open Graph images, generated at build time.
-//   /og/site.png    the site-wide card (home + any page without its own)
-//   /og/<slug>.png  one card per published post
-// All in the site's own voice — paper background, ink title, coloured edge —
-// and generated from site.yaml/frontmatter, so they can never drift from the
-// live design the way a hand-made og-image.jpg did.
+// Open Graph images for posts, generated at build time: /og/<slug>.png, one
+// card per published post, in the site's own voice — charcoal background, ink
+// title, coloured edge — and generated from frontmatter, so they can never
+// drift from the live design the way a hand-made og-image.jpg did.
+// (The home page's card is its own hand-drawn route: og/site.png.ts.)
 import { OGImageRoute } from 'astro-og-canvas';
 import { getCollection } from 'astro:content';
-import { profile, intro } from '../../lib/site';
 
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 
-// The site card reuses the hero's own lines from site.yaml.
-const sitePage = {
-  title: profile.fullName,
-  blurb: `${intro.role}. ${intro.bio}`,
-  tags: ['site'],
-};
-
-// Topic → brand colour (light palette from 01-base.css), as RGB for the canvas.
+// Topic → brand colour (dark palette from 01-base.css), as RGB for the canvas.
 const theme: Record<string, [number, number, number]> = {
   cloud: [96, 165, 250],   // Soft Azure
   systems: [74, 222, 128], // Pastel Emerald
@@ -27,10 +18,7 @@ const theme: Record<string, [number, number, number]> = {
 };
 
 export const { getStaticPaths, GET } = await OGImageRoute({
-  pages: {
-    site: sitePage,
-    ...Object.fromEntries(posts.map((p) => [p.id, p.data])),
-  },
+  pages: Object.fromEntries(posts.map((p) => [p.id, p.data])),
   getImageOptions: (_path, page) => {
     const accent = theme[page.tags?.[0]] ?? theme.site;
     const bgDark: [number, number, number] = [18, 18, 20]; // --paper in dark mode (approx #121214)

@@ -68,7 +68,9 @@ const { sections = false, reading = false } = Astro.props;
     {/* Right: a single contact CTA (→ the footer, where the socials and
         email live), plus the theme toggle. */}
     <nav aria-label="Actions" class="nav-row">
-      <a href="#contact" class="header-cta" data-magnetic>
+      {/* aria-label because narrow viewports hide the text span and leave only
+          the (aria-hidden) envelope icon — without it the link has no name. */}
+      <a href="#contact" class="header-cta" data-magnetic aria-label="Contact">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2" y="4" width="20" height="16" rx="2"></rect>
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>

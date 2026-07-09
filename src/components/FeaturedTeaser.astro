@@ -7,7 +7,9 @@ import { featured } from '../lib/site';
     <!-- lead-in that frames the interactive demo -->
     <div class="hero-featured-lead">
       <span class="featured-eyebrow">{featured.eyebrow}</span>
-      <p class="featured-lead-text" set:html={featured.lead}></p>
+      {/* h2 like the Experience/Feed leads (same class, same look): it heads
+          the section, so the RaftLock h3 below nests without a level skip. */}
+      <h2 class="featured-lead-text" set:html={featured.lead}></h2>
     </div>
 
     <!-- Glow background -->
@@ -45,11 +47,13 @@ import { featured } from '../lib/site';
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
           </span>
           <span class="mode-content">
+            {/* spans, not h4/p: a <button> only allows phrasing content, and a
+                heading inside a control reads wrong to assistive tech. */}
             <span class="mode-card-head">
-              <h4>Guided Tour</h4>
+              <span class="mode-title">Guided Tour</span>
               <span class="mode-badge">~2 min</span>
             </span>
-            <p>See how the lock survives crashes — explained step by step.</p>
+            <span class="mode-desc">See how the lock survives crashes — explained step by step.</span>
           </span>
           <span class="mode-arrow" aria-hidden="true">→</span>
         </button>
@@ -60,9 +64,9 @@ import { featured } from '../lib/site';
           </span>
           <span class="mode-content">
             <span class="mode-card-head">
-              <h4>Chaos Sandbox</h4>
+              <span class="mode-title">Chaos Sandbox</span>
             </span>
-            <p>Crash servers yourself and watch the cluster recover.</p>
+            <span class="mode-desc">Crash servers yourself and watch the cluster recover.</span>
           </span>
           <span class="mode-arrow" aria-hidden="true">→</span>
         </button>

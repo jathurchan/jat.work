@@ -604,6 +604,27 @@
   color: var(--faint-text);
 }
 
+/* Phones: at 375px the window ran to ~46% of the viewport, mostly because the
+   value column was squeezed to ~156px (every row wrapped long). Give the
+   values that width back — drop the ghost's reserved key width (the value
+   column may re-align if the window is expanded; on a phone that's a fair
+   trade for ~25px of every line), pull the key indent and side padding in,
+   and tighten the row rhythm. Type size stays untouched: smaller mono would
+   cost legibility, and the win is in the columns, not the glyphs. */
+@media (max-width: 520px) {
+  .hero-manifest {
+    column-gap: 10px;
+    row-gap: 9px;
+    padding: 14px 16px 18px;
+  }
+  .hero-manifest dt {
+    padding-left: 8px;
+  }
+  .key-ghost {
+    display: none;
+  }
+}
+
 /* Syntax Highlighting */
 .json-key, .json-string {
   color: inherit;
@@ -1249,7 +1270,8 @@
   gap: 8px;
   margin-bottom: 3px;
 }
-.mode-content h4 {
+.mode-title {
+  display: block;
   margin: 0;
   font-family: var(--font-sans);
   font-size: 15px;
@@ -1268,7 +1290,8 @@
   padding: 2px 7px;
   border-radius: 99px;
 }
-.mode-content p {
+.mode-desc {
+  display: block;
   margin: 0;
   font-size: 13px;
   line-height: 1.4;

@@ -27,9 +27,39 @@ const minutes = readingTime(entry.body ?? '');
 // auto-generates the matching `id` on each heading, so `#${slug}` jumps work.
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const hasToc = toc.length >= 2;
+
+// BlogPosting schema so search engines see the article's author, date, and
+// card without inferring them from the markup.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: blurb,
+  datePublished: pubDate.toISOString().slice(0, 10),
+  author: {
+    '@type': 'Person',
+    name: 'Jathurchan Selvakumar',
+    url: 'https://jat.work',
+  },
+  image: new URL(`/og/${entry.id}.png`, Astro.site).href,
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+  ...(series ? { isPartOf: { '@type': 'CreativeWorkSeries', name: series.series.name } } : {}),
+};
 ---
 
-<Base title={`${title} — Jathurchan Selvakumar`} description={blurb} ogType="article" ogImage={`/og/${entry.id}.png`}>
+<Base
+  title={`${title} — Jathurchan Selvakumar`}
+  description={blurb}
+  ogType="article"
+  ogImage={`/og/${entry.id}.png`}
+  ogImageAlt={`Title card: "${title}"${topic ? ` — ${topicLabel[topic]}` : ''}`}
+>
+  <Fragment slot="head">
+    <meta property="article:published_time" content={pubDate.toISOString().slice(0, 10)} />
+    <meta property="article:author" content="Jathurchan Selvakumar" />
+    {topic && <meta property="article:tag" content={topicLabel[topic]} />}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <div class="page" id="top" style={`--accent: ${accent};`}>
     {/* Quiet ambient backdrop so posts share the home page's atmosphere instead
         of cutting to flat paper: a static glow tinted with the post's topic

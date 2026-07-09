@@ -15,7 +15,9 @@ const pillarIcons: Record<string, string> = {
   <div class="hero-foot section-rise" style="width: 100%;">
     <div class="hero-skills-lead">
       <span class="featured-eyebrow">{skills.eyebrow}</span>
-      <p class="hero-skills-text">{skills.lead}</p>
+      {/* h2 like the Experience/Feed leads (same class, same look): it heads
+          the section, so the category h3s below nest without a level skip. */}
+      <h2 class="hero-skills-text">{skills.lead}</h2>
     </div>
     <ul class="toolkit-grid" aria-label="Toolkit">
       {skills.categories.map((cat) => (

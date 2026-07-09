@@ -17,15 +17,22 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     mdx(),
-    // Drop only the exact /raftlock redirect stub — it's a meta-refresh to
-    // /#raftlock, not a real page. Anchored to the end so it never catches the
-    // real /blog/raftlock-* posts.
-    sitemap({ filter: (page) => !/\/raftlock\/?$/.test(page) }),
+    // Drop only the exact redirect stubs — they're meta-refreshes to home-page
+    // anchors, not real pages. Matched against the whole pathname so the
+    // pattern can never catch a real post like /blog/raftlock-*.
+    sitemap({
+      filter: (page) => !/^\/(raftlock|writing|blog|contact)\/?$/.test(new URL(page).pathname),
+    }),
   ],
   vite: {
     plugins: [yaml()],
   },
   redirects: {
-    '/raftlock': '/#raftlock'
+    '/raftlock': '/#raftlock',
+    '/writing': '/#writing',
+    // Posts live under /blog/<slug>, so people trim shared URLs to /blog and
+    // expect the writing. /contact is the other URL strangers guess.
+    '/blog': '/#writing',
+    '/contact': '/#contact'
   }
 });

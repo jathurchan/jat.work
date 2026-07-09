@@ -20,7 +20,9 @@
     "@rollup/plugin-yaml": "^4.1.2",
     "@vercel/analytics": "^2.0.1",
     "astro": "^5.18.2",
-    "astro-og-canvas": "^0.13.0"
+    "astro-og-canvas": "^0.13.0",
+    "satori": "^0.26.0",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

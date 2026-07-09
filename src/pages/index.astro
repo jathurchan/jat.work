@@ -9,9 +9,26 @@ import FeaturedProject from '../components/FeaturedProject.astro';
 import Experience from '../components/Experience.astro';
 import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
+import { profile, intro } from '../lib/site';
+
+// Person schema: tells search engines who this site is about, and links the
+// GitHub/LinkedIn profiles as the same person.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.fullName,
+  url: 'https://jat.work',
+  email: `mailto:${profile.email}`,
+  jobTitle: 'Software Engineer & Site Reliability Engineer',
+  worksFor: { '@type': 'Organization', name: intro.company ?? 'Google' },
+  sameAs: [profile.links.github, profile.links.linkedin],
+};
 ---
 
 <Base>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <div class="page" id="top">
     {/* Page-wide ambient backdrop: interactive fluid canvas simulation */}
     <FluidBackground />
