@@ -26,7 +26,7 @@
        hues alive through the heavy blur. Over near-white paper the colour reads
        fainter than over charcoal, so light mode runs a touch more opaque/saturated
        to keep the two modes balanced. */
-    filter: blur(72px) saturate(136%);
+    filter: blur(32px) saturate(136%);
     opacity: 0.68;
     /* Note: deliberately NOT force-promoted with translateZ. A fixed, blurred
        (already compositor-promoted) layer that gets an explicit GPU layer is the
@@ -38,7 +38,7 @@
   :global(:root[data-theme="dark"]) .fluid-bg {
     /* Charcoal carries the colour better — let it read a touch stronger. */
     opacity: 0.62;
-    filter: blur(68px) saturate(135%);
+    filter: blur(32px) saturate(135%);
   }
 
   /* First-paint bloom: the colour field fades up from paper instead of
@@ -69,10 +69,10 @@
      — small enough that iOS won't drop it during a scroll. */
   @media (max-width: 768px) {
     .fluid-bg {
-      filter: blur(30px) saturate(120%);
+      filter: blur(12px) saturate(120%);
     }
     :global(:root[data-theme="dark"]) .fluid-bg {
-      filter: blur(32px) saturate(130%);
+      filter: blur(12px) saturate(130%);
     }
   }
 

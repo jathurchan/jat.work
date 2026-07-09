@@ -103,7 +103,7 @@
    scrolling smooth on mobile Safari. One token, so it flows to every glass tile. */
 @media (max-width: 768px) {
   :root {
-    --glass-blur: blur(12px) saturate(160%);
+    --glass-blur: blur(8px) saturate(160%);
   }
 }
 

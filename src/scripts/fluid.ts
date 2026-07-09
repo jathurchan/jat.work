@@ -59,6 +59,8 @@ class FluidSimulation {
   private isCoarse = false;
   private frameInterval = 0; // ms between frames; 0 = uncapped (desktop)
   private lastFrameTime = 0;
+  private isScrolling = false;
+  private scrollTimer = 0;
 
   constructor() {
     this.canvas = document.getElementById('fluid-canvas') as HTMLCanvasElement;
@@ -229,6 +231,12 @@ class FluidSimulation {
     const current = window.scrollY;
     this.scrollVelocity = current - this.lastScrollY;
     this.lastScrollY = current;
+    
+    this.isScrolling = true;
+    if (this.scrollTimer) window.clearTimeout(this.scrollTimer);
+    this.scrollTimer = window.setTimeout(() => {
+      this.isScrolling = false;
+    }, 150);
   }
 
   /** Draw one frame. `motion` 0..1 scales the per-tick movement (0 = frozen). */
@@ -270,9 +278,10 @@ class FluidSimulation {
         const g = parseInt(c.slice(3, 5), 16);
         const b = parseInt(c.slice(5, 7), 16);
         // Slightly deeper core with a longer falloff — richer colour without
-        // raising the overall field opacity (that goes muddy fast).
-        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.55)`);
-        gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.2)`);
+        // raising the overall field opacity (that goes muddy fast). Softened
+        // further to compensate for reduced CSS blur.
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.45)`);
+        gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.15)`);
         gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
       } else {
         gradient.addColorStop(0, c);
@@ -294,6 +303,11 @@ class FluidSimulation {
   private animate(now: number) {
     if (!this.running) return;
     this.animationFrame = requestAnimationFrame(this.animate);
+
+    if (this.isScrolling) {
+      this.lastFrameTime = now;
+      return;
+    }
 
     if (this.frameInterval > 0) {
       // Throttle to the target cadence. Scale `motion` by elapsed real time so

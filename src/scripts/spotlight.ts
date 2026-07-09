@@ -16,6 +16,7 @@ export function initSpotlight() {
 
   let frame = 0;
   let pending: { el: HTMLElement; x: number; y: number } | null = null;
+  const rects = new WeakMap<HTMLElement, DOMRect>();
 
   const flush = () => {
     frame = 0;
@@ -25,9 +26,14 @@ export function initSpotlight() {
     el.style.setProperty('--my', `${y}%`);
   };
 
+  const onEnter = (e: PointerEvent) => {
+    const el = e.currentTarget as HTMLElement;
+    rects.set(el, el.getBoundingClientRect());
+  };
+
   const onMove = (e: PointerEvent) => {
     const el = e.currentTarget as HTMLElement;
-    const r = el.getBoundingClientRect();
+    const r = rects.get(el) || el.getBoundingClientRect();
     pending = {
       el,
       x: ((e.clientX - r.left) / r.width) * 100,
@@ -36,10 +42,24 @@ export function initSpotlight() {
     if (!frame) frame = requestAnimationFrame(flush);
   };
 
-  cards.forEach((c) => c.addEventListener('pointermove', onMove));
+  const onScroll = () => {
+    // Clear rect cache on scroll so it's recalculated on the next move
+    cards.forEach(c => rects.delete(c));
+  };
+  
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  cards.forEach((c) => {
+    c.addEventListener('pointerenter', onEnter);
+    c.addEventListener('pointermove', onMove);
+  });
 
   trackTeardown(() => {
     if (frame) cancelAnimationFrame(frame);
-    cards.forEach((c) => c.removeEventListener('pointermove', onMove));
+    window.removeEventListener('scroll', onScroll);
+    cards.forEach((c) => {
+      c.removeEventListener('pointerenter', onEnter);
+      c.removeEventListener('pointermove', onMove);
+    });
   });
 }
