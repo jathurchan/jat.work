@@ -16,7 +16,7 @@ profile:
 meta:
   title: Jathurchan Selvakumar — Software Engineer, SRE
   description: >-
-    Jathurchan Selvakumar — Software Engineer & SRE at Google. I build systems
+    Jathurchan Selvakumar, Software Engineer & SRE at Google. I build systems
     that survive failure: distributed systems, observability, and RaftLock, a
     Raft-based distributed lock in Go.
 
@@ -45,7 +45,7 @@ intro:
   # Extra manifest rows revealed by the green traffic light on the intro.json
   # card — details worth having on hand, not worth the first impression.
   details:
-    education: "Master's — ENSEA, France"
+    education: "Master's · ENSEA, France"
     basedIn: "Dublin, Ireland"
   # Paired with `role` for the OG-image blurb (og/[...route].ts).
   bio: I build reliable infrastructure and enjoy solving hard scaling problems.
@@ -76,12 +76,12 @@ skills:
 # series grouping lives beside them in content/series.yaml.
 lab:
   eyebrow: Writing
-  lead: Notes from building real systems — what worked, what broke, and why.
+  lead: 'Notes from building real systems: what worked, what broke, and why.'
 
 # Section lead-in for the Career view.
 careerHead:
   eyebrow: Work Experience
-  lead: "The path so far, in order — from a student research paper to SRE at Google."
+  lead: "The path so far, in order: from a student research paper to SRE at Google."
 
 # Featured project card + live demo
 featured:
@@ -92,9 +92,9 @@ featured:
   eyebrow: Featured Project
   lead: >-
     My longest-running <span class="thread-systems">distributed systems</span>
-    project — and the one part of this site you can break yourself.
+    project, and the one part of this site you can break yourself.
   tagline: >-
-    Raft consensus written from the paper up — <strong>five layers</strong>,
+    Raft consensus written from the paper up: <strong>five layers</strong>,
     a purpose-built storage engine, a simulation test harness. Kill two
     nodes and watch the cluster recover.
   # demo chips
@@ -133,19 +133,19 @@ careerStart:
   kicker: Where it starts
   # `line` is rendered as HTML (see Experience.astro) so it can carry an inline link.
   line: >-
-    <p class="route-origin-prose">At 11, a stray "View Source" pulled me in — I
+    <p class="route-origin-prose">At 11, a stray "View Source" pulled me in. I
     rebuilt Google Search in raw HTML and didn't stop. <a class="route-link"
     href="https://louislegrand.fr/" target="_blank"
-    rel="noopener noreferrer">Lycée Louis-le-Grand</a> — France's most selective high school — then years of classes
-    préparatoires — pure mathematics, physics, and logic. The hardest years of my
+    rel="noopener noreferrer">Lycée Louis-le-Grand</a> (France's most selective high school), then years of classes
+    préparatoires: pure mathematics, physics, and logic. The hardest years of my
     life, and the most formative. I kept building through all of it.</p>
     <div class="origin-project">
-    <span class="origin-project-eye">Research · 2018 — 19</span>
+    <span class="origin-project-eye">Research · 2018–19</span>
     <a class="origin-project-name"
     href="https://github.com/jathurchan/air-route-optimizer" target="_blank"
     rel="noopener noreferrer">Air Route Optimizer ↗</a>
     <p class="origin-project-desc">Multi-objective graph optimizer for air
-    traffic networks — co-authored with a classmate under <a
+    traffic networks, co-authored with a classmate under <a
     href="http://jerome.gaertner.free.fr" target="_blank"
     rel="noopener noreferrer">Jérôme Gärtner</a>. The paper that opened the
     door to AWS.</p>
@@ -164,15 +164,15 @@ career:
     symbol: dynamo
     variant: station
     transitionIn: >-
-      I targeted AWS Dublin — prepped hard on <a
+      I targeted AWS Dublin, prepped hard on <a
       class="route-link" href="https://leetcode.com/" target="_blank"
-      rel="noopener noreferrer">LeetCode</a> and studied Amazon's <a
+      rel="noopener noreferrer">LeetCode</a>, studied Amazon's <a
       class="route-link"
       href="https://www.amazon.jobs/content/en/our-workplace/leadership-principles"
-      target="_blank" rel="noopener noreferrer">Leadership Principles</a> — and
+      target="_blank" rel="noopener noreferrer">Leadership Principles</a>, and
       Dublin said yes.
     story: >-
-      Built the JNI layer linking DynamoDB's new Rust client to its Java callers — closing the gap between two runtimes without serialization overhead.
+      Built the JNI layer linking DynamoDB's new Rust client to its Java callers, closing the gap between two runtimes without serialization overhead.
     heroMetric: { value: "−28%", label: "p99 latency" }
     product:
       label: Amazon DynamoDB
@@ -188,9 +188,9 @@ career:
     brand: var(--g-yellow)
     symbol: dynamo-watch
     variant: station
-    transitionIn: I deferred my full-time offer and came back for more — one more internship, deeper inside DynamoDB's internals.
+    transitionIn: 'I deferred my full-time offer and came back for more: one more internship, deeper inside DynamoDB''s internals.'
     story: >-
-      Rebuilt the monitoring system watching DynamoDB's metadata store — replacing fragile thresholds with automated canaries that could tell signal from noise.
+      Rebuilt the monitoring system watching DynamoDB's metadata store, replacing fragile thresholds with automated canaries that could tell signal from noise.
     heroMetric: { value: "−99%", label: "false alerts" }
     product:
       label: Amazon DynamoDB
@@ -199,7 +199,7 @@ career:
 
   - chapter: "—"
     org: Withings
-    period: "2023 — 24"
+    period: "2023–24"
     role: iOS Engineer
     place: Paris
     color: var(--g-red)
@@ -207,14 +207,14 @@ career:
     symbol: health
     variant: branch
     tag: Detour · iOS
-    terminus: Paused — for now
+    terminus: Paused, for now
     transitionIn: >-
       Master's from <a class="route-link" href="https://www.ensea.fr/en/"
       target="_blank" rel="noopener noreferrer">ENSEA</a>, two AWS internships
-      behind me, a full-time offer on the table — I chose to come home to Paris
+      behind me, a full-time offer on the table. I chose to come home to Paris
       instead. Three months of self-taught iOS later, I had the role.
     story: >-
-      Shipped an end-to-end Swift pipeline for AI-driven insights — building health software for the people I love.
+      Shipped an end-to-end Swift pipeline for AI-driven insights, building health software for the people I love.
     heroMetric: { value: "10M+", label: "users reached" }
     product:
       label: Withings HealthMate
@@ -230,9 +230,9 @@ career:
     brand: var(--g-yellow)
     symbol: cart
     variant: station
-    transitionIn: From iOS in Paris to backend in Luxembourg — I rejoined Amazon full-time and stepped into an entirely different domain.
+    transitionIn: 'From iOS in Paris to backend in Luxembourg: I rejoined Amazon full-time and stepped into an entirely different domain.'
     story: >-
-      Enabled the Ireland expansion for Amazon's core third-party Pricing services — coordinating across seven teams to resolve blockers and ship the launch.
+      Enabled the Ireland expansion for Amazon's core third-party Pricing services, coordinating across seven teams to resolve blockers and ship the launch.
     heroMetric: { value: "7+", label: "teams aligned" }
     product:
       label: Seller Central
@@ -250,12 +250,12 @@ career:
     variant: project
     demo: true
     transitionIn: >-
-      I wanted to build what I love — so I read <a class="route-link"
+      I wanted to build what I love, so I read <a class="route-link"
       href="https://www.google.com/search?q=Designing+Data-Intensive+Applications+book"
       target="_blank" rel="noopener noreferrer">Designing Data-Intensive
       Applications</a> cover to cover and turned theory into code.
     story: >-
-      Built a crash-tolerant distributed lock on Raft in Go — every layer written from scratch, verified with simulated crashes, partitions, and restarts.
+      Built a crash-tolerant distributed lock on Raft in Go: every layer written from scratch, verified with simulated crashes, partitions, and restarts.
     heroMetric: { value: "82%", label: "test coverage" }
     product:
       label: Open the live demo
@@ -272,7 +272,7 @@ career:
     symbol: observability
     variant: destination
     now: true
-    transitionIn: "I joined Google as an SRE in Dublin — keeping the infrastructure behind Google's products reliable, at a scale I'd only read about before."
+    transitionIn: "I joined Google as an SRE in Dublin, keeping the infrastructure behind Google's products reliable at a scale I'd only read about before."
     # The destination card swaps a tech-chip list for a live "terminal" — an
     # open-ended hook that the story is still being written (see Experience.astro).
     terminal: true

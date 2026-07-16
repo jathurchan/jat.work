@@ -15,7 +15,7 @@ series:
     topic: systems
     blurb: >-
       A crash-tolerant distributed lock built on Raft, explained one layer at
-      a time — from the consensus core out to the client.
+      a time, from the consensus core out to the client.
     parts:
       - raftlock-a-distributed-lock-that-survives-crashes
       - raftlock-the-consensus-engine
