@@ -84,6 +84,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
         if (!window.__themeSwapBound) {
           window.__themeSwapBound = true;
           document.addEventListener('astro:after-swap', applyTheme);
+          // Follow live OS theme changes (auto dark at sunset) — but only while
+          // the visitor hasn't picked a theme with the toggle; a stored choice
+          // always wins, and applyTheme re-checks it at fire time.
+          if (window.matchMedia) {
+            var mql = window.matchMedia('(prefers-color-scheme: dark)');
+            if (mql.addEventListener) {
+              mql.addEventListener('change', function () {
+                var stored = typeof localStorage !== 'undefined' && localStorage.getItem('theme');
+                if (!stored) applyTheme();
+              });
+            }
+          }
         }
       })();
     </script>

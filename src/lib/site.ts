@@ -58,6 +58,9 @@ export interface SiteConfig {
     email: string;
     links: { github: string; linkedin: string };
   };
+  /** Compact identity line under the footer CTA — the 15-second version of the
+   * career route. May carry inline HTML (e.g. <strong> around the name). */
+  about: { text: string };
   meta: { title: string; description: string };
   intro: {
     greeting: string;
@@ -98,7 +101,7 @@ export interface SiteConfig {
 
 export const config = raw as SiteConfig;
 
-export const { profile, meta, intro, skills, lab, careerHead, careerStart, nav, featured, filters, career } = config;
+export const { profile, about, meta, intro, skills, lab, careerHead, careerStart, nav, featured, filters, career } = config;
 
 // Topics are every filter except the catch-all "all" tab.
 const topics = filters.filter((f) => f.id !== 'all');

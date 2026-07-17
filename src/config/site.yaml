@@ -12,6 +12,18 @@ profile:
     github: https://github.com/jathurchan
     linkedin: https://www.linkedin.com/in/jathurchan
 
+# The 15-second version of the career route: a compact identity line rendered
+# as the supporting copy under the footer's "Let's build something." CTA, on
+# every page — who you'd be building with, right before the ways to reach him.
+# Two–three plain sentences, newest role first; the route above tells the long
+# story. The name carries <strong> so the footer can lift it to full ink
+# (rendered with set:html, like careerStart).
+about:
+  text: >-
+    I'm <strong>Jathurchan Selvakumar</strong> — Jat. Software Engineer & SRE
+    at Google in Dublin; before that, SDE at Amazon, iOS Engineer at Withings,
+    and SDE Intern at AWS. The rest of this site is the long version.
+
 # SEO / social metadata
 meta:
   title: Jathurchan Selvakumar — Software Engineer, SRE

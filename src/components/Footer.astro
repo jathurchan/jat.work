@@ -1,5 +1,5 @@
 ---
-import { profile } from '../lib/site';
+import { profile, about } from '../lib/site';
 import { socialLinks, socialIcons } from '../lib/social';
 
 const year = new Date().getFullYear();
@@ -9,11 +9,38 @@ const year = new Date().getFullYear();
   <div class="footer-parallax">
     <div class="shell footer-inner">
       <div class="footer-content">
-        <h2 class="footer-cta-title">Let's build<br />something.</h2>
+        {/* One contact card, top to bottom: the invitation, who this is (the
+            15-second version of the career route — content in site.yaml), then
+            the ways to reach him. */}
+        <div class="footer-lockup">
+          <h2 class="footer-cta-title">Let's build<br />something.</h2>
+          <p class="footer-about-text" set:html={about.text} />
+        </div>
         <div class="footer-contact">
-          <a class="footer-email-btn" href={`mailto:${profile.email}`} data-magnetic>
-            {profile.email} <span class="arrow" aria-hidden="true">→</span>
-          </a>
+          {/* Two paths to the same address: mailto for people with a mail app,
+              copy for everyone else. The hint is absolutely positioned so the
+              "copied" confirmation never shifts layout. */}
+          <div class="footer-email-row">
+            <a class="footer-email-btn" href={`mailto:${profile.email}`} data-magnetic>
+              {profile.email} <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <button
+              type="button"
+              class="footer-copy-btn"
+              data-copy-email={profile.email}
+              aria-label="Copy email address"
+              data-magnetic
+            >
+              <svg class="copy-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <svg class="check-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+            <span class="footer-copy-hint" data-copy-hint aria-live="polite"></span>
+          </div>
           <div class="footer-socials">
             {
               socialLinks.map((s) => (
@@ -47,3 +74,48 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  // Delegated on document (same pattern as the header's theme toggle) so the
+  // handler survives View Transitions swaps that replace the footer DOM.
+  let copyResetTimer: ReturnType<typeof setTimeout> | undefined;
+
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Clipboard API unavailable or blocked; the textarea + execCommand path
+      // still works inside a click gesture.
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        return ok;
+      } catch {
+        return false;
+      }
+    }
+  }
+
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy-email]');
+    if (!btn) return;
+    if (!(await copyText(btn.dataset.copyEmail ?? ''))) return;
+    const row = btn.closest('.footer-email-row');
+    const hint = row?.querySelector('[data-copy-hint]');
+    row?.classList.add('is-copied');
+    if (hint) hint.textContent = 'copied';
+    clearTimeout(copyResetTimer);
+    copyResetTimer = setTimeout(() => {
+      row?.classList.remove('is-copied');
+      if (hint) hint.textContent = '';
+    }, 1800);
+  });
+</script>
